@@ -22,8 +22,11 @@ class TickData:
     delta_time: float
 
 
+import logging
+
 class Clock:
     def __init__(self):
+        self.logger = logging.getLogger(__name__ + ".Clock")
         self.on_tick = Signal()
         self.target_framerate: Optional[int] = None
         self.start_timestamp: Optional[float] = None
@@ -34,8 +37,9 @@ class Clock:
         delta_time: float = self.__pygame_clock.tick(self.target_framerate or 0) * PYGAME_DELTA_TIME_SCALE
         tick_data = TickData(delta_time)
         await self.on_tick.emit(tick_data)
-        
+
     async def run(self):
+        self.logger.info("Clock started.")
         self.running = True
         self.start_timestamp = datetime.now().timestamp()
         while self.running:
