@@ -1,8 +1,21 @@
-from typing import Never
+import pygame
+pygame.init()
+
+from src.components.clock import Clock
 
 class Game:
     def __init__(self):
-        ...
+        self.clock = Clock()
+        self.running = False
+        
+    async def tick(self) -> None:
+        await self.clock.tick()
 
-    async def run(self) -> Never:
-        ...
+    async def run(self) -> None:
+        self.running = True
+        while self.running:
+            await self.tick()
+        pygame.quit()
+            
+    def stop(self) -> None:
+        self.running = False
