@@ -44,7 +44,7 @@ class Clock:
         await self.on_tick.emit(tick_data)
 
     async def run(self):
-        self.logger.info("Clock started.")
+        self.logger.debug("Clock started.")
         self.running = True
         self.start_timestamp = datetime.now().timestamp()
         while self.running:
