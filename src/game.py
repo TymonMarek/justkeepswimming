@@ -1,15 +1,18 @@
 import pygame
+
 pygame.init()
 
 from src.components.dispatcher import Dispatcher
 from src.components.window import Window
 from src.components.clock import Clock
+from src.utils.stage import Stage
 
 class Game:
     def __init__(self):
         self.dispatcher = Dispatcher() 
         self.window = Window()
         self.clock = Clock()
+        self.stage = Stage()
         self.running = False
         
     async def tick(self) -> None:
