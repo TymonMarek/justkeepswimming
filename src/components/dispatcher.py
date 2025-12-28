@@ -2,7 +2,7 @@ from collections import defaultdict
 from pygame import Event as PygameEvent
 import pygame
 
-from src.utils.signal import Signal
+from src.utilities.signal import Signal
 
 
 type EventType = int

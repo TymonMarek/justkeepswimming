@@ -3,7 +3,7 @@ from typing import Optional
 
 from pygame.time import Clock as PygameClock 
 
-from src.utils.signal import Signal
+from src.utilities.signal import Signal
 
 from datetime import datetime
 

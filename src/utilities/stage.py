@@ -1,4 +1,4 @@
-from src.utils.scene import Scene
+from src.utilities.scene import Scene
 
 
 class Stage:
