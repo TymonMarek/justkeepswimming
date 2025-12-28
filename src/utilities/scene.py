@@ -21,29 +21,29 @@ class Scene:
 
     def create_entity(self) -> Entity:
         entity = Entity(id=len(self.entities))
-        self.logger.info(f"Creating entity: {entity}")
+        self.logger.debug(f"Creating entity: {entity}")
         self.entities.append(entity)
         self.components[entity.id] = {}
         return entity
 
     def remove_entity(self, entity: Entity) -> None:
         if entity in self.entities:
-            self.logger.info(f"Removing entity: {entity}")
+            self.logger.debug(f"Removing entity: {entity}")
             self.entities.remove(entity)
             if entity.id in self.components:
                 del self.components[entity.id]
 
     def add_component(self, entity: Entity, component: Component) -> None:
-        self.logger.info(f"Adding component {component} to entity {entity}")
+        self.logger.debug(f"Adding component {component} to entity {entity}")
         self.components[entity.id][type(component)] = component
 
     def remove_component(self, entity: Entity, component_type: type) -> None:
-        self.logger.info(f"Removing component {component_type} from entity {entity}")
+        self.logger.debug(f"Removing component {component_type} from entity {entity}")
         if component_type in self.components[entity.id]:
             del self.components[entity.id][component_type]
 
     def add_system(self, system: System) -> None:
-        self.logger.info(f"Adding system: {system}")
+        self.logger.debug(f"Adding system: {system}")
         self.systems.append(system)
 
     def get_matching_entities(
