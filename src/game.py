@@ -7,7 +7,7 @@ pygame.init()
 
 from src.components.dispatcher import Dispatcher
 from src.components.window import Window
-from src.components.clock import Clock
+from src.components.clock import Clock, TickData
 from src.components.stage import Stage
 
 logger = logging.getLogger(__name__)
@@ -20,32 +20,26 @@ class Game:
         self.window = Window()
         self.clock = Clock()
         self.stage = Stage(Context(window=self.window))
-        self.running = False
+        self.clock.on_tick.connect(self.tick)
+        self._attach_quit_handler()
 
-    async def initialize(self) -> None:
+    def _attach_quit_handler(self) -> None:
         logger.debug("Setting up quit event handler.")
 
-        async def on_quit(event: pygame.event.Event) -> None:
+        async def _on_quit(event: pygame.event.Event) -> None:
             logger.info("Received QUIT, exiting the process on the next tick...")
-            self.stop()
+            self.quit()
 
-        self.dispatcher.get_signal_for(pygame.QUIT).connect(on_quit)
+        self.dispatcher.get_signal_for(pygame.QUIT).connect(_on_quit)
 
-    async def tick(self) -> None:
+    async def tick(self, tick_data: TickData) -> None:
         await self.dispatcher.process_events()
-        await self.clock.tick()
 
     async def run(self) -> None:
         logger.info("Process ready!")
-        self.running = True
-        while self.running:
-            await self.tick()
+        await self.clock.run()
         logger.info("Exiting process...")
-        pygame.quit()
-        import sys
 
-        sys.exit(0)
-
-    def stop(self) -> None:
+    def quit(self) -> None:
         logger.info("Stopping process...")
-        self.running = False
+        self.clock.running = False
