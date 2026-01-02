@@ -1,45 +1,62 @@
+import asyncio
+
+import os
+
+from src.scenes import SceneID, default
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
+
 import pygame
-import logging
+from logging import getLogger
 
-from src.utilities.context import Context
-
+from src.utilities.context import GameContext
 pygame.init()
 
-from src.components.dispatcher import Dispatcher
-from src.components.window import Window
-from src.components.clock import Clock, TickData
-from src.components.stage import Stage
+from src.modules.dispatcher import Dispatcher
+from src.modules.window import Window
+from src.modules.clock import Clock, TickContext
+from src.modules.stage import Stage
 
-logger = logging.getLogger(__name__)
 
 
 class Game:
     def __init__(self):
-        logger.info("Initializing process...")
+        self.logger = getLogger(__name__)
+        self.logger.info("Initializing process...")
         self.dispatcher = Dispatcher()
         self.window = Window()
         self.clock = Clock()
-        self.stage = Stage(Context(window=self.window))
-        self.clock.on_tick.connect(self.tick)
+
+        self.context = GameContext(
+            clock=self.clock,
+            window=self.window,
+            dispatcher=self.dispatcher,
+        )
+
+        self.stage = Stage({
+            SceneID.DEFAULT: default.load,
+        })
+        
         self._attach_quit_handler()
+        self.clock.on_tick.connect(self._process_game)
 
     def _attach_quit_handler(self) -> None:
-        logger.debug("Setting up quit event handler.")
+        self.logger.debug("Setting up quit event handler.")
 
         async def _on_quit(event: pygame.event.Event) -> None:
-            logger.info("Received QUIT, exiting the process on the next tick...")
-            self.quit()
+            self.logger.info("Received QUIT, exiting the process on the next tick...")
+            await self._quit()
 
         self.dispatcher.get_signal_for(pygame.QUIT).connect(_on_quit)
 
-    async def tick(self, tick_data: TickData) -> None:
+    async def _process_game(self, tick_context: TickContext) -> None:
         await self.dispatcher.process_events()
+        await self.stage.on_tick.emit(tick_context, self.context)
 
-    async def run(self) -> None:
-        logger.info("Process ready!")
-        await self.clock.run()
-        logger.info("Exiting process...")
+    async def start(self) -> None:
+        self.logger.info("Process ready!")
+        asyncio.create_task(self.clock.on_start.emit())
+        self.logger.info("Exiting process...")
 
-    def quit(self) -> None:
-        logger.info("Stopping process...")
-        self.clock.running = False
+    async def _quit(self) -> None:
+        self.logger.info("Stopping process...")
+        await self.clock.on_stop.emit()
