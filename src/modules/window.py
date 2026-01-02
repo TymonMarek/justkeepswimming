@@ -21,6 +21,9 @@ class Window:
         self._flags: int = DEFAULT_WINDOW_FLAGS
         self.surface: pygame.Surface
         self._create_window()
+        
+    def refresh(self):
+        pygame.display.flip()
 
     def _create_window(self):
         self.logger.debug(

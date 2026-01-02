@@ -3,6 +3,7 @@ import logging
 import argparse
 from rich.logging import RichHandler
 
+from src.scenes import SceneID
 from src.game import Game
 
 
@@ -12,15 +13,16 @@ def setup_logging(verbosity: int):
     ]
     logging.basicConfig(
         level=level,
-        format="%(levelname)s %(name)s: %(message)s",
+        format="%(message)s",
         handlers=[RichHandler(show_time=False)],
     )
 
 
 async def main():
     game = Game()
-    await game.initialize()
-    await game.run()
+    await game.start()
+    await game.stage.switch_scene(SceneID.DEFAULT)
+    await game.clock.on_stop.wait()
 
 
 if __name__ == "__main__":
@@ -29,7 +31,7 @@ if __name__ == "__main__":
         "-v",
         "--verbosity",
         type=int,
-        default=2,
+        default=1,
         help="Logging verbosity: 0=ERROR, 1=WARNING, 2=INFO, 3=DEBUG",
     )
     args = parser.parse_args()

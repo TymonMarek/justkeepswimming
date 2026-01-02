@@ -23,7 +23,7 @@ class ClockAlreadyRunningException(ClockException):
 
 
 @dataclass(frozen=True)
-class TickData:
+class TickContext:
     delta_time: float
 
 
@@ -37,25 +37,29 @@ class Clock:
         self.target_framerate: Optional[int] = None
         self.start_timestamp: Optional[float] = None
         self.__pygame_clock = PygameClock()
+        self.on_start = Signal()
+        self.on_stop = Signal()
         self.running = False
+        self.on_start.connect(self._start)
+        self.on_stop.connect(self._stop)
 
-    async def run(self):
+    async def _start(self):
         if self.running:
             raise ClockAlreadyRunningException()
         self.running = True
         self.start_timestamp = datetime.now().timestamp()
         while self.running:
-            await self.tick()
+            await self._tick()
 
-    async def tick(self):
+    async def _tick(self):
         delta_time: float = (
             self.__pygame_clock.tick(self.target_framerate or 0)
             * PYGAME_DELTA_TIME_SCALE
         )
-        tick_data = TickData(delta_time)
+        tick_data = TickContext(delta_time)
         await self.on_tick.emit(tick_data)
 
-    def stop(self):
+    async def _stop(self):
         if not self.running:
             raise ClockNotRunningException()
         self.running = False
