@@ -8,6 +8,10 @@ from justkeepswimming.ecs.scheduler import SystemScheduler
 from justkeepswimming.utilities.context import GameContext
 from justkeepswimming.ecs import SceneContext
 from justkeepswimming.utilities.signal import Signal
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from justkeepswimming.utilities.dag_visualizer import DAGVisualizer
 
 # Import for DAG visualizer
 try:
@@ -21,7 +25,9 @@ except ImportError:
 
 
 class Scene:
-    def __init__(self, id: SceneID, dag_visualizer=None) -> None:
+    def __init__(
+        self, id: SceneID, dag_visualizer: "DAGVisualizer | None" = None
+    ) -> None:
         self.id: SceneID = id
         self.logger = getLogger(__name__)
         self.context = SceneContext(surface=Surface(Vector2(960, 540)))

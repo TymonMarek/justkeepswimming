@@ -2,12 +2,15 @@ import enum
 import copy
 from dataclasses import dataclass, field
 from logging import getLogger
-from typing import Callable, Optional
+from typing import Callable, Optional, TYPE_CHECKING
 
 from justkeepswimming.modules.clock import TickContext
 from justkeepswimming.utilities.context import GameContext
 from justkeepswimming.utilities.scene import Scene, SceneID
 from justkeepswimming.utilities.signal import Signal
+
+if TYPE_CHECKING:
+    from justkeepswimming.utilities.dag_visualizer import DAGVisualizer
 
 
 class SceneLoadingStrategy(enum.Enum):
@@ -24,7 +27,7 @@ class SceneHandle:
         scene_id: SceneID,
         factory: SceneFactory,
         strategy: SceneLoadingStrategy,
-        dag_visualizer=None,
+        dag_visualizer: "DAGVisualizer | None" = None,
     ) -> None:
         self.scene_id = scene_id
         self.factory = factory
@@ -57,7 +60,7 @@ class Stage:
         engine_context: GameContext,
         scenes: dict[SceneID, SceneFactory],
         loading_strategy: SceneLoadingStrategy = SceneLoadingStrategy.EAGER,
-        dag_visualizer=None,
+        dag_visualizer: "DAGVisualizer | None" = None,
     ) -> None:
         self.logger = getLogger("Stage")
 

@@ -96,8 +96,9 @@ class DAGVisualizer:
             return
 
         try:
-            # Clear old data and add new
-            while True:
+            # Clear old data (limit iterations to prevent infinite loop)
+            max_clear_iterations = 100
+            for _ in range(max_clear_iterations):
                 try:
                     self.data_queue.get_nowait()
                 except queue.Empty:
