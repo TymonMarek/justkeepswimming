@@ -96,7 +96,9 @@ class Stage:
             except KeyError:
                 raise ValueError(f"Scene {scene_id} does not exist")
 
-            handle = SceneHandle(scene_id, factory, self.loading_strategy, self.dag_visualizer)
+            handle = SceneHandle(
+                scene_id, factory, self.loading_strategy, self.dag_visualizer
+            )
             self.handles[scene_id] = handle
             return handle
 

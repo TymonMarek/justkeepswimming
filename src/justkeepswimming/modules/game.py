@@ -37,6 +37,7 @@ class Game:
         self.dag_visualizer = None
         if enable_dag_visualizer:
             from justkeepswimming.utilities.dag_visualizer import DAGVisualizer
+
             self.dag_visualizer = DAGVisualizer()
             self.logger.info("DAG visualizer enabled")
 
@@ -66,19 +67,19 @@ class Game:
 
     async def start(self) -> None:
         self.logger.info("Process ready!")
-        
+
         # Start DAG visualizer if enabled
         if self.dag_visualizer:
             self.dag_visualizer.start()
-        
+
         asyncio.create_task(self.clock.on_start.emit())
         self.logger.info("Exiting process...")
 
     async def _quit(self) -> None:
         self.logger.info("Stopping process...")
-        
+
         # Stop DAG visualizer if running
         if self.dag_visualizer:
             self.dag_visualizer.stop()
-        
+
         await self.clock.on_stop.emit()
