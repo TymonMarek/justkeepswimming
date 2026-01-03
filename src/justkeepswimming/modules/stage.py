@@ -24,15 +24,20 @@ class SceneHandle:
         scene_id: SceneID,
         factory: SceneFactory,
         strategy: SceneLoadingStrategy,
+        dag_visualizer=None,
     ) -> None:
         self.scene_id = scene_id
         self.factory = factory
         self.strategy = strategy
+        self.dag_visualizer = dag_visualizer
         self._scene: Optional[Scene] = None
 
     async def get_scene(self) -> Scene:
         if self._scene is None:
             self._scene = self.factory()
+            # Set the visualizer on the scene
+            if self.dag_visualizer:
+                self._scene.dag_visualizer = self.dag_visualizer
             await self._scene.on_load.emit()
 
         return copy.deepcopy(self._scene)
@@ -52,11 +57,13 @@ class Stage:
         engine_context: GameContext,
         scenes: dict[SceneID, SceneFactory],
         loading_strategy: SceneLoadingStrategy = SceneLoadingStrategy.EAGER,
+        dag_visualizer=None,
     ) -> None:
         self.logger = getLogger("Stage")
 
         self.scenes = scenes
         self.loading_strategy = loading_strategy
+        self.dag_visualizer = dag_visualizer
 
         self.scene: Optional[Scene] = None
         self.handles: dict[SceneID, SceneHandle] = {}
@@ -77,6 +84,7 @@ class Stage:
                 scene_id,
                 factory,
                 self.loading_strategy,
+                self.dag_visualizer,
             )
 
     def _get_handle(self, scene_id: SceneID) -> SceneHandle:
@@ -88,7 +96,7 @@ class Stage:
             except KeyError:
                 raise ValueError(f"Scene {scene_id} does not exist")
 
-            handle = SceneHandle(scene_id, factory, self.loading_strategy)
+            handle = SceneHandle(scene_id, factory, self.loading_strategy, self.dag_visualizer)
             self.handles[scene_id] = handle
             return handle
 

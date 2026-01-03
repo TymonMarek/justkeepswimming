@@ -11,11 +11,12 @@ from justkeepswimming.utilities.signal import Signal
 
 
 class Scene:
-    def __init__(self, id: SceneID) -> None:
+    def __init__(self, id: SceneID, dag_visualizer=None) -> None:
         self.id: SceneID = id
         self.logger = getLogger(__name__)
         self.context = SceneContext(surface=Surface(Vector2(960, 540)))
         self.scheduler = SystemScheduler()
+        self.dag_visualizer = dag_visualizer
         self.on_load = Signal()
         self.on_enter = Signal[GameContext]()
         self.on_tick = Signal[TickContext, GameContext]()
@@ -35,6 +36,15 @@ class Scene:
         self, tick_context: TickContext, engine_context: GameContext
     ) -> None:
         await self.scheduler.process_tick(tick_context, self.context, engine_context)
+        
+        # Update DAG visualizer if available
+        if self.dag_visualizer:
+            try:
+                from justkeepswimming.utilities.dag_visualizer import extract_graph_data_from_scheduler
+                graph_data = extract_graph_data_from_scheduler(self.scheduler)
+                self.dag_visualizer.update_graph(graph_data)
+            except Exception as e:
+                self.logger.warning(f"Failed to update DAG visualizer: {e}")
 
     def __repr__(self) -> str:
         return self.id.name
