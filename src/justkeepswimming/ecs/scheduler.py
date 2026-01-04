@@ -1,14 +1,14 @@
 import asyncio
 from logging import getLogger
-from typing import Set, Dict, Type
+from typing import Dict, Set, Type
 
 from justkeepswimming.datatypes.dag import (
     DirectedAcyclicGraph,
     DirectedAcyclicGraphNode,
 )
-from justkeepswimming.utilities.context import GameContext
-from justkeepswimming.modules.clock import TickContext
 from justkeepswimming.ecs import Component, SceneContext, System
+from justkeepswimming.modules.clock import TickContext
+from justkeepswimming.utilities.context import GameContext
 
 
 class SchedulerException(Exception):

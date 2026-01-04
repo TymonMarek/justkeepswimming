@@ -1,23 +1,19 @@
 import asyncio
-
 import os
 import time
-
-from justkeepswimming.scenes import SceneID, default
-
-os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
-
-import pygame
 from logging import getLogger
 
+import pygame
+
+from justkeepswimming.modules.clock import Clock, TickContext
+from justkeepswimming.modules.dispatcher import Dispatcher
+from justkeepswimming.modules.stage import Stage
+from justkeepswimming.modules.window import Window
+from justkeepswimming.scenes import SceneID, default
 from justkeepswimming.utilities.context import GameContext
 
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
 pygame.init()
-
-from justkeepswimming.modules.dispatcher import Dispatcher
-from justkeepswimming.modules.window import Window
-from justkeepswimming.modules.clock import Clock, TickContext
-from justkeepswimming.modules.stage import Stage
 
 
 class Game:

@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
 from justkeepswimming.modules.clock import Clock
-from justkeepswimming.modules.window import Window
 from justkeepswimming.modules.dispatcher import Dispatcher
+from justkeepswimming.modules.window import Window
 
 
 @dataclass(frozen=True)

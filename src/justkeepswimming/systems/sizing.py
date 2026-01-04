@@ -1,17 +1,21 @@
 from pygame import Rect, Surface, Vector2
 
-from justkeepswimming.components.pseudo import ScenePseudoComponent, WindowPseudoComponent
+from justkeepswimming.components.physics import Transform
+from justkeepswimming.components.pseudo import (
+    ScenePseudoComponent,
+    WindowPseudoComponent,
+)
 from justkeepswimming.components.render import Renderer
 from justkeepswimming.components.sizing import (
     AspectRatioConstraint,
     SceneSizeConstraint,
     ScreenSizeConstraint,
 )
-from justkeepswimming.components.physics import Transform
 from justkeepswimming.ecs import SceneContext, System
 from justkeepswimming.modules.clock import TickContext
 from justkeepswimming.systems.render import RenderSystem
 from justkeepswimming.utilities.context import GameContext
+
 
 class SceneSizeConstraintSystem(System):
     reads = frozenset({Transform})
@@ -42,13 +46,9 @@ class RendererTransformConstraintSystem(System):
         scene_context: SceneContext,
         engine_context: GameContext,
     ) -> None:
-        for _, (transform, renderer) in scene_context.query(
-            Transform, Renderer
-        ):
+        for _, (transform, renderer) in scene_context.query(Transform, Renderer):
             if transform.size != Vector2(renderer.surface.get_size()):
-                surface = Surface(
-                    transform.size, flags=renderer.surface.get_flags()
-                )
+                surface = Surface(transform.size, flags=renderer.surface.get_flags())
                 destination = (
                     Vector2(surface.get_size()) / 2
                     - transform.size.elementwise() * transform.anchor

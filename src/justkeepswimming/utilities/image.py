@@ -1,17 +1,16 @@
 import asyncio
-from asyncio import Task
 import enum
 import logging
+from asyncio import Task
 from pathlib import Path
 
-from pygame import Rect, Surface, Vector2
-from pygame import image
 import pygame
+from pygame import Rect, Surface, Vector2, image
 
 from justkeepswimming.components.physics import Transform
 
-
 logger = logging.getLogger(__name__)
+
 
 class ImageLoadingStrategy(enum.Enum):
     LAZY = enum.auto()
@@ -39,7 +38,9 @@ class Image:
     def __deepcopy__(self, memo: dict[int, object]) -> "Image":
         return self
 
-    def __init__(self, path: Path, strategy: ImageLoadingStrategy = ImageLoadingStrategy.LAZY) -> None:
+    def __init__(
+        self, path: Path, strategy: ImageLoadingStrategy = ImageLoadingStrategy.LAZY
+    ) -> None:
         self.path = path
         self._surface: Surface | None = None
         self.transform: Transform | None = None
@@ -53,7 +54,9 @@ class Image:
     @property
     def surface(self) -> Surface:
         if not self.loaded:
-            logger.debug(f"Image {self.path} was requested but not loaded yet, lazily loading it now...")
+            logger.debug(
+                f"Image {self.path} was requested but not loaded yet, lazily loading it now..."
+            )
             self._load_task = asyncio.create_task(self.__load())
             return Surface((0, 0))
         assert self._surface is not None
@@ -86,7 +89,10 @@ class Image:
             size=Vector2(self._surface.get_size()),
             anchor=Vector2(0.5, 0.5),
         )
-        logger.debug(f"Image loaded from {self.path} with size {self._surface.get_size()}")
+        logger.debug(
+            f"Image loaded from {self.path} with size {self._surface.get_size()}"
+        )
+
 
 class ImageRegion:
     def __init__(self, transform: Transform) -> None:

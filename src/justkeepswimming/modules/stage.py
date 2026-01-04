@@ -1,5 +1,5 @@
-import enum
 import copy
+import enum
 from dataclasses import dataclass, field
 from logging import getLogger
 from typing import Callable, Optional

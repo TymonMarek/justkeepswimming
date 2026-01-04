@@ -1,6 +1,7 @@
 import logging
-from pygame import Event as PygameEvent
+
 import pygame
+from pygame import Event as PygameEvent
 
 from justkeepswimming.utilities.signal import Signal
 

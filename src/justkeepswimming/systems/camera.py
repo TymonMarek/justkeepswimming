@@ -1,13 +1,14 @@
-from pygame import Color, Rect, Vector2
 import pygame
+from pygame import Color, Rect, Vector2
 
-from justkeepswimming.components.pseudo import ScenePseudoComponent, WindowPseudoComponent
-from justkeepswimming.ecs import SceneContext
-from justkeepswimming.modules.clock import TickContext
 from justkeepswimming.components.physics import Transform
+from justkeepswimming.components.pseudo import (
+    ScenePseudoComponent,
+    WindowPseudoComponent,
+)
 from justkeepswimming.components.render import Camera, MainCamera
-
-from justkeepswimming.ecs import System
+from justkeepswimming.ecs import SceneContext, System
+from justkeepswimming.modules.clock import TickContext
 from justkeepswimming.utilities.context import GameContext
 
 
