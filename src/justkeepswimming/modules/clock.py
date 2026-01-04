@@ -1,11 +1,11 @@
+import logging
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Optional
 
 from pygame.time import Clock as PygameClock
 
 from justkeepswimming.utilities.signal import Signal
-
-from datetime import datetime
 
 PYGAME_DELTA_TIME_SCALE = 0.001
 
@@ -25,9 +25,6 @@ class ClockAlreadyRunningException(ClockException):
 @dataclass(frozen=True)
 class TickContext:
     delta_time: float
-
-
-import logging
 
 
 class Clock:
