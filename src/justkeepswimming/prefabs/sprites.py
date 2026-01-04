@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from pygame import Vector2
 
 from justkeepswimming.components.physics import Transform
@@ -8,8 +9,9 @@ from justkeepswimming.ecs import Component, System
 from justkeepswimming.systems.render import RenderSystem
 from justkeepswimming.systems.sizing import RendererTransformConstraintSystem
 from justkeepswimming.systems.sprite import SpriteSystem
-from justkeepswimming.utilities.prefab import Prefab
 from justkeepswimming.utilities.image import Image
+from justkeepswimming.utilities.prefab import Prefab
+
 
 class SpritePrefab(Prefab):
     components: list[Component] = [
@@ -22,5 +24,5 @@ class SpritePrefab(Prefab):
     systems: list[type[System]] = [
         RenderSystem,
         RendererTransformConstraintSystem,
-        SpriteSystem
+        SpriteSystem,
     ]

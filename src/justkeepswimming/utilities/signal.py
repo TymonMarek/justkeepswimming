@@ -1,12 +1,8 @@
-from collections.abc import Awaitable, Callable
-
-from asyncio import Future
-
-from typing import Any
-
 import asyncio
-
 import logging
+from asyncio import Future
+from collections.abc import Awaitable, Callable
+from typing import Any
 
 
 class SignalException(Exception):
@@ -49,7 +45,7 @@ class Signal[**P]:
         return connection
 
     def disconnect(self, connection: Connection[P]) -> None:
-        if not connection in self.connections:
+        if connection not in self.connections:
             self._logger.error("Connection not found during disconnect.")
             raise ConnectionNotFoundException()
         self._logger.debug("Disconnecting connection.")

@@ -8,4 +8,4 @@ from justkeepswimming.utilities.image import Image
 
 @dataclass
 class SpriteComponent(Component):
-    content: Image | Surface 
+    content: Image | Surface

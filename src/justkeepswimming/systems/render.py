@@ -7,7 +7,6 @@ from justkeepswimming.ecs import SceneContext, System
 from justkeepswimming.modules.clock import TickContext
 from justkeepswimming.utilities.context import GameContext
 
-
 BACKGROUND_COLOR: Color = Color(0, 0, 0)
 
 
@@ -27,5 +26,6 @@ class RenderSystem(System):
             if renderer.surface:
                 scene.blit(
                     renderer.surface,
-                    transform.position.elementwise() - transform.size.elementwise() * transform.anchor,
+                    transform.position.elementwise()
+                    - transform.size.elementwise() * transform.anchor,
                 )

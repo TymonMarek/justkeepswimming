@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import deque
-from typing import Generic, TypeVar, Set, Dict, List
+from typing import Dict, Generic, List, Set, TypeVar
 
 T = TypeVar("T")
 

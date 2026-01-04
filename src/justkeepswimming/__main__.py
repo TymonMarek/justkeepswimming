@@ -1,10 +1,11 @@
+import argparse
 import asyncio
 import logging
-import argparse
+
 from rich.logging import RichHandler
 
-from justkeepswimming.scenes import SceneID
 from justkeepswimming.modules.game import Game
+from justkeepswimming.scenes import SceneID
 
 
 def setup_logging(verbosity: int):

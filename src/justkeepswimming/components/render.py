@@ -9,6 +9,7 @@ from justkeepswimming.utilities.image import Image
 @dataclass
 class MainCamera(Component): ...
 
+
 @dataclass
 class Camera(Component):
     surface: Surface = field(default_factory=lambda: Surface((0, 0)))
