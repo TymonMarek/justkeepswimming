@@ -9,8 +9,6 @@ from justkeepswimming.processors.sizing import RendererTransformConstraintProces
 from justkeepswimming.systems.clock import TickContext
 from justkeepswimming.utilities.context import EngineContext
 
-index = 0
-
 
 class SpriteProcessor(Processor):
     reads = frozenset({SpriteComponent})
@@ -31,7 +29,7 @@ class SpriteProcessor(Processor):
                 continue
             renderer.surface.blit(
                 pygame.transform.scale(
-                    sprite.content.surface, renderer.surface.get_size()
+                    await sprite.content.get_surface(), renderer.surface.get_size()
                 ),
                 Vector2(0, 0),
             )

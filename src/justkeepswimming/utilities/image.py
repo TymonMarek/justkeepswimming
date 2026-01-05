@@ -8,6 +8,7 @@ import pygame
 from pygame import Rect, Surface, Vector2, image
 
 from justkeepswimming.components.physics import TransformComponent
+from justkeepswimming.utilities.transform import Transform
 
 logger = logging.getLogger(__name__)
 
@@ -51,14 +52,9 @@ class Image:
             self._load_task = asyncio.create_task(self.__load())
         logger.debug(f"{path} will be lazily loaded when accessed")
 
-    @property
-    def surface(self) -> Surface:
+    async def get_surface(self) -> Surface:
         if not self.loaded:
-            logger.debug(
-                f"Image {self.path} was requested but not loaded yet, lazily loading it now..."
-            )
-            self._load_task = asyncio.create_task(self.__load())
-            return Surface((0, 0))
+            await self.load()
         assert self._surface is not None
         return self._surface
 
@@ -69,20 +65,16 @@ class Image:
     async def load(self) -> Surface:
         if self._surface and self.loaded:
             return self._surface
-
-        if self._load_task is None:
-            self._load_task = asyncio.create_task(self.__load())
-
-        await self._load_task
+        await self.__load()
         assert self._surface is not None
         return self._surface
 
     async def __load(self) -> None:
         try:
             self._surface = image.load(self.path).convert_alpha()
-        except FileNotFoundError:
+        except FileNotFoundError as err:
             logger.warning(f"Failed to load {self.path}: Asset not found.")
-            self._surface = Surface((0, 0))
+            raise err
         self.transform = TransformComponent(
             position=Vector2(0, 0),
             rotation=0.0,
@@ -94,22 +86,20 @@ class Image:
         )
 
 
-class ImageRegion:
-    def __init__(self, transform: TransformComponent) -> None:
+class Frame:
+    def __init__(self, transform: Transform) -> None:
+        self.logger = logging.getLogger("Frame")
         self.transform = transform
 
-    def slice(self, texture: Image) -> Surface:
-        if not texture.surface or not texture.loaded:
-            return Surface((0, 0))
-
+    async def slice(self, texture: Image) -> Surface:
         anchor_offset = self.transform.size.elementwise() * self.transform.anchor
         top_left = self.transform.position - anchor_offset
 
-        region = Surface(self.transform.size, flags=texture.surface.get_flags())
-        region.blit(
-            source=texture.surface,
-            dest=Vector2(0, 0),
-            area=Rect(top_left, self.transform.size),
+        # TODO
+        # pygame.draw.rect(await texture.get_surface(), (255, 0, 0), Rect(top_left, self.transform.size), 2)
+
+        region = (await texture.get_surface()).subsurface(
+            Rect(top_left, self.transform.size)
         )
 
         if self.transform.rotation != 0:
