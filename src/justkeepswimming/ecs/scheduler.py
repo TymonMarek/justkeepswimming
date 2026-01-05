@@ -52,21 +52,21 @@ class ProcessorScheduler:
                 )
             )
 
-    def add_system(self, system: Processor) -> None:
-        if system in self.processors:
+    def add_processor(self, processor: Processor) -> None:
+        if processor in self.processors:
             raise SystemDuplicateEntryException(
-                f"System {system} is already in the scheduler."
+                f"System {processor} is already in the scheduler."
             )
-        self.processors.add(system)
-        self.logger.debug(f"Added system {system} to the scheduler.")
+        self.processors.add(processor)
+        self.logger.debug(f"Added system {processor} to the scheduler.")
         self._rebuild()
 
-    def remove_system(self, system: Processor) -> None:
-        if system not in self.processors:
+    def remove_processor(self, processor: Processor) -> None:
+        if processor not in self.processors:
             raise SystemNotFoundException(
-                f"System {system} not found in the scheduler."
+                f"System {processor} not found in the scheduler."
             )
-        self.processors.remove(system)
+        self.processors.remove(processor)
         self._rebuild()
 
     def execution_order(self) -> list[Set[Processor]]:
@@ -136,10 +136,11 @@ class ProcessorScheduler:
 
                 write_write = a.writes & b.writes
                 if write_write:
-                    raise SystemConflictException(
-                        f"Unresolved write-write conflict between {a} and {b} "
-                        f"on {self._fmt_components(write_write)}"
-                    )
+                    if type(a) not in b.alongside or type(b) not in a.alongside:
+                        raise SystemConflictException(
+                            f"Unresolved write-write conflict between {a} and {b} "
+                            f"on {self._fmt_components(write_write)}"
+                        )
 
         self._execution_order = self._graph.parallel_sort()
 

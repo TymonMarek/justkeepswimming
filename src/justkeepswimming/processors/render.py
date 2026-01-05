@@ -25,9 +25,23 @@ class RendererProcessor(Processor):
         for _, (transform, renderer) in scene_context.query(
             TransformComponent, RendererComponent
         ):
-            if renderer.surface:
-                scene.blit(
-                    renderer.surface,
-                    transform.position.elementwise()
-                    - transform.size.elementwise() * transform.anchor,
-                )
+            scene.blit(
+                renderer.surface,
+                transform.position.elementwise()
+                - transform.size.elementwise() * transform.anchor,
+            )
+
+
+class RendererPreProcessor(Processor):
+    reads = frozenset({})
+    writes = frozenset({RendererComponent})
+    before = frozenset({RendererProcessor})
+
+    async def update(
+        self,
+        tick_context: TickContext,
+        scene_context: SceneContext,
+        engine_context: EngineContext,
+    ) -> None:
+        for _, (renderer,) in scene_context.query(RendererComponent):
+            renderer.surface.fill(Color(0, 0, 0, 0))

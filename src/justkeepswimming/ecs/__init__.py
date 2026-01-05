@@ -1,7 +1,7 @@
 import logging
 from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import overload
+from typing import cast, overload
 
 from pygame import Surface, Vector2
 
@@ -10,12 +10,25 @@ from justkeepswimming.utilities.context import EngineContext
 from justkeepswimming.utilities.maid import Maid
 
 
-@dataclass(frozen=True)
 class Entity:
-    id: int
+    def __init__(self, entity_id: int, context: "SceneContext") -> None:
+        self.id = entity_id
+        self.context = context
+
+    def has_component(self, component_type: type["Component"]) -> bool:
+        return component_type in self.context.components[self.id]
+
+    def get_component[C](self, component_type: type[C]) -> C:
+        return cast(C, self.context.components[self.id][component_type])
+
+    def add_component(self, component: "Component") -> None:
+        self.context.add_component(self, component)
+
+    def remove_component(self, component: "Component") -> None:
+        if self.has_component(type(component)):
+            del self.context.components[self.id][type(component)]
 
 
-@dataclass
 class Component:
     pass
 
@@ -30,7 +43,7 @@ class SceneContext:
     )
 
     def create_entity(self) -> Entity:
-        entity = Entity(len(self.entities) + 1)
+        entity = Entity(len(self.entities) + 1, self)
         self.entities[entity.id] = entity
         self.components[entity.id] = {}
         return entity
@@ -138,6 +151,7 @@ class Processor:
     reads: frozenset[type[Component]] = frozenset()
     before: frozenset[type["Processor"]] = frozenset()
     after: frozenset[type["Processor"]] = frozenset()
+    alongside: frozenset[type["Processor"]] = frozenset()
 
     async def update(
         self,

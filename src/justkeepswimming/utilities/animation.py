@@ -1,14 +1,17 @@
 import enum
+import logging
 
 from pygame import Surface
 
-from justkeepswimming.utilities.image import Image, ImageRegion
+from justkeepswimming.systems.clock import TickContext
+from justkeepswimming.utilities.image import Frame, Image
+from justkeepswimming.utilities.signal import Signal
 
 
 class Keyframe:
-    def __init__(self, timestamp: float, region: ImageRegion) -> None:
+    def __init__(self, timestamp: float, region: Frame) -> None:
         self.timestamp: float = timestamp
-        self.region: ImageRegion = region
+        self.region: Frame = region
 
 
 class AnimationPriority(enum.Enum):
@@ -35,39 +38,138 @@ class KeyframeSequence:
 
 
 class Animation:
+
     def __init__(
-        self, texture: Image, sequence: KeyframeSequence, priority: AnimationPriority
+        self,
+        image: Image,
+        priority: AnimationPriority,
+        looped: bool,
+        speed: float,
+        sequence: KeyframeSequence,
     ) -> None:
-        self.texture: Image = texture
+        self.image: Image = image
         self.sequence: KeyframeSequence = sequence
         self.priority: AnimationPriority = priority
-        self.looped: bool = True
-        self.speed: float = 1.0
+        self.looped: bool = looped
+        self.speed: float = speed
+
+
+class AnimationType(enum.Enum):
+    IDLE = enum.auto()
+    WALK = enum.auto()
+    ATTACK = enum.auto()
+    HURT = enum.auto()
+    DEATH = enum.auto()
+
+
+class AnimationTrackState(enum.Enum):
+    STOPPED = enum.auto()
+    PLAYING = enum.auto()
+    PAUSED = enum.auto()
+    FINISHED = enum.auto()
+    CANCELLED = enum.auto()
 
 
 class AnimationTrack:
-    def __init__(self, animation: Animation) -> None:
+    def __init__(self, animator: "Animator", animation: Animation) -> None:
         self.animation: Animation = animation
+        self.state: AnimationTrackState = AnimationTrackState.STOPPED
+        self.logger = logging.getLogger("AnimationTrack")
         self.priority: AnimationPriority = animation.priority
         self.looped: bool = animation.looped
         self.speed: float = animation.speed
-        self.frames: list[Surface] = []
+
+        self.animator: Animator = animator
+        self.frames: dict[float, Surface] = {}
+        self.on_playing = Signal()
+        self.on_looped = Signal()
+        self.on_finished = Signal()
         self.time: float = 0.0
 
     async def load(self) -> None:
-        if not self.animation.texture.loaded:
-            await self.animation.texture.load()
-
         for keyframe in self.animation.sequence.keyframes:
-            self.frames.append(keyframe.region.slice(self.animation.texture))
+            frame_surface = await keyframe.region.slice(self.animation.image)
+            self.frames[keyframe.timestamp] = frame_surface
+        self.logger.debug(
+            f"Loaded animation track for animation with {len(self.frames)} frames."
+        )
+
+    async def get_current_frame(self) -> Surface | None:
+        if not self.frames:
+            return None
+        keyframes = self.animation.sequence.keyframes
+        for index in range(len(keyframes) - 1):
+            start_keyframe = keyframes[index]
+            end_keyframe = keyframes[index + 1]
+            if start_keyframe.timestamp <= self.time < end_keyframe.timestamp:
+                return self.frames[start_keyframe.timestamp]
+
+    async def play(self) -> None:
+        if self.state == AnimationTrackState.PLAYING:
+            return
+        self.state = AnimationTrackState.PLAYING
+        self.time = 0.0
+        await self.on_playing.emit(self)
+
+    async def pause(self) -> None:
+        if self.state != AnimationTrackState.PLAYING:
+            return
+        self.state = AnimationTrackState.PAUSED
+
+    async def stop(self) -> None:
+        if self.state == AnimationTrackState.STOPPED:
+            return
+        self.state = AnimationTrackState.STOPPED
+        self.time = 0.0
+
+    async def cancel(self) -> None:
+        if self.state == AnimationTrackState.CANCELLED:
+            return
+        self.state = AnimationTrackState.CANCELLED
+
+    async def update(self, delta_time: float) -> None:
+        if self.state != AnimationTrackState.PLAYING:
+            return
+        self.time += delta_time * self.speed
+        if self.time > self.animation.sequence.duration:
+            if self.looped:
+                self.time = self.time % self.animation.sequence.duration
+                await self.on_looped.emit(self)
+            else:
+                self.time = self.animation.sequence.duration
+                self.state = AnimationTrackState.FINISHED
+                await self.on_finished.emit(self)
 
 
 class Animator:
     def __init__(self) -> None:
-        self.tracks: list[AnimationTrack] = []
+        self.tracks: dict[Animation, AnimationTrack] = {}
+        self.logger = logging.getLogger("Animator")
 
-    async def load(self, animation: Animation) -> AnimationTrack:
-        track = AnimationTrack(animation)
+    async def load_animation(self, animation: Animation) -> AnimationTrack:
+        if animation in self.tracks:
+            return self.tracks[animation]
+        track = AnimationTrack(self, animation)
         await track.load()
-        self.tracks.append(track)
+        self.tracks[animation] = track
         return track
+
+    async def get_current_frame(self) -> Surface | None:
+        active_track = await self.get_active_track()
+        if active_track is None:
+            self.logger.debug("No active animation track found.")
+            return None
+        return await active_track.get_current_frame()
+
+    async def get_active_track(self) -> AnimationTrack | None:
+        if not self.tracks:
+            return None
+        active_track = max(
+            self.tracks.values(),
+            key=lambda track: track.priority.value,
+        )
+        return active_track
+
+    async def update(self, tick: TickContext) -> None:
+        for track in self.tracks.values():
+            await track.update(tick.delta_time)
