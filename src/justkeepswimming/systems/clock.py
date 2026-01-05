@@ -27,6 +27,9 @@ class TickContext:
     delta_time: float
 
 
+SAFE_FPS = 30
+
+
 class Clock:
     def __init__(self):
         self.logger = logging.getLogger(__name__ + ".Clock")
@@ -54,6 +57,13 @@ class Clock:
             * PYGAME_DELTA_TIME_SCALE
         )
         tick_data = TickContext(delta_time)
+        if (
+            self.__pygame_clock.get_fps() < SAFE_FPS
+            and self.__pygame_clock.get_fps() > 0
+        ):
+            self.logger.warning(
+                f"A performance drop has been detected! Your application is running at an extremely low framerate of {self.__pygame_clock.get_fps():.0f} FPS, something is very wrong!"
+            )
         await self.on_tick.emit(tick_data)
 
     async def _stop(self):

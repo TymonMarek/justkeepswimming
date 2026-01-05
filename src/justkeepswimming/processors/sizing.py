@@ -12,7 +12,7 @@ from justkeepswimming.components.sizing import (
     ScreenSizeConstraintComponent,
 )
 from justkeepswimming.ecs import Processor, SceneContext
-from justkeepswimming.processors.render import RendererProcessor
+from justkeepswimming.processors.render import RendererPreProcessor, RendererProcessor
 from justkeepswimming.systems.clock import TickContext
 from justkeepswimming.utilities.context import EngineContext
 
@@ -39,7 +39,7 @@ class SceneSizeConstraintProcessor(Processor):
 class RendererTransformConstraintProcessor(Processor):
     reads = frozenset({TransformComponent, RendererComponent})
     writes = frozenset({RendererComponent})
-    before = frozenset({RendererProcessor})
+    before = frozenset({RendererProcessor, RendererPreProcessor})
     after = frozenset({})
 
     async def update(

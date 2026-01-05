@@ -1,7 +1,6 @@
-from justkeepswimming.components.physics import TransformComponent
 from justkeepswimming.components.render import CameraComponent, MainCameraComponent
 from justkeepswimming.components.sizing import SceneSizeConstraintComponent
-from justkeepswimming.ecs import Component, Processor
+from justkeepswimming.prefabs.physics import GameObjectPrefab
 from justkeepswimming.processors.camera import CameraProcessor
 from justkeepswimming.processors.render import RendererProcessor
 from justkeepswimming.processors.sizing import SceneSizeConstraintProcessor
@@ -9,11 +8,11 @@ from justkeepswimming.utilities.prefab import Prefab
 
 
 class CameraPrefab(Prefab):
-    components: list[Component] = [
+    extends = GameObjectPrefab()
+    components = [
         CameraComponent(),
-        TransformComponent(),
     ]
-    processors: list[type[Processor]] = [
+    processors = [
         RendererProcessor,
         CameraProcessor,
     ]
@@ -21,10 +20,10 @@ class CameraPrefab(Prefab):
 
 class MainCameraPrefab(Prefab):
     extends = CameraPrefab()
-    components: list[Component] = [
+    components = [
         MainCameraComponent(),
         SceneSizeConstraintComponent(),
     ]
-    processors: list[type[Processor]] = [
+    processors = [
         SceneSizeConstraintProcessor,
     ]
