@@ -1,13 +1,15 @@
 from pathlib import Path
 
-from pygame import Vector2
+from pygame import Color, Vector2
 
 from justkeepswimming.components.animation import (
     AnimationStateComponent,
     SpritesheetComponent,
 )
+from justkeepswimming.components.filter import TintComponent
 from justkeepswimming.components.physics import TransformComponent
 from justkeepswimming.prefabs.characters import CharacterPrefab
+from justkeepswimming.processors.filter import TintProcessor
 from justkeepswimming.utilities.animation import (
     Animation,
     AnimationPriority,
@@ -73,15 +75,15 @@ class TurtlePrefab(Prefab):
                                 Frame(TURTLE_GRID.cell(1, 1)),
                             ),
                             Keyframe(
-                                0.4,
+                                0.3,
                                 Frame(TURTLE_GRID.cell(1, 2)),
                             ),
                             Keyframe(
-                                0.6,
+                                0.4,
                                 Frame(TURTLE_GRID.cell(1, 3)),
                             ),
                             Keyframe(
-                                0.8,
+                                0.6,
                                 Frame(TURTLE_GRID.cell(1, 4)),
                             ),
                             Keyframe(
@@ -187,5 +189,9 @@ class TurtlePrefab(Prefab):
         AnimationStateComponent(
             current_state=AnimationType.WALK,
         ),
+        TintComponent(
+            color=Color(0, 255, 0),
+            intensity=0.7,
+        ),
     ]
-    processors = []
+    processors = [TintProcessor]
