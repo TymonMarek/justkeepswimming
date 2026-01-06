@@ -8,6 +8,8 @@ from justkeepswimming.systems.clock import TickContext
 from justkeepswimming.utilities.image import Frame, Image
 from justkeepswimming.utilities.signal import Signal
 
+logger = logging.getLogger(__name__)
+
 
 class Keyframe:
     def __init__(self, timestamp: float, region: Frame) -> None:
@@ -88,14 +90,14 @@ class AnimationTrack:
         self.on_looped = Signal()
         self.on_finished = Signal()
 
-        self.logger = logging.getLogger("AnimationTrack")
-
     async def load(self) -> None:
         for keyframe in self.animation.sequence.keyframes:
             surface = await keyframe.region.slice(self.animation.image)
             self.frames[keyframe.timestamp] = surface
-            self.logger.debug(
-                f"Loaded {surface.get_size()} frame at timestamp {keyframe.timestamp}"
+            logger.debug(
+                f"Loaded {
+                    surface.get_size()} frame at timestamp {
+                    keyframe.timestamp}"
             )
 
     async def play(self) -> None:
@@ -142,7 +144,6 @@ class Animator:
     def __init__(self) -> None:
         self.tracks: Dict[Animation, AnimationTrack] = {}
         self.animations: Dict[AnimationType, Animation] = {}
-        self.logger = logging.getLogger("Animator")
 
     async def load_animation(
         self,
@@ -153,7 +154,7 @@ class Animator:
             return self.tracks[animation]
 
         track = AnimationTrack(self, animation)
-        self.logger.debug(f"Loading animation track for {animation_type}")
+        logger.debug(f"Loading animation track for {animation_type}")
         await track.load()
 
         self.animations[animation_type] = animation

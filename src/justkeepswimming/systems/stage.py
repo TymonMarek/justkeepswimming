@@ -1,13 +1,15 @@
 import copy
 import enum
+import logging
 from dataclasses import dataclass, field
-from logging import getLogger
 from typing import Awaitable, Callable, Optional
 
 from justkeepswimming.systems.clock import TickContext
 from justkeepswimming.utilities.context import EngineContext
 from justkeepswimming.utilities.scene import Scene, SceneID
 from justkeepswimming.utilities.signal import Signal
+
+logger = logging.getLogger(__name__)
 
 
 class SceneLoadingStrategy(enum.Enum):
@@ -55,8 +57,6 @@ class Stage:
         scenes: dict[SceneID, SceneFactory],
         loading_strategy: SceneLoadingStrategy = SceneLoadingStrategy.EAGER,
     ) -> None:
-        self.logger = getLogger("Stage")
-
         self.scenes = scenes
         self.loading_strategy = loading_strategy
 

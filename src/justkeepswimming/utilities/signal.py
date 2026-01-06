@@ -1,8 +1,10 @@
 import asyncio
 import logging
-from asyncio import Future
+from asyncio import CancelledError, Future
 from collections.abc import Awaitable, Callable
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 
 class SignalException(Exception):
@@ -17,7 +19,6 @@ class Connection[**P]:
     def __init__(
         self, signal: "Signal[P]", callback: Callable[P, Awaitable[Any]]
     ) -> None:
-        self.logger = logging.getLogger(__name__ + ".Connection")
         self.callback: Callable[P, Awaitable[Any]] = callback
         self.signal = signal
 
@@ -35,26 +36,28 @@ class Connection[**P]:
 
 class Signal[**P]:
     def __init__(self) -> None:
-        self._logger = logging.getLogger(__name__ + ".Signal")
         self.connections: list[Connection[P]] = []
 
     def connect(self, callback: Callable[P, Awaitable[Any]]) -> Connection[P]:
-        self._logger.debug(f"Connecting callback: {callback}")
+        logger.debug(f"Connecting callback: {callback}")
         connection = Connection[P](self, callback)
         self.connections.append(connection)
         return connection
 
     def disconnect(self, connection: Connection[P]) -> None:
         if connection not in self.connections:
-            self._logger.error("Connection not found during disconnect.")
+            logger.error("Connection not found during disconnect.")
             raise ConnectionNotFoundException()
-        self._logger.debug("Disconnecting connection.")
+        logger.debug("Disconnecting connection.")
         self.connections.remove(connection)
 
     async def emit(self, *args: P.args, **kwargs: P.kwargs) -> None:
-        await asyncio.gather(
-            *(connection.fire(*args, **kwargs) for connection in self.connections)
-        )
+        try:
+            await asyncio.gather(
+                *(connection.fire(*args, **kwargs) for connection in self.connections)
+            )
+        except CancelledError:
+            logger.debug("Signal emission was cancelled by asyncio, exiting...")
 
     async def wait(self) -> None:
         future: Future[None] = asyncio.get_event_loop().create_future()

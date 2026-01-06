@@ -64,7 +64,10 @@ class PlayerAngularMovementInputProcessor(Processor):
     ) -> None:
         input_actions = engine_context.input.action_manager.actions
         torque = 0.0
-        for action_id, wish_torque in ANGULAR_INPUT_ACTION_TO_WISH_TORQUE.items():
+        for (
+            action_id,
+            wish_torque,
+        ) in ANGULAR_INPUT_ACTION_TO_WISH_TORQUE.items():
             action = input_actions.get(action_id)
             if not action:
                 logger.warning(f"Input action {action_id} not found")

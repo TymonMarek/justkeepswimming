@@ -7,7 +7,7 @@ from justkeepswimming.utilities.scene import Scene
 
 
 async def load(stage_context: StageContext, engine_context: EngineContext) -> Scene:
-    scene = Scene(SceneID.DEFAULT)
-    MainCameraPrefab().construct(scene)
-    PlayerPrefab().construct(scene)
+    scene = Scene(SceneID.DEFAULT, engine_context.profiler)
+    MainCameraPrefab().construct("MainCamera", scene)
+    PlayerPrefab().construct("Player", scene)
     return scene

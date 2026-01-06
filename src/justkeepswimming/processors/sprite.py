@@ -29,7 +29,8 @@ class SpriteProcessor(Processor):
                 continue
             renderer.surface.blit(
                 pygame.transform.scale(
-                    await sprite.content.get_surface(), renderer.surface.get_size()
+                    await sprite.content.get_surface(),
+                    renderer.surface.get_size(),
                 ),
                 Vector2(0, 0),
             )

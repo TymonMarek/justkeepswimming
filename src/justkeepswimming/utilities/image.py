@@ -40,7 +40,9 @@ class Image:
         return self
 
     def __init__(
-        self, path: Path, strategy: ImageLoadingStrategy = ImageLoadingStrategy.LAZY
+        self,
+        path: Path,
+        strategy: ImageLoadingStrategy = ImageLoadingStrategy.LAZY,
     ) -> None:
         self.path = path
         self._surface: Surface | None = None
@@ -82,13 +84,14 @@ class Image:
             anchor=Vector2(0.5, 0.5),
         )
         logger.debug(
-            f"Image loaded from {self.path} with size {self._surface.get_size()}"
+            f"Image loaded from {
+                self.path} with size {
+                self._surface.get_size()}"
         )
 
 
 class Frame:
     def __init__(self, transform: Transform) -> None:
-        self.logger = logging.getLogger("Frame")
         self.transform = transform
 
     async def slice(self, texture: Image) -> Surface:
