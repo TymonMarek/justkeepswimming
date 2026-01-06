@@ -6,6 +6,7 @@ from justkeepswimming.ecs import SceneContext
 from justkeepswimming.ecs.scheduler import ProcessorScheduler
 from justkeepswimming.scenes import SceneID
 from justkeepswimming.systems.clock import TickContext
+from justkeepswimming.systems.input import InputAction
 from justkeepswimming.utilities.context import EngineContext
 from justkeepswimming.utilities.signal import Signal
 
@@ -18,15 +19,26 @@ class Scene:
         self.logger = getLogger(__name__)
         self.context = SceneContext(surface=Surface(INTERNAL_RENDER_WINDOW_SIZE))
         self.scheduler = ProcessorScheduler()
+
+        self.actions: list[InputAction] = []
+
         self.on_load = Signal()
         self.on_enter = Signal[EngineContext]()
         self.on_tick = Signal[TickContext, EngineContext]()
-        self.on_exit = Signal()
+        self.on_exit = Signal[EngineContext]()
         self.on_unload = Signal()
+
+        self.on_enter.connect(self._handle_enter)
         self.on_exit.connect(self._handle_exit)
         self.on_tick.connect(self._process_systems)
 
-    async def _handle_exit(self) -> None:
+    async def _handle_enter(self, engine_context: EngineContext) -> None:
+        for action in self.actions:
+            engine_context.input.action_manager.register_action(action)
+
+    async def _handle_exit(self, engine_context: EngineContext) -> None:
+        for action in self.actions:
+            engine_context.input.action_manager.unregister_action(action)
         self.context.maid.cleanup()
 
     async def _on_window_resize(self, event: Event) -> None:

@@ -20,7 +20,7 @@ class CustomEvent:
 
 class Dispatcher:
     def __init__(self) -> None:
-        self.logger = logging.getLogger(__name__ + ".Dispatcher")
+        self.logger = logging.getLogger(__name__ + "Dispatcher")
         self.event_signals: dict[EventType, Signal[PygameEvent]] = dict()
         self._custom_event_type_ptr: int = pygame.USEREVENT + 1
 
@@ -41,9 +41,6 @@ class Dispatcher:
     async def _dispatch_event(self, event: PygameEvent) -> None:
         if event.type in self.event_signals:
             signal = self.event_signals[event.type]
-            self.logger.debug(
-                f"Dispatching {event} to {len(signal.connections)} connections."
-            )
             await signal.emit(event)
 
     async def process_events(self) -> None:
