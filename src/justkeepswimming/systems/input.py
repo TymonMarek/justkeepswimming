@@ -47,8 +47,8 @@ class InputAction:
         self.__active_start_time: float = 0.0
         self.__active_bindings: int = 0
 
-        self.on_triggered = Signal()
-        self.on_reset = Signal()
+        self.on_triggered = Signal[[]]()
+        self.on_reset = Signal[[]]()
 
     async def _activate(self) -> None:
         self.active = True
@@ -83,8 +83,8 @@ class KeyboardKey:
         self.pressed: bool = False
         self.__press_start_time: float = 0.0
 
-        self.on_pressed = Signal()
-        self.on_released = Signal()
+        self.on_pressed = Signal[[]]()
+        self.on_released = Signal[[]]()
 
     async def press(self):
         self.pressed = True
@@ -148,8 +148,8 @@ class MouseButton:
         self.pressed: bool = False
         self.__press_start_time: float = 0.0
 
-        self.on_pressed = Signal()
-        self.on_released = Signal()
+        self.on_pressed = Signal[[]]()
+        self.on_released = Signal[[]]()
 
     async def press(self):
         self.pressed = True

@@ -9,10 +9,13 @@ from justkeepswimming.systems.clock import TickContext
 from justkeepswimming.utilities.context import EngineContext
 from justkeepswimming.utilities.maid import Maid
 
+logger = logging.getLogger(__name__)
+
 
 class Entity:
-    def __init__(self, entity_id: int, context: "SceneContext") -> None:
+    def __init__(self, entity_id: int, name: str, context: "SceneContext") -> None:
         self.id = entity_id
+        self.name = name
         self.context = context
 
     def has_component(self, component_type: type["Component"]) -> bool:
@@ -28,8 +31,12 @@ class Entity:
         if self.has_component(type(component)):
             del self.context.components[self.id][type(component)]
 
+    def __repr__(self) -> str:
+        return f"<Entity {self.name} ({self.id})>"
+
 
 class Component:
+    incompatible_with: frozenset[type["Component"]] = frozenset()
     pass
 
 
@@ -42,8 +49,8 @@ class SceneContext:
         default_factory=dict[int, dict[type, Component]]
     )
 
-    def create_entity(self) -> Entity:
-        entity = Entity(len(self.entities) + 1, self)
+    def create_entity(self, name: str) -> Entity:
+        entity = Entity(len(self.entities) + 1, name, self)
         self.entities[entity.id] = entity
         self.components[entity.id] = {}
         return entity
@@ -55,6 +62,14 @@ class SceneContext:
 
     def add_component(self, entity: Entity, component: Component) -> None:
         if entity.id in self.components:
+            for incompatible_component in component.incompatible_with:
+                if incompatible_component in self.components[entity.id]:
+                    raise ValueError(
+                        f"Component {
+                            type(component).__name__} is incompatible with existing component {
+                            incompatible_component.__name__} on entity {
+                            entity.id}"
+                    )
             self.components[entity.id][type(component)] = component
 
     @overload
@@ -90,14 +105,17 @@ class SceneContext:
         fourth_component_type: type[C4],
     ) -> Iterable[tuple[Entity, tuple[C1, C2, C3, C4]]]: ...
 
-    def query(self, *classes: type[Component]) -> Iterable[tuple[Entity, tuple[Component, ...]]]:  # type: ignore (See https://discuss.python.org/t/pre-pep-considerations-and-feedback-type-transformations-on-variadic-generics/50605)
+    # https://discuss.python.org/t/pre-pep-considerations-and-feedback-type-transformations-on-variadic-generics/50605
+    def query(  # type: ignore
+        self, *classes: type[Component]
+    ) -> Iterable[tuple[Entity, tuple[Component, ...]]]:
         for entity_id, components in self.components.items():
             if all(component_type in components.keys() for component_type in classes):
                 entity = self.entities[entity_id]
-                components = tuple(
+                components_tuple = tuple(
                     components[component_type] for component_type in classes
                 )
-                yield (entity, components)
+                yield (entity, components_tuple)
 
     @overload
     def query_one[
@@ -132,7 +150,9 @@ class SceneContext:
         fourth_component_type: type[C4],
     ) -> (tuple[Entity, tuple[C1, C2, C3, C4]] | None): ...
 
-    def query_one(self, *classes: type[Component]) -> tuple[Entity, tuple[Component, ...]] | None:  # type: ignore
+    def query_one(  # type: ignore
+        self, *classes: type[Component]
+    ) -> tuple[Entity, tuple[Component, ...]] | None:
         for entity_id, components in self.components.items():
             if all(component_type in components.keys() for component_type in classes):
                 entity = self.entities[entity_id]
@@ -144,9 +164,6 @@ class SceneContext:
 
 
 class Processor:
-    def __init__(self) -> None:
-        self.logger = logging.getLogger(f"System.{self.__class__.__name__}")
-
     writes: frozenset[type[Component]] = frozenset()
     reads: frozenset[type[Component]] = frozenset()
     before: frozenset[type["Processor"]] = frozenset()
@@ -162,4 +179,4 @@ class Processor:
         raise NotImplementedError
 
     def __repr__(self) -> str:
-        return f"<System {self.__class__.__name__}>"
+        return f"<Processor {self.__class__.__name__}>"

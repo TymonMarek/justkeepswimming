@@ -1,13 +1,15 @@
 import logging
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
 
 from pygame.time import Clock as PygameClock
 
+from justkeepswimming.debug.profiler import Profiler
 from justkeepswimming.utilities.signal import Signal
 
 PYGAME_DELTA_TIME_SCALE = 0.001
+
+logger = logging.getLogger(__name__)
 
 
 class ClockException(Exception):
@@ -27,23 +29,18 @@ class TickContext:
     delta_time: float
 
 
-SAFE_FPS = 30
-
-
 class Clock:
-    def __init__(self):
-        self.logger = logging.getLogger(__name__ + ".Clock")
-        self.on_tick = Signal()
-        self.target_framerate: Optional[int] = None
-        self.start_timestamp: Optional[float] = None
+    def __init__(self, profiler: Profiler):
+        self.on_tick = Signal[TickContext]()
+        self.profiler = profiler
         self.__pygame_clock = PygameClock()
-        self.on_start = Signal()
-        self.on_stop = Signal()
+        self.on_start = Signal[[]]()
+        self.on_stop = Signal[[]]()
         self.running = False
         self.on_start.connect(self._start)
         self.on_stop.connect(self._stop)
 
-    async def _start(self):
+    async def _start(self) -> None:
         if self.running:
             raise ClockAlreadyRunningException()
         self.running = True
@@ -51,23 +48,13 @@ class Clock:
         while self.running:
             await self._tick()
 
-    async def _tick(self):
-        delta_time: float = (
-            self.__pygame_clock.tick(self.target_framerate or 0)
-            * PYGAME_DELTA_TIME_SCALE
-        )
-        tick_data = TickContext(delta_time)
-        if (
-            self.__pygame_clock.get_fps() < SAFE_FPS
-            and self.__pygame_clock.get_fps() > 0
-        ):
-            self.logger.debug(
-                f"A performance drop has been detected! Your application is running at an extremely low framerate of {self.__pygame_clock.get_fps():.0f} FPS, something is very wrong!"
-            )
-        await self.on_tick.emit(tick_data)
+    async def _tick(self) -> None:
+        with self.profiler.measure():
+            delta_time: float = self.__pygame_clock.tick() * PYGAME_DELTA_TIME_SCALE
+            tick_data = TickContext(delta_time)
+            await self.on_tick.emit(tick_data)
 
-    async def _stop(self):
+    async def _stop(self) -> None:
         if not self.running:
             raise ClockNotRunningException()
         self.running = False
-        self.start_timestamp = None

@@ -10,19 +10,21 @@ class Prefab:
     processors: list[type[Processor]]
     logger = logging.getLogger(__name__)
 
-    def construct(self, scene: "Scene", use_entity: Entity | None = None) -> Entity:
+    def construct(
+        self, name: str, scene: "Scene", use_entity: Entity | None = None
+    ) -> Entity:
         entity: Entity
         if use_entity is not None:
             entity = use_entity
         else:
-            entity = scene.context.create_entity()
+            entity = scene.context.create_entity(name)
 
         if self.extends:
             if isinstance(self.extends, list):
                 for prefab in self.extends:
-                    prefab.construct(scene, use_entity=entity)
+                    prefab.construct(name, scene, use_entity=entity)
             else:
-                self.extends.construct(scene, use_entity=entity)
+                self.extends.construct(name, scene, use_entity=entity)
 
         for component in self.components:
             component_type = type(component)
@@ -38,3 +40,14 @@ class Prefab:
                 scene.scheduler.add_processor(processor_cls())
 
         return entity
+
+
+class PrefabGroup:
+    prefabs: dict[str, Prefab]
+
+    def construct(self, scene: "Scene") -> list[Entity]:
+        entities: list[Entity] = []
+        for prefab_name, prefab in self.prefabs.items():
+            entity = prefab.construct(prefab_name, scene)
+            entities.append(entity)
+        return entities

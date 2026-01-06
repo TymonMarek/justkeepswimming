@@ -1,7 +1,10 @@
-from logging import getLogger
+import copy
+import logging
+from typing import Any
 
 from pygame import Event, Surface, Vector2
 
+from justkeepswimming.debug.profiler import Profiler
 from justkeepswimming.ecs import SceneContext
 from justkeepswimming.ecs.scheduler import ProcessorScheduler
 from justkeepswimming.scenes import SceneID
@@ -10,15 +13,16 @@ from justkeepswimming.systems.input import InputAction
 from justkeepswimming.utilities.context import EngineContext
 from justkeepswimming.utilities.signal import Signal
 
+logger = logging.getLogger(__name__)
+
 INTERNAL_RENDER_WINDOW_SIZE = Vector2(1920, 1080)
 
 
 class Scene:
-    def __init__(self, id: SceneID) -> None:
+    def __init__(self, id: SceneID, profiler: Profiler) -> None:
         self.id: SceneID = id
-        self.logger = getLogger(__name__)
         self.context = SceneContext(surface=Surface(INTERNAL_RENDER_WINDOW_SIZE))
-        self.scheduler = ProcessorScheduler()
+        self.scheduler = ProcessorScheduler(profiler)
 
         self.actions: list[InputAction] = []
 
@@ -32,6 +36,13 @@ class Scene:
         self.on_exit.connect(self._handle_exit)
         self.on_tick.connect(self._process_systems)
 
+    def __deepcopy__(self, memo: dict[int, Any] | None) -> "Scene":
+        new_scene = Scene(self.id, self.scheduler.profiler)
+        new_scene.context = copy.deepcopy(self.context, memo)
+        new_scene.scheduler = copy.deepcopy(self.scheduler, memo)
+        new_scene.actions = copy.deepcopy(self.actions, memo)
+        return new_scene
+
     async def _handle_enter(self, engine_context: EngineContext) -> None:
         for action in self.actions:
             engine_context.input.action_manager.register_action(action)
@@ -43,7 +54,7 @@ class Scene:
 
     async def _on_window_resize(self, event: Event) -> None:
         self.context.surface = Surface(Vector2(event.w, event.h))
-        self.logger.debug(f"Scene {self.id} resized to Vector2({event.w}, {event.h})")
+        logger.debug(f"Scene {self.id} resized to Vector2({event.w}, {event.h})")
 
     async def _process_systems(
         self, tick_context: TickContext, engine_context: EngineContext
