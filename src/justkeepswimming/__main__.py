@@ -25,6 +25,7 @@ async def game_loop(launch_options: LaunchOptions):
     await engine.start()
     await engine.stage.switch_scene(SceneID.DEFAULT)
     await engine.clock.on_stop.wait()
+    engine.profiler.show()
 
 
 def main():
