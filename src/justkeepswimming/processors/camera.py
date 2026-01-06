@@ -41,7 +41,7 @@ class CameraProcessor(Processor):
             new_width = int(camera_width * scale)
             new_height = int(camera_height * scale)
 
-            scaled_surface = pygame.transform.smoothscale(
+            scaled_surface = pygame.transform.scale(
                 camera.surface, Vector2(new_width, new_height)
             )
 
