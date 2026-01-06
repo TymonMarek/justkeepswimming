@@ -114,8 +114,7 @@ class DirectedAcyclicGraph(Generic[T]):
         if path is not None:
             path_str = self._format_cycle(path + [dependency])
             raise CyclicalDependencyError(
-                "Cannot add dependency because it would create a cycle:\n\n"
-                f"{path_str}"
+                f"Cannot add dependency because it would create a cycle:\n\n{path_str}"
             )
 
         node.depends_on.add(dependency)

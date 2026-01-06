@@ -31,7 +31,10 @@ class AnimationTrackPlaybackProcessor(Processor):
         scene_context: SceneContext,
         engine_context: EngineContext,
     ) -> None:
-        for _, (animation_component, renderer_component) in scene_context.query(
+        for _, (
+            animation_component,
+            renderer_component,
+        ) in scene_context.query(
             AnimatorComponent,
             RendererComponent,
         ):
