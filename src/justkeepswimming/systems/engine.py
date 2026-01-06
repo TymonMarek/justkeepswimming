@@ -8,6 +8,7 @@ import pygame
 from justkeepswimming.scenes import SceneID, default
 from justkeepswimming.systems.clock import Clock, TickContext
 from justkeepswimming.systems.dispatcher import Dispatcher
+from justkeepswimming.systems.input import Input
 from justkeepswimming.systems.stage import Stage
 from justkeepswimming.systems.window import Window
 from justkeepswimming.utilities.context import EngineContext
@@ -23,12 +24,14 @@ class Engine:
         self.logger.info("Initializing...")
         self.dispatcher = Dispatcher()
         self.window = Window(self.dispatcher)
+        self.input = Input(self.dispatcher)
         self.clock = Clock()
 
         self.context = EngineContext(
             clock=self.clock,
             window=self.window,
             dispatcher=self.dispatcher,
+            input=self.input,
         )
 
         self.stage = Stage(
@@ -42,7 +45,7 @@ class Engine:
         self.clock.on_tick.connect(self._process_game)
 
     def _attach_quit_handler(self) -> None:
-        async def _on_quit(event: pygame.event.Event) -> None:
+        async def _on_quit(_: pygame.event.Event) -> None:
             await self._quit()
 
         self.dispatcher.get_signal_for(pygame.QUIT).connect(_on_quit)

@@ -6,5 +6,5 @@ from justkeepswimming.ecs import Component
 
 
 @dataclass
-class MovementInputComponent(Component):
-    wish_direction: Vector2 = field(default_factory=lambda: Vector2(0, 0))
+class PlayerMovementInputComponent(Component):
+    direction: Vector2 = field(default_factory=lambda: Vector2(0, 0))

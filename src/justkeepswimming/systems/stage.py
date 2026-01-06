@@ -2,7 +2,7 @@ import copy
 import enum
 from dataclasses import dataclass, field
 from logging import getLogger
-from typing import Callable, Optional
+from typing import Awaitable, Callable, Optional
 
 from justkeepswimming.systems.clock import TickContext
 from justkeepswimming.utilities.context import EngineContext
@@ -15,7 +15,15 @@ class SceneLoadingStrategy(enum.Enum):
     EAGER = enum.auto()
 
 
-type SceneFactory = Callable[[], Scene]
+@dataclass
+class StageContext:
+    scene: Optional[Scene] = None
+    on_request_switch_scene: Signal[SceneID] = field(
+        default_factory=lambda: Signal[SceneID]()
+    )
+
+
+type SceneFactory = Callable[[StageContext, EngineContext], Awaitable[Scene]]
 
 
 class SceneHandle:
@@ -30,20 +38,14 @@ class SceneHandle:
         self.strategy = strategy
         self._scene: Optional[Scene] = None
 
-    async def get_scene(self) -> Scene:
+    async def get_scene(
+        self, context: StageContext, engine_context: EngineContext
+    ) -> Scene:
         if self._scene is None:
-            self._scene = self.factory()
+            self._scene = await self.factory(context, engine_context)
             await self._scene.on_load.emit()
 
         return copy.deepcopy(self._scene)
-
-
-@dataclass
-class StageContext:
-    scene: Optional[Scene] = None
-    on_request_switch_scene: Signal[SceneID] = field(
-        default_factory=lambda: Signal[SceneID]()
-    )
 
 
 class Stage:
@@ -97,11 +99,11 @@ class Stage:
 
     async def _handle_request_switch_scene(self, scene_id: SceneID) -> None:
         if self.scene:
-            await self.scene.on_exit.emit()
+            await self.scene.on_exit.emit(self.engine_context)
             await self.scene.on_unload.emit()
 
         handle = self._get_handle(scene_id)
-        self.scene = await handle.get_scene()
+        self.scene = await handle.get_scene(self.context, self.engine_context)
         await self.scene.on_enter.emit(self.engine_context)
 
     async def _process_scene(
