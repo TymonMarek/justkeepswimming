@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from justkeepswimming.systems.clock import Clock
 from justkeepswimming.systems.dispatcher import Dispatcher
+from justkeepswimming.systems.input import Input
 from justkeepswimming.systems.window import Window
 
 
@@ -10,3 +11,4 @@ class EngineContext:
     clock: Clock
     window: Window
     dispatcher: Dispatcher
+    input: Input
