@@ -2,9 +2,11 @@ import asyncio
 import logging
 from asyncio import CancelledError, Future
 from collections.abc import Awaitable, Callable
-from typing import Any
+from typing import Any, Generic, ParamSpec
 
 logger = logging.getLogger(__name__)
+
+P = ParamSpec("P")
 
 
 class SignalException(Exception):
@@ -15,7 +17,7 @@ class ConnectionNotFoundException(SignalException):
     pass
 
 
-class Connection[**P]:
+class Connection(Generic[P]):
     def __init__(
         self, signal: "Signal[P]", callback: Callable[P, Awaitable[Any]]
     ) -> None:
@@ -34,13 +36,13 @@ class Connection[**P]:
         self.signal.disconnect(self)
 
 
-class Signal[**P]:
+class Signal(Generic[P]):
     def __init__(self) -> None:
         self.connections: list[Connection[P]] = []
 
     def connect(self, callback: Callable[P, Awaitable[Any]]) -> Connection[P]:
         logger.debug(f"Connecting callback: {callback}")
-        connection = Connection[P](self, callback)
+        connection = Connection(self, callback)
         self.connections.append(connection)
         return connection
 
