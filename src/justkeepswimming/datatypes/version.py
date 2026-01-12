@@ -6,3 +6,9 @@ class SemanticVersion:
 
     def is_compatible_with(self, other: "SemanticVersion") -> bool:
         return self.major == other.major and self.minor >= other.minor
+
+    def __str__(self) -> str:
+        return f"{self.major}.{self.minor}.{self.patch}"
+
+    def __repr__(self) -> str:
+        return f"{self.major}.{self.minor}.{self.patch}"

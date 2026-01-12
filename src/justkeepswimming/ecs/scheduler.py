@@ -7,7 +7,6 @@ from justkeepswimming.datatypes.dag import (
     DirectedAcyclicGraph,
     DirectedAcyclicGraphNode,
 )
-from justkeepswimming.debug.profiler import Profiler
 from justkeepswimming.debug.scopes import ProfilerScope
 from justkeepswimming.ecs import Component, Processor, SceneContext
 from justkeepswimming.systems.clock import TickContext
@@ -33,15 +32,16 @@ class SystemConflictException(SchedulerException):
 
 
 class ProcessorScheduler:
-    def __init__(self, profiler: Profiler) -> None:
+    def __init__(self, engine_context: EngineContext) -> None:
         self.processors: Set[Processor] = set()
         self._nodes: Dict[Processor, DirectedAcyclicGraphNode[Processor]] = {}
         self._graph: DirectedAcyclicGraph[Processor] = DirectedAcyclicGraph()
         self._execution_order: list[Set[Processor]] = []
-        self.profiler = profiler
+        self.engine_context = engine_context
+        self.profiler = engine_context.profiler
 
     def __deepcopy__(self, memo: dict[int, Any] | None) -> "ProcessorScheduler":
-        new_scheduler = ProcessorScheduler(self.profiler)
+        new_scheduler = ProcessorScheduler(self.engine_context)
         new_scheduler.processors = copy.deepcopy(self.processors, memo)
         new_scheduler._nodes = copy.deepcopy(self._nodes, memo)
         new_scheduler._graph = copy.deepcopy(self._graph, memo)
@@ -80,6 +80,11 @@ class ProcessorScheduler:
             return await system.update(tick_context, scene_context, engine_context)
 
     def add_processor(self, processor: Processor) -> None:
+        if processor.debug_only and not self.engine_context.launch_options.debug:
+            logger.debug(
+                f"Skipping addition of debug-only system {processor} "
+                "in non-debug mode."
+            )
         if processor in self.processors:
             raise SystemDuplicateEntryException(
                 f"System {processor} is already in the scheduler."

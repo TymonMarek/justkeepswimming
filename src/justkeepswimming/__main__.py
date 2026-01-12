@@ -4,10 +4,10 @@ import logging
 
 from rich.logging import RichHandler
 
-from justkeepswimming.debug.args import VerbosityAction
 from justkeepswimming.scenes import SceneID
 from justkeepswimming.systems.engine import Engine
 from justkeepswimming.utilities.launch import LaunchOptions
+from justkeepswimming.utilities.logger import logger
 
 
 def setup_logging(verbosity: int):
@@ -34,8 +34,9 @@ def main():
     parser.add_argument(
         "-v",
         "--verbose",
-        action=VerbosityAction,
-        help="Increases the verbosity level (can be specified multiple times).",
+        type=int,
+        default=1,
+        help="Set the verbosity level (0=error, 1=warning, 2=info, 3=debug).",
         dest="log_level",
     )
     parser.add_argument(
@@ -58,6 +59,12 @@ def main():
     )
     args = parser.parse_args()
     setup_logging(args.log_level or 1)
+    if args.debug:
+        logger.warning("Debug mode is enabled. Performance may be impacted.")
+    if args.profiler:
+        logger.warning(
+            "Profiler is enabled, keeping last %d records.", args.profiler_history
+        )
     launch_options = LaunchOptions(
         debug=args.debug,
         profiler_enabled=args.profiler,

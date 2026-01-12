@@ -31,7 +31,8 @@ class RendererProcessor(Processor):
             )
             rotated_rect = rotated_surface.get_rect()
             anchor_offset = transform.size.elementwise() * transform.anchor
-            rotated_rect.center = transform.position - anchor_offset
+            position = transform.position - anchor_offset
+            rotated_rect.center = (int(position[0]), int(position[1]))
             scene.blit(rotated_surface, rotated_rect.topleft)
 
 
