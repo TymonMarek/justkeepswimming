@@ -59,6 +59,13 @@ class Signal[**P]:
         except CancelledError:
             logger.debug("Signal emission was cancelled by asyncio, exiting...")
 
+    def emit_sync(self, *args: P.args, **kwargs: P.kwargs) -> None:
+        try:
+            loop = asyncio.get_running_loop()
+            loop.create_task(self.emit(*args, **kwargs))
+        except RuntimeError:
+            asyncio.run(self.emit(*args, **kwargs))
+
     async def wait(self) -> None:
         future: Future[None] = asyncio.get_event_loop().create_future()
 

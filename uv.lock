@@ -216,7 +216,6 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "asyncio" },
-    { name = "matplotlib" },
     { name = "psutil" },
     { name = "pygame-ce" },
     { name = "rich" },
@@ -228,6 +227,7 @@ dev = [
     { name = "black" },
     { name = "flake8" },
     { name = "isort" },
+    { name = "matplotlib" },
     { name = "mypy" },
     { name = "pre-commit" },
     { name = "pycodestyle" },
@@ -238,7 +238,6 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "asyncio", specifier = ">=4.0.0" },
-    { name = "matplotlib", specifier = ">=3.10.8" },
     { name = "psutil", specifier = ">=7.2.1" },
     { name = "pygame-ce", specifier = ">=2.5.6" },
     { name = "rich", specifier = ">=14.2.0" },
@@ -250,6 +249,7 @@ dev = [
     { name = "black", specifier = ">=25.12.0" },
     { name = "flake8", specifier = ">=7.3.0" },
     { name = "isort", specifier = ">=7.0.0" },
+    { name = "matplotlib", specifier = ">=3.10.8" },
     { name = "mypy", specifier = ">=1.19.1" },
     { name = "pre-commit", specifier = ">=4.5.1" },
     { name = "pycodestyle", specifier = ">=2.14.0" },
