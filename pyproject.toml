@@ -14,7 +14,13 @@ dependencies = [
     "rich>=14.2.0",
 ]
 
+[tool.uv.sources]
+nuitka = { git = "https://github.com/Nuitka/Nuitka" }
+
 [dependency-groups]
+build = [
+    "nuitka",
+]
 dev = [
     "matplotlib>=3.10.8",
     "autopep8>=2.3.2",
@@ -52,6 +58,7 @@ max-line-length = 79
 
 [project.scripts]
 game-play = "justkeepswimming.__main__:main"
+game-build = "justkeepswimming.build:main"
 prof-summary = "justkeepswimming.debug.viewer:cli_summary"
 prof-frame = "justkeepswimming.debug.viewer:cli_frame"
 
