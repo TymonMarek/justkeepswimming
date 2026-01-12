@@ -14,7 +14,7 @@ from justkeepswimming.utilities.logger import logger
 
 
 class Profiler:
-    version = SemanticVersion(1, 0, 0)
+    version = SemanticVersion(2, 0, 0)
 
     def __init__(self, enabled: bool, history_length: int):
         self.options = ProfileOptions(
@@ -24,28 +24,28 @@ class Profiler:
                 f"dumps/{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.prof"
             ),
         )
-        self.records: dict[ProfilerScope, dict[str, deque[float]]] = {}
+        self.records: dict[ProfilerScope, dict[str, deque[tuple[float, float]]]] = {}
         self.tick_times_ms: deque[float] = deque(maxlen=self.options.history_length)
         self.memory_bytes: deque[float] = deque(maxlen=self.options.history_length)
 
-    def record(self, scope: ProfilerScope, name: str, duration: float):
+    def record(self, scope: ProfilerScope, name: str, start_ms: float, end_ms: float):
         if not self.options.enabled:
             return
         if scope not in self.records:
             self.records[scope] = {}
         if name not in self.records[scope]:
             self.records[scope][name] = deque(maxlen=self.options.history_length)
-        self.records[scope][name].append(duration)
+        self.records[scope][name].append((start_ms, end_ms))
 
     @contextmanager
     def scope(self, scope: ProfilerScope, name: str):
         if not self.options.enabled:
             yield
             return
-        start_time = time.time()
+        start = time.time() * 1000
         yield
-        duration = (time.time() - start_time) * 1000
-        self.record(scope, name, duration)
+        end = time.time() * 1000
+        self.record(scope, name, start, end)
 
     @contextmanager
     def measure(self):
