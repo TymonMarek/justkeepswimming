@@ -4,7 +4,7 @@ import pygame
 from pygame import Event, Vector2
 
 from justkeepswimming.systems.dispatcher import Dispatcher
-from justkeepswimming.utilities.log import logger
+from justkeepswimming.utilities.logger import logger
 from justkeepswimming.utilities.signal import Signal
 
 

@@ -9,7 +9,7 @@ from justkeepswimming.ecs import Processor, SceneContext
 from justkeepswimming.systems.clock import TickContext
 from justkeepswimming.systems.input import InputActionId
 from justkeepswimming.utilities.context import EngineContext
-from justkeepswimming.utilities.log import logger
+from justkeepswimming.utilities.logger import logger
 
 LINEAR_INPUT_ACTION_TO_WISH_VECTOR: dict[InputActionId, Vector2] = {
     InputActionId.PLAYER_MOVE_UP: Vector2(1, 0),

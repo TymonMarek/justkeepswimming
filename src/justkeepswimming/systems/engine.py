@@ -50,6 +50,10 @@ class Engine:
 
         self._attach_quit_handler()
         self.clock.on_tick.connect(self._process_game)
+        self.clock.on_stop.connect(self.__profiler_save_dump)
+
+    async def __profiler_save_dump(self) -> None:
+        self.profiler.save()
 
     def _attach_quit_handler(self) -> None:
         async def _on_quit(_: pygame.event.Event) -> None:
