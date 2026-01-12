@@ -51,8 +51,9 @@ max-line-length = 79
 
 
 [project.scripts]
-client = "justkeepswimming.__main__:main"
-show_dump = "justkeepswimming.debug.viewer:main"
+game-play = "justkeepswimming.__main__:main"
+prof-summary = "justkeepswimming.debug.viewer:cli_summary"
+prof-frame = "justkeepswimming.debug.viewer:cli_frame"
 
 [build-system]
 requires = ["setuptools>=65.5.1", "wheel"]
