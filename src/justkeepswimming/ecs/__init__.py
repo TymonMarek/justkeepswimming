@@ -163,6 +163,7 @@ class Processor:
     before: frozenset[type["Processor"]] = frozenset()
     after: frozenset[type["Processor"]] = frozenset()
     alongside: frozenset[type["Processor"]] = frozenset()
+    debug_only: bool = False
 
     async def update(
         self,

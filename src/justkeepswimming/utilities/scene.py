@@ -4,7 +4,6 @@ from typing import Any
 
 from pygame import Event, Surface, Vector2
 
-from justkeepswimming.debug.profiler import Profiler
 from justkeepswimming.ecs import SceneContext
 from justkeepswimming.ecs.scheduler import ProcessorScheduler
 from justkeepswimming.scenes import SceneID
@@ -19,10 +18,10 @@ INTERNAL_RENDER_WINDOW_SIZE = Vector2(1920, 1080)
 
 
 class Scene:
-    def __init__(self, id: SceneID, profiler: Profiler) -> None:
+    def __init__(self, id: SceneID, engine_context: EngineContext) -> None:
         self.id: SceneID = id
         self.context = SceneContext(surface=Surface(INTERNAL_RENDER_WINDOW_SIZE))
-        self.scheduler = ProcessorScheduler(profiler)
+        self.scheduler = ProcessorScheduler(engine_context)
 
         self.actions: list[InputAction] = []
 
@@ -37,7 +36,7 @@ class Scene:
         self.on_tick.connect(self._process_systems)
 
     def __deepcopy__(self, memo: dict[int, Any] | None) -> "Scene":
-        new_scene = Scene(self.id, self.scheduler.profiler)
+        new_scene = Scene(self.id, self.scheduler.engine_context)
         new_scene.context = copy.deepcopy(self.context, memo)
         new_scene.scheduler = copy.deepcopy(self.scheduler, memo)
         new_scene.actions = copy.deepcopy(self.actions, memo)

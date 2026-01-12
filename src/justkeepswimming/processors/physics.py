@@ -16,7 +16,7 @@ from justkeepswimming.utilities.context import EngineContext
 
 class AngularPhysicsProcessor(Processor):
     reads = frozenset({AngularPhysicsComponent, PlayerAngularMovementInputComponent})
-    writes = frozenset({TransformComponent})
+    writes = frozenset({TransformComponent, AngularPhysicsComponent})
 
     async def update(
         self,
@@ -58,7 +58,7 @@ class AngularPhysicsProcessor(Processor):
 
 class LinearPhysicsProcessor(Processor):
     reads = frozenset({LinearPhysicsComponent, PlayerLinearMovementInputComponent})
-    writes = frozenset({TransformComponent})
+    writes = frozenset({TransformComponent, LinearPhysicsComponent})
     alongside = frozenset({AngularPhysicsProcessor})
 
     async def update(
