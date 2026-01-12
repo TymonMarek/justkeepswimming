@@ -1,7 +1,7 @@
 import logging
 from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import cast, overload
+from typing import TypeVar, cast, overload
 
 from pygame import Surface, Vector2
 
@@ -10,6 +10,8 @@ from justkeepswimming.utilities.context import EngineContext
 from justkeepswimming.utilities.maid import Maid
 
 logger = logging.getLogger(__name__)
+
+C = TypeVar("C")
 
 
 class Entity:
@@ -21,7 +23,7 @@ class Entity:
     def has_component(self, component_type: type["Component"]) -> bool:
         return component_type in self.context.components[self.id]
 
-    def get_component[C](self, component_type: type[C]) -> C:
+    def get_component(self, component_type: type[C]) -> C:
         return cast(C, self.context.components[self.id][component_type])
 
     def add_component(self, component: "Component") -> None:
@@ -38,6 +40,12 @@ class Entity:
 class Component:
     incompatible_with: frozenset[type["Component"]] = frozenset()
     pass
+
+
+C1 = TypeVar("C1")
+C2 = TypeVar("C2")
+C3 = TypeVar("C3")
+C4 = TypeVar("C4")
 
 
 @dataclass
@@ -73,21 +81,15 @@ class SceneContext:
             self.components[entity.id][type(component)] = component
 
     @overload
-    def query[
-        C1
-    ](self, component_type: type[C1]) -> Iterable[tuple[Entity, tuple[C1]]]: ...
+    def query(self, component_type: type[C1]) -> Iterable[tuple[Entity, tuple[C1]]]: ...
 
     @overload
-    def query[
-        C1, C2
-    ](
+    def query(
         self, first_component_type: type[C1], second_component_type: type[C2]
     ) -> Iterable[tuple[Entity, tuple[C1, C2]]]: ...
 
     @overload
-    def query[
-        C1, C2, C3
-    ](
+    def query(
         self,
         first_component_type: type[C1],
         second_component_type: type[C2],
@@ -95,9 +97,7 @@ class SceneContext:
     ) -> Iterable[tuple[Entity, tuple[C1, C2, C3]]]: ...
 
     @overload
-    def query[
-        C1, C2, C3, C4
-    ](
+    def query(
         self,
         first_component_type: type[C1],
         second_component_type: type[C2],
@@ -118,37 +118,31 @@ class SceneContext:
                 yield (entity, components_tuple)
 
     @overload
-    def query_one[
-        C1
-    ](self, component_type: type[C1]) -> tuple[Entity, tuple[C1]] | None: ...
+    def query_one(
+        self, component_type: type[C1]
+    ) -> tuple[Entity, tuple[C1]] | None: ...
 
     @overload
-    def query_one[
-        C1, C2
-    ](self, first_component_type: type[C1], second_component_type: type[C2]) -> (
-        tuple[Entity, tuple[C1, C2]] | None
-    ): ...
+    def query_one(
+        self, first_component_type: type[C1], second_component_type: type[C2]
+    ) -> tuple[Entity, tuple[C1, C2]] | None: ...
 
     @overload
-    def query_one[
-        C1, C2, C3
-    ](
+    def query_one(
         self,
         first_component_type: type[C1],
         second_component_type: type[C2],
         third_component_type: type[C3],
-    ) -> (tuple[Entity, tuple[C1, C2, C3]] | None): ...
+    ) -> tuple[Entity, tuple[C1, C2, C3]] | None: ...
 
     @overload
-    def query_one[
-        C1, C2, C3, C4
-    ](
+    def query_one(
         self,
         first_component_type: type[C1],
         second_component_type: type[C2],
         third_component_type: type[C3],
         fourth_component_type: type[C4],
-    ) -> (tuple[Entity, tuple[C1, C2, C3, C4]] | None): ...
+    ) -> tuple[Entity, tuple[C1, C2, C3, C4]] | None: ...
 
     def query_one(  # type: ignore
         self, *classes: type[Component]

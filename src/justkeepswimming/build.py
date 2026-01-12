@@ -1,38 +1,47 @@
 import logging
-import subprocess
-import rich.logging
 import platform
-from rich.progress import Progress
+import subprocess
 from pathlib import Path
 
+import rich.logging
+from rich.progress import Progress
+
 LOG_FILE_PATH: str = "dist/build.log"
-VENV_PYTHON: str = ".venv/bin/python"
+VENV_PYTHON: str = (
+    ".venv/bin/python"
+    if platform.system() != "Windows"
+    else ".venv\\Scripts\\python.exe"
+)
 COMPILER: str = "nuitka"
 COMPILER_ARGUMENTS: list[str] = [
-    "--follow-imports", # Follow all imports
-    "--standalone", # Create a standalone executable
-    "--output-dir=dist", # Output directory
-    f"--output-filename=justkeepswimming{".exe" if platform.system() == "Windows" else ""}", # Output filename
-    "--windows-icon-from-ico=assets/icon.png", # Windows icon
-    "--macos-app-icon=assets/icon.png", # macOS icon
-    "--linux-icon=assets/icon.png", # Linux icon
-    "--assume-yes-for-downloads", # Automatically agree to downloads
-    "--deployment", # Optimize for deployment
-    "--product-name=JustKeepSwimming", # Product name
-    "--product-version=1.0.0", # Product version
-    "--file-version=1", # File version
-    "--file-description=\"A game about a small fish in the deep sea.\"", # File description
-    "--copyright=\"(c) 2026 Tymon Marek\"", # Copyright
-    "--include-data-dir=assets=assets", # Include assets directory
+    "--standalone",  # Create a standalone executable
+    "--output-dir=dist",  # Output directory
+    f"--output-filename=justkeepswimming{".exe" if platform.system() == "Windows" else ""}",  # Output filename
+    "--windows-icon-from-ico=assets/icon.png",  # Windows icon
+    "--macos-app-icon=assets/icon.png",  # macOS icon
+    "--linux-icon=assets/icon.png",  # Linux icon
+    "--assume-yes-for-downloads",  # Automatically agree to downloads
+    "--deployment",  # Optimize for deployment
+    "--product-name=JustKeepSwimming",  # Product name
+    "--product-version=1.0.0",  # Product version
+    "--file-version=1",  # File version
+    '--file-description="A game about a small fish in the deep sea."',  # File description
+    '--copyright="(c) 2026 Tymon Marek"',  # Copyright
+    "--include-data-dir=assets=assets",  # Include assets directory
 ]
-ENTRY_POINT = "src/justkeepswimming/__main__.py"
+ENTRY_POINT = "src/justkeepswimming"
 
 logging.basicConfig(
     level=logging.DEBUG,
     format="[bold cyan]%(name)s[/] %(message)s",
-    handlers=[rich.logging.RichHandler(rich_tracebacks=True, show_time=False, show_level=False, markup=True)],
+    handlers=[
+        rich.logging.RichHandler(
+            rich_tracebacks=True, show_time=False, show_level=False, markup=True
+        )
+    ],
 )
 logger = logging.getLogger(__package__)
+
 
 def build() -> None:
     logger.info("Starting build process...")
@@ -60,7 +69,10 @@ def build() -> None:
         returncode = process.wait()
         progress.update(compiling_task, total=1, completed=1)
         if returncode != 0:
-            raise subprocess.CalledProcessError(returncode, [VENV_PYTHON, "-m", COMPILER, *COMPILER_ARGUMENTS, ENTRY_POINT])
+            raise subprocess.CalledProcessError(
+                returncode,
+                [VENV_PYTHON, "-m", COMPILER, *COMPILER_ARGUMENTS, ENTRY_POINT],
+            )
         progress.remove_task(compiling_task)
         cleaning_task = progress.add_task("[cyan]Finalizing...", total=1)
         process.wait()
@@ -75,4 +87,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-    
