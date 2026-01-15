@@ -1,6 +1,5 @@
 import logging
 from collections.abc import Iterable
-from dataclasses import dataclass, field
 from typing import TypeVar, cast, overload
 
 from pygame import Surface, Vector2
@@ -47,17 +46,28 @@ C2 = TypeVar("C2")
 C3 = TypeVar("C3")
 C4 = TypeVar("C4")
 
+INTERNAL_RENDER_WINDOW_SIZE = Vector2(1920 / 3, 1080 / 3)
 
-@dataclass
 class SceneContext:
-    maid: Maid = field(default_factory=Maid)
-    surface: Surface = field(default_factory=lambda: Surface(Vector2(0, 0)))
-    entities: dict[int, Entity] = field(default_factory=dict[int, Entity])
-    components: dict[int, dict[type, Component]] = field(
-        default_factory=dict[int, dict[type, Component]]
-    )
+    def __init__(self) -> None:
+        self.maid: Maid = Maid()
+        self.surface: Surface = Surface(INTERNAL_RENDER_WINDOW_SIZE)
+        self.entities: dict[int, Entity] = {}
+        self.components: dict[int, dict[type, Component]] = {}
+        self._query_cache: dict[
+            tuple[type[Component], ...], list[tuple[Entity, tuple[Component, ...]]]
+        ] = {}
+        self._query_one_cache: dict[
+            tuple[type[Component], ...], tuple[Entity, tuple[Component, ...]] | None
+        ] = {}
+
+    def _invalidate_caches(self) -> None:
+        self._query_cache.clear()
+        self._query_one_cache.clear()
 
     def create_entity(self, name: str) -> Entity:
+        # This technically won't affect the cache correctness, since no components exist yet for this entity
+        # so it is safe to not clear the cache here.
         entity = Entity(len(self.entities) + 1, name, self)
         self.entities[entity.id] = entity
         self.components[entity.id] = {}
@@ -67,6 +77,7 @@ class SceneContext:
         if entity.id in self.entities:
             del self.entities[entity.id]
             del self.components[entity.id]
+        self._invalidate_caches()
 
     def add_component(self, entity: Entity, component: Component) -> None:
         if entity.id in self.components:
@@ -79,6 +90,7 @@ class SceneContext:
                             entity.id}"
                     )
             self.components[entity.id][type(component)] = component
+        self._invalidate_caches()
 
     @overload
     def query(self, component_type: type[C1]) -> Iterable[tuple[Entity, tuple[C1]]]: ...
@@ -109,13 +121,19 @@ class SceneContext:
     def query(  # type: ignore
         self, *classes: type[Component]
     ) -> Iterable[tuple[Entity, tuple[Component, ...]]]:
+        if self._query_cache.get(classes) is not None:
+            yield from self._query_cache[classes]
+            return
+        results: list[tuple[Entity, tuple[Component, ...]]] = []
         for entity_id, components in self.components.items():
             if all(component_type in components.keys() for component_type in classes):
                 entity = self.entities[entity_id]
                 components_tuple = tuple(
                     components[component_type] for component_type in classes
                 )
+                results.append((entity, components_tuple))
                 yield (entity, components_tuple)
+        self._query_cache[classes] = results
 
     @overload
     def query_one(
@@ -147,12 +165,15 @@ class SceneContext:
     def query_one(  # type: ignore
         self, *classes: type[Component]
     ) -> tuple[Entity, tuple[Component, ...]] | None:
+        if self._query_one_cache.get(classes) is not None:
+            return self._query_one_cache[classes]
         for entity_id, components in self.components.items():
             if all(component_type in components.keys() for component_type in classes):
                 entity = self.entities[entity_id]
                 components_tuple = tuple(
                     components[component_type] for component_type in classes
                 )
+                self._query_one_cache[classes] = (entity, components_tuple)
                 return (entity, components_tuple)
         return None
 

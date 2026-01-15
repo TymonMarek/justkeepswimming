@@ -1,3 +1,4 @@
+from pygame import Vector2
 from justkeepswimming.characters.turtle import TurtlePrefab
 from justkeepswimming.components.input import (
     PlayerAngularMovementInputComponent,
@@ -19,8 +20,8 @@ class PlayerPrefab(Prefab):
     extends = [PhysicsObjectPrefab(), TurtlePrefab()]
     components = [
         LinearPhysicsComponent(
-            thrust=200.0,
-            max_velocity=200.0,
+            thrust=Vector2(200.0, 200.0),
+            max_velocity=Vector2(200.0, 200.0),
         ),
         AngularPhysicsComponent(
             torque=150.0,

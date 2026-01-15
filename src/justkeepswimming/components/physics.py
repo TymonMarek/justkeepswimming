@@ -9,9 +9,9 @@ from justkeepswimming.ecs import Component
 class LinearPhysicsComponent(Component):
     velocity: Vector2 = field(default_factory=lambda: Vector2(0, 0))
     acceleration: Vector2 = field(default_factory=lambda: Vector2(0, 0))
-    thrust: float = 3000.0
-    max_velocity: float = 2000.0
-    drag: float = 0.6
+    thrust: Vector2 = field(default_factory=lambda: Vector2(100.0, 100.0))
+    max_velocity: Vector2 = field(default_factory=lambda: Vector2(1000.0, 1000.0))
+    drag: Vector2 = field(default_factory=lambda: Vector2(0.6, 0.6))
 
 
 @dataclass
