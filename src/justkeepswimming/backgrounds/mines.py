@@ -17,7 +17,7 @@ class FarOceanBackgroundLayerPrefab(Prefab):
     extends = ScrollingParallaxBackgroundLayerPrefab()
     components = [
         TileTextureComponent(Image(Path("assets/backgrounds/mines/1.png"))),
-        AutoTileScrollComponent(speed=Vector2(90, 0)),
+        AutoTileScrollComponent(speed=Vector2(45, 0)),
         TransformComponent(
             position=Vector2(0, 0),
             size=Vector2(0, 0),
@@ -32,7 +32,7 @@ class FarMinesOceanBackgroundLayerPrefab(Prefab):
     extends = ScrollingParallaxBackgroundLayerPrefab()
     components = [
         TileTextureComponent(Image(Path("assets/backgrounds/mines/2.png"))),
-        AutoTileScrollComponent(speed=Vector2(180, 0)),
+        AutoTileScrollComponent(speed=Vector2(90, 0)),
         TransformComponent(
             position=Vector2(0, 0),
             size=Vector2(0, 0),
@@ -47,7 +47,7 @@ class FarParticleEffectBackgroundLayerPrefab(Prefab):
     extends = ScrollingParallaxBackgroundLayerPrefab()
     components = [
         TileTextureComponent(Image(Path("assets/backgrounds/mines/3.png"))),
-        AutoTileScrollComponent(speed=Vector2(270, 0)),
+        AutoTileScrollComponent(speed=Vector2(135, 0)),
         TransformComponent(
             position=Vector2(0, 0),
             size=Vector2(0, 0),
@@ -62,7 +62,7 @@ class NearMinesOceanBackgroundLayerPrefab(Prefab):
     extends = ScrollingParallaxBackgroundLayerPrefab()
     components = [
         TileTextureComponent(Image(Path("assets/backgrounds/mines/4.png"))),
-        AutoTileScrollComponent(speed=Vector2(360, 0)),
+        AutoTileScrollComponent(speed=Vector2(180, 0)),
         TransformComponent(
             position=Vector2(0, 0),
             size=Vector2(0, 0),
@@ -77,7 +77,7 @@ class NearParticleEffectBackgroundLayerPrefab(Prefab):
     extends = ScrollingParallaxBackgroundLayerPrefab()
     components = [
         TileTextureComponent(Image(Path("assets/backgrounds/mines/5.png"))),
-        AutoTileScrollComponent(speed=Vector2(450, 0)),
+        AutoTileScrollComponent(speed=Vector2(225, 0)),
         TransformComponent(
             position=Vector2(0, 0),
             size=Vector2(0, 0),

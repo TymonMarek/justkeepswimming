@@ -73,29 +73,42 @@ class LinearPhysicsProcessor(Processor):
             LinearPhysicsComponent,
             TransformComponent,
         ):
-            linear_physics.acceleration = Vector2(0, 0)
+            wish = Vector2()
 
             if entity.has_component(PlayerLinearMovementInputComponent):
-                input_component = entity.get_component(
-                    PlayerLinearMovementInputComponent
-                )
+                input_component = entity.get_component(PlayerLinearMovementInputComponent)
 
-                wish_direction = (
+                wish = (
                     transform.up * input_component.thrust.y
                     + transform.right * input_component.thrust.x
                 )
 
-                if wish_direction.length_squared() > 0:
-                    wish_direction = wish_direction.normalize()
+                lsq = wish.length_squared()
+                if lsq > 1:
+                    wish = wish.normalize()
 
-                linear_physics.acceleration = wish_direction * linear_physics.thrust
+            if wish.x or wish.y:
+                linear_physics.acceleration = (
+                    wish.elementwise() * linear_physics.thrust.elementwise()
+                )
+            else:
+                linear_physics.acceleration.update(0.0, 0.0)
 
             linear_physics.velocity += linear_physics.acceleration * delta
-            linear_physics.velocity -= (
-                linear_physics.velocity * linear_physics.drag * delta
-            )
 
-            if linear_physics.velocity.length() > linear_physics.max_velocity:
-                linear_physics.velocity.scale_to_length(linear_physics.max_velocity)
+            drag = linear_physics.drag
+            decay_x = 1 - drag.x * delta
+            decay_y = 1 - drag.y * delta
+            if decay_x < 0:
+                decay_x = 0
+            if decay_y < 0:
+                decay_y = 0
+
+            linear_physics.velocity.x *= decay_x
+            linear_physics.velocity.y *= decay_y
+
+            max_v = linear_physics.max_velocity
+            linear_physics.velocity.x = max(-max_v.x, min(linear_physics.velocity.x, max_v.x))
+            linear_physics.velocity.y = max(-max_v.y, min(linear_physics.velocity.y, max_v.y))
 
             transform.position += linear_physics.velocity * delta
