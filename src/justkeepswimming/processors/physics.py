@@ -88,8 +88,13 @@ class LinearPhysicsProcessor(Processor):
                     wish = wish.normalize()
 
             if wish.x or wish.y:
+                thrust = (
+                    transform.up * linear_physics.thrust.y
+                    + transform.right * linear_physics.thrust.x
+                )
+
                 linear_physics.acceleration = (
-                    wish.elementwise() * linear_physics.thrust.elementwise()
+                    wish.elementwise() * thrust
                 )
             else:
                 linear_physics.acceleration.update(0.0, 0.0)
