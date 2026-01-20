@@ -11,9 +11,8 @@ from justkeepswimming.utilities.logger import logger
 
 
 def setup_logging(verbosity: int):
-    level = [logging.ERROR, logging.WARNING, logging.INFO, logging.DEBUG][
-        min(3, max(0, verbosity))
-    ]
+    levels: list[int] = [logging.ERROR, logging.WARNING, logging.INFO, logging.DEBUG]
+    level = levels[min(3, max(0, verbosity))]
     logging.basicConfig(
         level=level,
         format="%(message)s",
