@@ -48,8 +48,10 @@ C4 = TypeVar("C4")
 
 INTERNAL_RENDER_WINDOW_SIZE = Vector2(1920 / 3, 1080 / 3)
 
+
 class SceneContext:
     def __init__(self) -> None:
+        self.time_scale: float = 1
         self.maid: Maid = Maid()
         self.surface: Surface = Surface(INTERNAL_RENDER_WINDOW_SIZE)
         self.entities: dict[int, Entity] = {}

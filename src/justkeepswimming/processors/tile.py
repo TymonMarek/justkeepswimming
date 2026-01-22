@@ -123,7 +123,7 @@ class AutoTileScrollProcessor(Processor):
         scene_context: SceneContext,
         engine_context: EngineContext,
     ) -> None:
-        dt = float(tick_context.delta_time)
+        delta = float(tick_context.delta_time * scene_context.time_scale)
 
         for _, (auto_tile_scroll, tile_texture) in scene_context.query(
             AutoTileScrollComponent, TileTextureComponent
@@ -131,7 +131,7 @@ class AutoTileScrollProcessor(Processor):
             tile_size_x = float(tile_texture.tile_size.x) or 1.0
             tile_size_y = float(tile_texture.tile_size.y) or 1.0
 
-            tile_texture.scroll += auto_tile_scroll.speed * dt
+            tile_texture.scroll += auto_tile_scroll.speed * delta
             tile_texture.scroll.x %= tile_size_x
             tile_texture.scroll.y %= tile_size_y
 

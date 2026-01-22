@@ -38,7 +38,7 @@ class AnimationTrackPlaybackProcessor(Processor):
             AnimatorComponent,
             RendererComponent,
         ):
-            await animation_component.animator.update(tick_context)
+            await animation_component.animator.update(tick_context, scene_context)
             current_frame = await animation_component.animator.get_current_frame()
             if current_frame is not None:
                 renderer_component.surface.blit(
