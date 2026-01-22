@@ -24,7 +24,7 @@ class AngularPhysicsProcessor(Processor):
         scene_context: SceneContext,
         engine_context: EngineContext,
     ) -> None:
-        delta = tick_context.delta_time
+        delta = tick_context.delta_time * scene_context.time_scale
 
         for entity, (angular_physics, transform) in scene_context.query(
             AngularPhysicsComponent,
@@ -67,7 +67,7 @@ class LinearPhysicsProcessor(Processor):
         scene_context: SceneContext,
         engine_context: EngineContext,
     ) -> None:
-        delta = tick_context.delta_time
+        delta = tick_context.delta_time * scene_context.time_scale
 
         for entity, (linear_physics, transform) in scene_context.query(
             LinearPhysicsComponent,
