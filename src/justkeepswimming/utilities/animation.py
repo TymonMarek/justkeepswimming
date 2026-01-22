@@ -4,6 +4,7 @@ from typing import Dict
 
 from pygame import Surface
 
+from justkeepswimming.ecs import SceneContext
 from justkeepswimming.systems.clock import TickContext
 from justkeepswimming.utilities.image import Frame, Image
 from justkeepswimming.utilities.signal import Signal
@@ -175,6 +176,8 @@ class Animator:
             return None
         return await track.get_current_frame()
 
-    async def update(self, tick: TickContext) -> None:
+    async def update(
+        self, tick_context: TickContext, scene_context: SceneContext
+    ) -> None:
         for track in self.tracks.values():
-            await track.update(tick.delta_time)
+            await track.update(tick_context.delta_time * scene_context.time_scale)
