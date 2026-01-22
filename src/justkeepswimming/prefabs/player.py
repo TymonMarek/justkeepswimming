@@ -1,4 +1,5 @@
 from pygame import Vector2
+
 from justkeepswimming.characters.turtle import TurtlePrefab
 from justkeepswimming.components.input import (
     PlayerAngularMovementInputComponent,
@@ -8,6 +9,7 @@ from justkeepswimming.components.physics import (
     AngularPhysicsComponent,
     LinearPhysicsComponent,
 )
+from justkeepswimming.components.player import PlayerComponent
 from justkeepswimming.prefabs.physics import PhysicsObjectPrefab
 from justkeepswimming.processors.input import (
     PlayerAngularMovementInputProcessor,
@@ -29,6 +31,7 @@ class PlayerPrefab(Prefab):
         ),
         PlayerLinearMovementInputComponent(),
         PlayerAngularMovementInputComponent(),
+        PlayerComponent(),
     ]
     processors = [
         PlayerLinearMovementInputProcessor,
