@@ -5,6 +5,7 @@ from justkeepswimming.components.animation import (
     AnimationStateComponent,
     AnimatorComponent,
     SpritesheetComponent,
+    VelocityAffectsAnimationSpeedComponent,
 )
 from justkeepswimming.components.physics import (
     LinearPhysicsComponent,
@@ -49,7 +50,7 @@ class AnimationTrackPlaybackProcessor(Processor):
                 )
 
 
-class CharacterAnimationStateProcessors(Processor):
+class CharacterAnimationStateProcessor(Processor):
     reads = frozenset(
         {AnimationStateComponent, TransformComponent, LinearPhysicsComponent}
     )
@@ -116,7 +117,7 @@ class CharacterAnimationProcessor(Processor):
     ) -> None:
         for _, (
             animator_component,
-            character_component,
+            animation_state_component,
             spritesheet_component,
         ) in scene_context.query(
             AnimatorComponent,
@@ -124,21 +125,58 @@ class CharacterAnimationProcessor(Processor):
             SpritesheetComponent,
         ):
             desired_animation = spritesheet_component.animations[
-                character_component.current_state
+                animation_state_component.current_state
             ]
             if (
-                character_component.current_track is None
-                or character_component.current_track.animation != desired_animation
+                animation_state_component.current_track is None
+                or animation_state_component.current_track.animation
+                != desired_animation
             ):
                 if (
-                    character_component.current_track is not None
-                    and character_component.current_track.priority.value
+                    animation_state_component.current_track is not None
+                    and animation_state_component.current_track.priority.value
                     >= desired_animation.priority.value
                 ):
-                    await character_component.current_track.stop()
-                character_component.current_track = (
+                    await animation_state_component.current_track.stop()
+                animation_state_component.current_track = (
                     await animator_component.animator.load_animation(
-                        character_component.current_state, desired_animation
+                        animation_state_component.current_state, desired_animation
                     )
                 )
-                await character_component.current_track.play()
+                await animation_state_component.current_track.play()
+
+
+class VelocityAffectsAnimationSpeedProcessor(Processor):
+    reads = frozenset(
+        {
+            AnimationStateComponent,
+            LinearPhysicsComponent,
+            VelocityAffectsAnimationSpeedComponent,
+        }
+    )
+    writes = frozenset({AnimationStateComponent})
+    before = frozenset({})
+    after = frozenset({CharacterAnimationStateProcessor})
+
+    async def update(
+        self,
+        tick_context: TickContext,
+        scene_context: SceneContext,
+        engine_context: EngineContext,
+    ) -> None:
+        for _, (
+            animation_state,
+            linear_physics,
+            velocity_affects_animation_speed,
+        ) in scene_context.query(
+            AnimationStateComponent,
+            LinearPhysicsComponent,
+            VelocityAffectsAnimationSpeedComponent,
+        ):
+            if track := animation_state.current_track:
+                base_speed = track.animation.speed
+                speed = (
+                    linear_physics.velocity.length()
+                    * velocity_affects_animation_speed.speed_multiplier
+                )
+                animation_state.current_speed = base_speed + speed

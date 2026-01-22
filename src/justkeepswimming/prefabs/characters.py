@@ -2,12 +2,14 @@ from justkeepswimming.components.animation import (
     AnimationStateComponent,
     AnimatorComponent,
     SpritesheetComponent,
+    VelocityAffectsAnimationSpeedComponent,
 )
 from justkeepswimming.prefabs.renderable import RenderablePrefab
 from justkeepswimming.processors.animation import (
     AnimationTrackPlaybackProcessor,
     CharacterAnimationProcessor,
-    CharacterAnimationStateProcessors,
+    CharacterAnimationStateProcessor,
+    VelocityAffectsAnimationSpeedProcessor,
 )
 from justkeepswimming.utilities.prefab import Prefab
 
@@ -18,9 +20,11 @@ class CharacterPrefab(Prefab):
         AnimatorComponent(),
         AnimationStateComponent(),
         SpritesheetComponent({}),
+        VelocityAffectsAnimationSpeedComponent(),
     ]
     processors = [
         AnimationTrackPlaybackProcessor,
-        CharacterAnimationStateProcessors,
+        CharacterAnimationStateProcessor,
         CharacterAnimationProcessor,
+        VelocityAffectsAnimationSpeedProcessor,
     ]
