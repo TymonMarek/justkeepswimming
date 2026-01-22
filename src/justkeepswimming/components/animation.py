@@ -29,3 +29,8 @@ class AnimationStateComponent(Component):
     current_state: AnimationType = AnimationType.IDLE
     current_track: AnimationTrack | None = None
     current_speed: float = 1.0
+
+
+@dataclass
+class VelocityAffectsAnimationSpeedComponent(Component):
+    speed_multiplier: float = 60.0
