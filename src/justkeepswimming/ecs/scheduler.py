@@ -32,16 +32,19 @@ class SystemConflictException(SchedulerException):
 
 
 class ProcessorScheduler:
-    def __init__(self, engine_context: EngineContext) -> None:
+    def __init__(
+        self, scene_context: SceneContext, engine_context: EngineContext
+    ) -> None:
         self.processors: Set[Processor] = set()
         self._nodes: Dict[Processor, DirectedAcyclicGraphNode[Processor]] = {}
         self._graph: DirectedAcyclicGraph[Processor] = DirectedAcyclicGraph()
         self._execution_order: list[Set[Processor]] = []
         self.engine_context = engine_context
+        self.scene_context = scene_context
         self.profiler = engine_context.profiler
 
     def __deepcopy__(self, memo: dict[int, Any] | None) -> "ProcessorScheduler":
-        new_scheduler = ProcessorScheduler(self.engine_context)
+        new_scheduler = ProcessorScheduler(self.scene_context, self.engine_context)
         new_scheduler.processors = copy.deepcopy(self.processors, memo)
         new_scheduler._nodes = copy.deepcopy(self._nodes, memo)
         new_scheduler._graph = copy.deepcopy(self._graph, memo)
@@ -90,6 +93,7 @@ class ProcessorScheduler:
                 f"System {processor} is already in the scheduler."
             )
         self.processors.add(processor)
+        processor.initialize(self.scene_context, self.engine_context)
         logger.debug(f"Added system {processor} to the scheduler.")
         self._rebuild()
 
@@ -99,6 +103,8 @@ class ProcessorScheduler:
                 f"System {processor} not found in the scheduler."
             )
         self.processors.remove(processor)
+        processor.maid.cleanup()
+        processor.teardown(self.scene_context, self.engine_context)
         self._rebuild()
 
     def execution_order(self) -> list[Set[Processor]]:

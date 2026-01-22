@@ -7,6 +7,7 @@ from pygame import Surface, Vector2
 from justkeepswimming.systems.clock import TickContext
 from justkeepswimming.utilities.context import EngineContext
 from justkeepswimming.utilities.maid import Maid
+from justkeepswimming.utilities.signal import Signal
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +17,7 @@ C = TypeVar("C")
 class Entity:
     def __init__(self, entity_id: int, name: str, context: "SceneContext") -> None:
         self.id = entity_id
+        self.maid = Maid()
         self.name = name
         self.context = context
 
@@ -56,6 +58,10 @@ class SceneContext:
         self.surface: Surface = Surface(INTERNAL_RENDER_WINDOW_SIZE)
         self.entities: dict[int, Entity] = {}
         self.components: dict[int, dict[type, Component]] = {}
+        self.on_entity_created = Signal[Entity]()
+        self.on_entity_deleted = Signal[Entity]()
+        self.on_component_added = Signal[tuple[Entity, Component]]()
+        self.on_component_removed = Signal[tuple[Entity, Component]]()
         self._query_cache: dict[
             tuple[type[Component], ...], list[tuple[Entity, tuple[Component, ...]]]
         ] = {}
@@ -73,26 +79,66 @@ class SceneContext:
         entity = Entity(len(self.entities) + 1, name, self)
         self.entities[entity.id] = entity
         self.components[entity.id] = {}
+        self.on_entity_created.emit_sync(entity)
         return entity
 
     def delete_entity(self, entity: Entity) -> None:
         if entity.id in self.entities:
+            self.on_entity_deleted.emit_sync(entity)
             del self.entities[entity.id]
             del self.components[entity.id]
         self._invalidate_caches()
 
     def add_component(self, entity: Entity, component: Component) -> None:
-        if entity.id in self.components:
-            for incompatible_component in component.incompatible_with:
-                if incompatible_component in self.components[entity.id]:
-                    raise ValueError(
-                        f"Component {
-                            type(component).__name__} is incompatible with existing component {
-                            incompatible_component.__name__} on entity {
-                            entity.id}"
-                    )
-            self.components[entity.id][type(component)] = component
+        if entity.id not in self.components:
+            raise RuntimeError(
+                f"Entity {entity.id} does not exist in the scene context."
+            )
+        for incompatible_component in component.incompatible_with:
+            if incompatible_component in self.components[entity.id]:
+                raise ValueError(
+                    f"Component {type(component).__name__} is incompatible with existing component {incompatible_component.__name__} on entity {entity.id}"
+                )
+        self.components[entity.id][type(component)] = component
+        self.on_component_added.emit_sync((entity, component))
         self._invalidate_caches()
+
+    def remove_component(self, entity: Entity, component_type: type[Component]) -> None:
+        if entity.id not in self.components:
+            raise RuntimeError(
+                f"Entity {entity.id} does not exist in the scene context."
+            )
+        if component_type in self.components[entity.id]:
+            component = self.components[entity.id][component_type]
+            del self.components[entity.id][component_type]
+            self.on_component_removed.emit_sync((entity, component))
+            self._invalidate_caches()
+
+    def get_signal_for_component_addition(
+        self, component_type: type[Component], maid: Maid
+    ) -> Signal[tuple[Entity, Component]]:
+        signal = Signal[tuple[Entity, Component]]()
+
+        async def handler(args: tuple[Entity, Component]) -> None:
+            entity, component = args
+            if isinstance(component, component_type):
+                await signal.emit((entity, component))
+
+        maid.add(self.on_component_added.connect(handler))
+        return signal
+
+    def get_signal_for_component_removal(
+        self, component_type: type[Component], maid: Maid
+    ) -> Signal[tuple[Entity, Component]]:
+        signal = Signal[tuple[Entity, Component]]()
+
+        async def handler(args: tuple[Entity, Component]) -> None:
+            entity, component = args
+            if isinstance(component, component_type):
+                await signal.emit((entity, component))
+
+        maid.add(self.on_component_removed.connect(handler))
+        return signal
 
     @overload
     def query(self, component_type: type[C1]) -> Iterable[tuple[Entity, tuple[C1]]]: ...
@@ -187,6 +233,23 @@ class Processor:
     after: frozenset[type["Processor"]] = frozenset()
     alongside: frozenset[type["Processor"]] = frozenset()
     debug_only: bool = False
+
+    def __init__(self) -> None:
+        self.maid = Maid()
+
+    def initialize(
+        self,
+        scene_context: SceneContext,
+        engine_context: EngineContext,
+    ) -> None:
+        pass
+
+    def teardown(
+        self,
+        scene_context: SceneContext,
+        engine_context: EngineContext,
+    ) -> None:
+        pass
 
     async def update(
         self,

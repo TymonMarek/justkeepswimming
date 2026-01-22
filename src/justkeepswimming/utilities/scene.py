@@ -15,12 +15,11 @@ from justkeepswimming.utilities.signal import Signal
 logger = logging.getLogger(__name__)
 
 
-
 class Scene:
     def __init__(self, id: SceneID, engine_context: EngineContext) -> None:
         self.id: SceneID = id
         self.context = SceneContext()
-        self.scheduler = ProcessorScheduler(engine_context)
+        self.scheduler = ProcessorScheduler(self.context, engine_context)
 
         self.actions: list[InputAction] = []
 
