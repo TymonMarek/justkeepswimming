@@ -58,7 +58,7 @@ max-line-length = 79
 
 
 [project.scripts]
-game-play = "justkeepswimming.__main__:main"
+game-play = "justkeepswimming.main:main"
 game-build = "justkeepswimming.build:main"
 prof-summary = "justkeepswimming.debug.viewer:cli_summary"
 prof-frame = "justkeepswimming.debug.viewer:cli_frame"
