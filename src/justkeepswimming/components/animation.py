@@ -33,4 +33,4 @@ class AnimationStateComponent(Component):
 
 @dataclass
 class VelocityAffectsAnimationSpeedComponent(Component):
-    speed_multiplier: float = 60.0
+    speed_multiplier: float = 100.0
