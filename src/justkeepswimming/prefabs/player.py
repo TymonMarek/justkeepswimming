@@ -22,12 +22,12 @@ class PlayerPrefab(Prefab):
     extends = [PhysicsObjectPrefab(), TurtlePrefab()]
     components = [
         LinearPhysicsComponent(
-            thrust=Vector2(200.0, 50.0),
-            max_velocity=Vector2(200.0, 200.0),
+            thrust=Vector2(100.0, 50.0),
+            max_velocity=Vector2(100.0, 50.0),
         ),
         AngularPhysicsComponent(
-            torque=150.0,
-            max_angular_velocity=120.0,
+            torque=200.0,
+            max_angular_velocity=150.0,
         ),
         PlayerLinearMovementInputComponent(),
         PlayerAngularMovementInputComponent(),
