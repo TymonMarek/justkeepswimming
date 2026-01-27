@@ -1,4 +1,4 @@
-from justkeepswimming.backgrounds.oceans import OceanBackgroundPrefabGroup
+from justkeepswimming.backgrounds.tropical import TropicalBackgroundPrefabGroup
 from justkeepswimming.prefabs.cameras import MainCameraPrefab
 from justkeepswimming.prefabs.player import PlayerPrefab
 from justkeepswimming.scenes import SceneID
@@ -17,7 +17,7 @@ async def load(
 ) -> Scene:
     scene = Scene(SceneID.DEFAULT, engine_context)
     MainCameraPrefab().construct("MainCamera", scene)
-    OceanBackgroundPrefabGroup().construct(scene)
+    TropicalBackgroundPrefabGroup().construct(scene)
     scene.actions = [
         InputAction(
             InputActionId.PLAYER_MOVE_UP, "Move up", [KeyboardKeyType.W]

@@ -10,6 +10,7 @@ from justkeepswimming.processors.sizing import SceneSizeConstraintProcessor
 from justkeepswimming.processors.tile import (
     AutoTileScrollProcessor,
     FitTileSizeToTransformProcessor,
+    MouseRelativeTileScrollProcessor,
     TileTextureProcessor,
 )
 from justkeepswimming.utilities.prefab import Prefab
@@ -28,6 +29,25 @@ class ScrollingParallaxBackgroundLayerPrefab(Prefab):
     processors = [
         TileTextureProcessor,
         AutoTileScrollProcessor,
+        FitTileSizeToTransformProcessor,
+        SceneSizeConstraintProcessor,
+        SceneCenterConstraintProcessor,
+    ]
+
+
+class MouseParallaxBackgroundLayerPrefab(Prefab):
+    extends = RenderablePrefab()
+    components = [
+        TransformComponent(
+            position=Vector2(0, 0), size=Vector2(0, 0), anchor=Vector2(0, 0)
+        ),
+        FitTileSizeToTransformComponent(),
+        SceneSizeConstraintComponent(),
+        SceneCenterConstraintComponent(),
+    ]
+    processors = [
+        TileTextureProcessor,
+        MouseRelativeTileScrollProcessor,
         FitTileSizeToTransformProcessor,
         SceneSizeConstraintProcessor,
         SceneCenterConstraintProcessor,
