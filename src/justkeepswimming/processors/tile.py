@@ -3,12 +3,15 @@ import math
 
 import pygame
 
+from pygame import Vector2
+
 from justkeepswimming.components.physics import TransformComponent
 from justkeepswimming.components.pseudo import ScenePseudoComponent
 from justkeepswimming.components.render import RendererComponent
 from justkeepswimming.components.tile import (
     AutoTileScrollComponent,
     FitTileSizeToTransformComponent,
+    MouseRelativeTileScrollComponent,
     TileTextureComponent,
 )
 from justkeepswimming.ecs import Processor, SceneContext
@@ -88,13 +91,13 @@ class TileTextureProcessor(Processor):
                 start_x = 0
                 start_y = 0
 
-            pos_x = float(transform.position.x)
-            pos_y = float(transform.position.y)
+            pos_x = transform.position.x
+            pos_y = transform.position.y
             half_w = size_x * 0.5
             half_h = size_y * 0.5
 
-            origin_x = pos_x - half_w - float(scroll.x)
-            origin_y = pos_y - half_h - float(scroll.y)
+            origin_x = pos_x - half_w - scroll.x
+            origin_y = pos_y - half_h - scroll.y
 
             surf = renderer.surface
 
@@ -103,11 +106,9 @@ class TileTextureProcessor(Processor):
 
             for x in range(start_x, end_x):
                 px = origin_x + x * tile_w
-                ipx = int(px)
                 for y in range(start_y, end_y):
                     py = origin_y + y * tile_h
-                    ipy = int(py)
-                    surf.blit(tile_texture.cache_scaled_surface, (ipx, ipy))
+                    surf.blit(tile_texture.cache_scaled_surface, Vector2(px, py))
 
 
 class AutoTileScrollProcessor(Processor):
@@ -161,3 +162,28 @@ class FitTileSizeToTransformProcessor(Processor):
         ):
             if transform.size.x and transform.size.y:
                 tile_texture.tile_size = transform.size
+
+def lerp_vec2(start: Vector2, end: Vector2, time: float) -> Vector2:
+    return start + (end - start) * time
+
+class MouseRelativeTileScrollProcessor(Processor):
+    reads = frozenset(
+        {MouseRelativeTileScrollComponent, TileTextureComponent, ScenePseudoComponent}
+    )
+    writes = frozenset({TileTextureComponent})
+    after = frozenset({FitTileSizeToTransformProcessor, AutoTileScrollProcessor})
+    before = frozenset({TileTextureProcessor, RendererProcessor})
+
+    async def update(
+        self,
+        tick_context: TickContext,
+        scene_context: SceneContext,
+        engine_context: EngineContext,
+    ) -> None:
+        for _, (mouse_relative_scroll, tile_texture) in scene_context.query(
+            MouseRelativeTileScrollComponent, TileTextureComponent
+        ):
+            screen_center = engine_context.window.size * 0.5
+            mouse_position = engine_context.input.mouse.position
+            mouse_relative = (mouse_position - screen_center).elementwise() / screen_center
+            tile_texture.scroll = mouse_relative.elementwise() * mouse_relative_scroll.strength
