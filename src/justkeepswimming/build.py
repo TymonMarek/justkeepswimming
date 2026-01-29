@@ -4,7 +4,7 @@ import subprocess
 from pathlib import Path
 
 import rich.logging
-from rich.progress import Progress
+from rich.progress import Progress, TimeElapsedColumn, TextColumn, BarColumn
 
 LOG_FILE_PATH: str = "dist/build.log"
 VENV_PYTHON: str = (
@@ -49,17 +49,22 @@ logger = logging.getLogger(__package__)
 def build() -> None:
     logger.info("Starting build process...")
 
-    with Progress() as progress:
-        preparing_task = progress.add_task("[cyan]Preparing...", total=1)
+    with Progress(
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            TimeElapsedColumn()
+            ) as progress:
+        compiling_task = progress.add_task(
+            "[cyan]Compiling...",
+            total=None,
+            start=True
+            )
         process = subprocess.Popen(
             [VENV_PYTHON, "-m", COMPILER, *COMPILER_ARGUMENTS, ENTRY_POINT],
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
         )
-        progress.update(preparing_task, advance=1)
-        progress.remove_task(preparing_task)
-        compiling_task = progress.add_task("[cyan]Compiling...", total=None)
         compiler_logger = logging.getLogger(COMPILER.capitalize())
         dist_path = Path("dist")
         dist_path.mkdir(exist_ok=True)
@@ -72,9 +77,15 @@ def build() -> None:
         returncode = process.wait()
         progress.update(compiling_task, total=1, completed=1)
         if returncode != 0:
+            logger.error(f"Build failed with return code {returncode}.")
             raise subprocess.CalledProcessError(
                 returncode,
-                [VENV_PYTHON, "-m", COMPILER, *COMPILER_ARGUMENTS, ENTRY_POINT],
+                [
+                    VENV_PYTHON,
+                    "-m", COMPILER,
+                    *COMPILER_ARGUMENTS,
+                    ENTRY_POINT
+                ],
             )
         progress.remove_task(compiling_task)
         cleaning_task = progress.add_task("[cyan]Finalizing...", total=1)
