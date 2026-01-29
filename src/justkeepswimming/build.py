@@ -5,6 +5,7 @@ from pathlib import Path
 
 import rich.logging
 from rich.progress import Progress, TimeElapsedColumn, TextColumn, BarColumn
+import toml
 
 LOG_FILE_PATH: str = "dist/build.log"
 VENV_PYTHON: str = (
@@ -13,9 +14,13 @@ VENV_PYTHON: str = (
     else ".venv\\Scripts\\python.exe"
 )
 COMPILER: str = "nuitka"
+
+pyproject = toml.load("pyproject.toml")
+version = pyproject["project"]["version"]
+
 COMPILER_ARGUMENTS: list[str] = [
     "--standalone",  # Create a standalone executable
-    "--output-dir=dist",  # Output directory
+    "--output-dir=build",  # Output directory
     f"--output-filename=justkeepswimming{
         '.exe' if platform.system() == 'Windows' else ''
     }",  # Output filename
@@ -25,7 +30,7 @@ COMPILER_ARGUMENTS: list[str] = [
     "--assume-yes-for-downloads",  # Automatically agree to downloads
     "--deployment",  # Optimize for deployment
     "--product-name=JustKeepSwimming",  # Product name
-    "--product-version=1.0.0",  # Product version
+    f"--product-version={version}",  # Product version
     "--file-version=1",  # File version
     '--file-description="A game about a small fish in the deep sea."',
     '--copyright="(c) 2026 Tymon Marek"',  # Copyright
