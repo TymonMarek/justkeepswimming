@@ -5,10 +5,12 @@ on:
     types: [published, prereleased, created, edited, released]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
+    permissions:
+      contents: write
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
@@ -49,6 +51,8 @@ jobs:
 
   hash:
     needs: build
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts
@@ -72,6 +76,8 @@ jobs:
 
   sign:
     needs: hash
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts
@@ -101,6 +107,8 @@ jobs:
 
   upload:
     needs: sign
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts
