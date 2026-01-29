@@ -50,9 +50,7 @@ class Clock:
 
     async def _tick(self) -> None:
         with self.profiler.measure():
-            delta_time: float = (
-                self.__pygame_clock.tick() * PYGAME_DELTA_TIME_SCALE
-                )
+            delta_time: float = self.__pygame_clock.tick() * PYGAME_DELTA_TIME_SCALE
             tick_data = TickContext(delta_time)
             await self.on_tick.emit(tick_data)
 

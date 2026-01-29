@@ -38,5 +38,6 @@ class TintProcessor(Processor):
                 int(tint_color.a * intensity),
             )
             tint_surface = renderable_component.surface.copy()
-            tint_surface.fill(blended_color, special_flags=tint_component.blend_mode)
+            tint_surface.fill(
+                blended_color, special_flags=tint_component.blend_mode)
             renderable_component.surface.blit(tint_surface, (0, 0))

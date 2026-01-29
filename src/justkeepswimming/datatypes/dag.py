@@ -44,7 +44,8 @@ class DirectedAcyclicGraph(Generic[T]):
         self, node: DirectedAcyclicGraphNode[T]
     ) -> DirectedAcyclicGraphNode[T]:
         if node in self.nodes:
-            raise NodeAlreadyExistsError(f"{node} already exists in the graph.")
+            raise NodeAlreadyExistsError(
+                f"{node} already exists in the graph.")
         self.nodes.add(node)
         return node
 
@@ -58,7 +59,8 @@ class DirectedAcyclicGraph(Generic[T]):
         target: DirectedAcyclicGraphNode[T],
     ) -> List[DirectedAcyclicGraphNode[T]] | None:
         stack: list[
-            tuple[DirectedAcyclicGraphNode[T], list[DirectedAcyclicGraphNode[T]]]
+            tuple[DirectedAcyclicGraphNode[T],
+                  list[DirectedAcyclicGraphNode[T]]]
         ] = [(start, [start])]
         visited: set[DirectedAcyclicGraphNode[T]] = set()
 
@@ -114,8 +116,7 @@ class DirectedAcyclicGraph(Generic[T]):
         if path is not None:
             path_str = self._format_cycle(path + [dependency])
             raise CyclicalDependencyError(
-                f"Cannot add dependency because it would create a cycle:\n\n{path_str}"
-            )
+                f"Cannot add dependency because it would create a cycle:\n\n{path_str}")
 
         node.depends_on.add(dependency)
 

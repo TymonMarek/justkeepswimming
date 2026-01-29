@@ -24,7 +24,8 @@ class AnimationTrackPlaybackProcessor(Processor):
     reads = frozenset({AnimatorComponent, RendererComponent})
     writes = frozenset({AnimatorComponent, RendererComponent})
     before = frozenset({RendererProcessor})
-    after = frozenset({RendererTransformConstraintProcessor, RendererPreProcessor})
+    after = frozenset(
+        {RendererTransformConstraintProcessor, RendererPreProcessor})
 
     async def update(
         self,

@@ -41,11 +41,9 @@ class Window:
 
     def _create_window(self):
         logger.debug(
-            f"Creating window: title={
-                self._title}, size={
-                self._size}, vsync={
-                self._vsync_enabled}, flags={
-                    self._flags}"
+            f"Creating window: title={self._title}, size={self._size}, vsync={
+                self._vsync_enabled
+            }, flags={self._flags}"
         )
         self.surface = pygame.display.set_mode(
             self._size, flags=self._flags, vsync=self._vsync_enabled

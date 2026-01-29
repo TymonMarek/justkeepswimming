@@ -68,7 +68,8 @@ class Stage:
         self.context = StageContext()
 
         self.on_tick.connect(self._process_scene)
-        self.context.on_request_switch_scene.connect(self._handle_request_switch_scene)
+        self.context.on_request_switch_scene.connect(
+            self._handle_request_switch_scene)
 
         if loading_strategy is SceneLoadingStrategy.EAGER:
             self._create_all_handles()

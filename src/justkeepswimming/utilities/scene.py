@@ -52,17 +52,12 @@ class Scene:
     async def _on_window_resize(self, event: Event) -> None:
         self.context.surface = Surface(Vector2(event.w, event.h))
         logger.debug(
-            f"Scene {self.id} resized to Vector2({event.w}, {event.h})"
-        )
+            f"Scene {self.id} resized to Vector2({event.w}, {event.h})")
 
     async def _process_systems(
         self, tick_context: TickContext, engine_context: EngineContext
     ) -> None:
-        await self.scheduler.process_tick(
-            tick_context,
-            self.context,
-            engine_context
-        )
+        await self.scheduler.process_tick(tick_context, self.context, engine_context)
 
     def __repr__(self) -> str:
         return self.id.name

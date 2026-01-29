@@ -43,12 +43,15 @@ class ProcessorScheduler:
         self.scene_context = scene_context
         self.profiler = engine_context.profiler
 
-    def __deepcopy__(self, memo: dict[int, Any] | None) -> "ProcessorScheduler":
-        new_scheduler = ProcessorScheduler(self.scene_context, self.engine_context)
+    def __deepcopy__(self, memo: dict[int, Any]
+                     | None) -> "ProcessorScheduler":
+        new_scheduler = ProcessorScheduler(
+            self.scene_context, self.engine_context)
         new_scheduler.processors = copy.deepcopy(self.processors, memo)
         new_scheduler._nodes = copy.deepcopy(self._nodes, memo)
         new_scheduler._graph = copy.deepcopy(self._graph, memo)
-        new_scheduler._execution_order = copy.deepcopy(self._execution_order, memo)
+        new_scheduler._execution_order = copy.deepcopy(
+            self._execution_order, memo)
         return new_scheduler
 
     def _fmt_components(self, components: frozenset[Type[Component]]) -> str:
@@ -85,9 +88,7 @@ class ProcessorScheduler:
     def add_processor(self, processor: Processor) -> None:
         if processor.debug_only and not self.engine_context.launch_options.debug:
             logger.debug(
-                f"Skipping addition of debug-only system {processor} "
-                "in non-debug mode."
-            )
+                f"Skipping addition of debug-only system {processor} in non-debug mode.")
         if processor in self.processors:
             raise SystemDuplicateEntryException(
                 f"System {processor} is already in the scheduler."
@@ -161,7 +162,9 @@ class ProcessorScheduler:
                     logger.debug(
                         f"Inferred: {a} runs BEFORE {b} "
                         f"because {b} reads {
-                            self._fmt_components(components_a_writes_that_b_reads)}"
+                            self._fmt_components(
+                                components_a_writes_that_b_reads)
+                        }"
                     )
                     self._graph.set_dependency(node_b, node_a)
 
@@ -170,7 +173,9 @@ class ProcessorScheduler:
                     logger.debug(
                         f"Inferred: {b} runs BEFORE {a} "
                         f"because {a} reads {
-                            self._fmt_components(components_a_reads_that_b_writes)}"
+                            self._fmt_components(
+                                components_a_reads_that_b_writes)
+                        }"
                     )
                     self._graph.set_dependency(node_a, node_b)
 
