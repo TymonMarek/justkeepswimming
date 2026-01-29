@@ -41,6 +41,7 @@ jobs:
           if [[ "${{ runner.os }}" == "Windows" ]]; then
             powershell Compress-Archive -Path "build/justkeepswimming.dist/*" -DestinationPath "dist/justkeepswimming-${{ runner.os }}-${{ runner.arch }}-${{ github.event.release.tag_name }}.zip"
           else
+            tree -d build
             tar -czf dist/justkeepswimming-${{ runner.os }}-${{ runner.arch }}-${{ github.event.release.tag_name }}.tar.gz -C build/justkeepswimming.dist .
           fi
   
