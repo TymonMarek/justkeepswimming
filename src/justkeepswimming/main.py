@@ -11,7 +11,12 @@ from justkeepswimming.utilities.logger import logger
 
 
 def setup_logging(verbosity: int):
-    levels: list[int] = [logging.ERROR, logging.WARNING, logging.INFO, logging.DEBUG]
+    levels: list[int] = [
+        logging.ERROR,
+        logging.WARNING,
+        logging.INFO,
+        logging.DEBUG,
+    ]
     level = levels[min(3, max(0, verbosity))]
     logging.basicConfig(
         level=level,
@@ -62,7 +67,8 @@ def main():
         logger.warning("Debug mode is enabled. Performance may be impacted.")
     if args.profiler:
         logger.warning(
-            "Profiler is enabled, keeping last %d records.", args.profiler_history
+            "Profiler is enabled, keeping last %d records.",
+            args.profiler_history,
         )
     launch_options = LaunchOptions(
         debug=args.debug,

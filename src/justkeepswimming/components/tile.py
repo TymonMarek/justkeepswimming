@@ -28,6 +28,7 @@ class MouseRelativeTileScrollComponent(Component):
     strength: Vector2
     lerp_factor: float = 0.1
 
+
 @dataclass
 class FitTileSizeToTransformComponent(Component):
     pass
