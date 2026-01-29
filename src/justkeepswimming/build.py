@@ -16,7 +16,9 @@ COMPILER: str = "nuitka"
 COMPILER_ARGUMENTS: list[str] = [
     "--standalone",  # Create a standalone executable
     "--output-dir=dist",  # Output directory
-    f"--output-filename=justkeepswimming{".exe" if platform.system() == "Windows" else ""}",  # Output filename
+    f"--output-filename=justkeepswimming{
+        ".exe" if platform.system() == "Windows" else ""
+        }",  # Output filename
     "--windows-icon-from-ico=assets/icon.png",  # Windows icon
     "--macos-app-icon=assets/icon.png",  # macOS icon
     "--linux-icon=assets/icon.png",  # Linux icon
@@ -25,7 +27,7 @@ COMPILER_ARGUMENTS: list[str] = [
     "--product-name=JustKeepSwimming",  # Product name
     "--product-version=1.0.0",  # Product version
     "--file-version=1",  # File version
-    '--file-description="A game about a small fish in the deep sea."',  # File description
+    '--file-description="A game about a small fish in the deep sea."',
     '--copyright="(c) 2026 Tymon Marek"',  # Copyright
     "--include-data-dir=assets=assets",  # Include assets directory
 ]
@@ -36,7 +38,10 @@ logging.basicConfig(
     format="[bold cyan]%(name)s[/] %(message)s",
     handlers=[
         rich.logging.RichHandler(
-            rich_tracebacks=True, show_time=False, show_level=False, markup=True
+            rich_tracebacks=True,
+            show_time=False,
+            show_level=False,
+            markup=True
         )
     ],
 )
@@ -71,7 +76,12 @@ def build() -> None:
         if returncode != 0:
             raise subprocess.CalledProcessError(
                 returncode,
-                [VENV_PYTHON, "-m", COMPILER, *COMPILER_ARGUMENTS, ENTRY_POINT],
+                [
+                    VENV_PYTHON,
+                    "-m", COMPILER,
+                    *COMPILER_ARGUMENTS,
+                    ENTRY_POINT
+                ],
             )
         progress.remove_task(compiling_task)
         cleaning_task = progress.add_task("[cyan]Finalizing...", total=1)
