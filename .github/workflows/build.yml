@@ -39,11 +39,11 @@ jobs:
         run: |
           mkdir -p dist/
           if [[ "${{ runner.os }}" == "Windows" ]]; then
-            powershell Compress-Archive -Path "justkeepswimming.dist\*" -DestinationPath "dist/justkeepswimming-${{ runner.os }}-${{ runner.arch }}-${{ github.event.release.tag_name }}.zip"
+            powershell Compress-Archive -Path "build/justkeepswimming.dist/*" -DestinationPath "dist/justkeepswimming-${{ runner.os }}-${{ runner.arch }}-${{ github.event.release.tag_name }}.zip"
           else
-            tar -czf dist/justkeepswimming-${{ runner.os }}-${{ runner.arch }}-${{ github.event.release.tag_name }}.tar.gz -C justkeepswimming.dist .
+            tar -czf dist/justkeepswimming-${{ runner.os }}-${{ runner.arch }}-${{ github.event.release.tag_name }}.tar.gz -C build/justkeepswimming.dist .
           fi
-
+  
       - name: Upload compressed build artifacts
         uses: actions/upload-artifact@v4
         with:
