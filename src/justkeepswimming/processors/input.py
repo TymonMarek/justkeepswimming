@@ -17,6 +17,7 @@ LINEAR_INPUT_ACTION_TO_WISH_VECTOR: dict[InputActionId, Vector2] = {
     InputActionId.PLAYER_MOVE_DOWN: Vector2(-1, 0),
 }
 
+
 class PlayerLinearMovementInputProcessor(Processor):
     reads = frozenset({InputPseudoComponent})
     writes = frozenset({PlayerLinearMovementInputComponent})
@@ -40,7 +41,9 @@ class PlayerLinearMovementInputProcessor(Processor):
         if direction.length_squared() > 0:
             direction = direction.normalize()
 
-        for _, (wish,) in scene_context.query(PlayerLinearMovementInputComponent):
+        for _, (wish,) in scene_context.query(
+            PlayerLinearMovementInputComponent
+        ):
             wish.thrust = direction
 
 
@@ -73,5 +76,7 @@ class PlayerAngularMovementInputProcessor(Processor):
             if action.active:
                 torque += wish_torque
 
-        for _, (wish,) in scene_context.query(PlayerAngularMovementInputComponent):
+        for _, (wish,) in scene_context.query(
+            PlayerAngularMovementInputComponent
+        ):
             wish.torque = torque
