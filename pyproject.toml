@@ -36,10 +36,13 @@ dev = [
 ]
 
 [project.scripts]
-game = "justkeepswimming.main:main"
 build = "justkeepswimming.build:main"
-prof-summary = "justkeepswimming.debug.viewer:cli_summary"
-prof-frame = "justkeepswimming.debug.viewer:cli_frame"
+profiler-generate-summary = "justkeepswimming.debug.viewer:cli_summary"
+profiler-generate-frame-summary = "justkeepswimming.debug.viewer:cli_frame"
+
+[tool.nuitka]
+standalone = true
+enable-plugin = ["pygame"]
 
 [build-system]
 requires = ["setuptools>=65.5.1", "wheel"]
