@@ -2,7 +2,7 @@ name: Build, hash, sign, and upload release artifacts
 
 on:
   release:
-    types: [published]
+    types: [published, prereleased, created, edited, released]
 
 jobs:
   build:
