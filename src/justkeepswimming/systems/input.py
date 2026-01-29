@@ -116,7 +116,8 @@ class Keyboard:
         self._on_key_down.connect(self._handle_key_down_event)
         self._on_key_up.connect(self._handle_key_up_event)
 
-    async def _get_keyboard_key(self, key_type: KeyboardKeyType) -> KeyboardKey:
+    async def _get_keyboard_key(
+            self, key_type: KeyboardKeyType) -> KeyboardKey:
         key = self.keys.get(key_type)
         if key is None:
             key = KeyboardKey(key_type)
@@ -174,7 +175,8 @@ class Mouse:
         self.position: Vector2 = Vector2(0, 0)
 
         self._on_motion = dispatcher.get_signal_for(pygame.MOUSEMOTION)
-        self._on_button_down = dispatcher.get_signal_for(pygame.MOUSEBUTTONDOWN)
+        self._on_button_down = dispatcher.get_signal_for(
+            pygame.MOUSEBUTTONDOWN)
         self._on_button_up = dispatcher.get_signal_for(pygame.MOUSEBUTTONUP)
 
         self.on_mouse_move = Signal[Vector2]()
@@ -188,7 +190,8 @@ class Mouse:
     async def _handle_motion_event(self, event: Event) -> None:
         self.position = Vector2(event.pos)
 
-    async def _get_mouse_button(self, button_type: MouseButtonType) -> MouseButton:
+    async def _get_mouse_button(
+            self, button_type: MouseButtonType) -> MouseButton:
         button = self.buttons.get(button_type)
         if button is None:
             button = MouseButton(button_type)

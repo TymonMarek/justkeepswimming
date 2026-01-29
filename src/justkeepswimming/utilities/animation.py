@@ -98,8 +98,7 @@ class AnimationTrack:
             logger.debug(
                 f"Loaded {
                     surface.get_size()} frame at timestamp {
-                    keyframe.timestamp}"
-            )
+                    keyframe.timestamp}")
 
     async def play(self) -> None:
         if self.state == AnimationTrackState.PLAYING:
@@ -163,9 +162,8 @@ class Animator:
         return track
 
     async def get_active_track(self) -> AnimationTrack | None:
-        playing = [
-            t for t in self.tracks.values() if t.state == AnimationTrackState.PLAYING
-        ]
+        playing = [t for t in self.tracks.values() if t.state ==
+                   AnimationTrackState.PLAYING]
         if not playing:
             return None
         return max(playing, key=lambda t: t.priority.value)

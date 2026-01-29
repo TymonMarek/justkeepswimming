@@ -6,10 +6,8 @@ from justkeepswimming.utilities.context import EngineContext
 from justkeepswimming.utilities.scene import Scene
 
 
-async def load(
-        stage_context: StageContext,
-        engine_context: EngineContext
-        ) -> Scene:
+async def load(stage_context: StageContext,
+               engine_context: EngineContext) -> Scene:
     scene = Scene(SceneID.MENU, engine_context)
     MainCameraPrefab().construct("MainCamera", scene)
     TropicalBackgroundPrefabGroup().construct("Background", scene)

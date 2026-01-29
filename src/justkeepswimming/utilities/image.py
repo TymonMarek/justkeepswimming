@@ -86,8 +86,7 @@ class Image:
         logger.debug(
             f"Image loaded from {
                 self.path} with size {
-                self._surface.get_size()}"
-        )
+                self._surface.get_size()}")
 
 
 class Frame:

@@ -17,8 +17,8 @@ COMPILER_ARGUMENTS: list[str] = [
     "--standalone",  # Create a standalone executable
     "--output-dir=dist",  # Output directory
     f"--output-filename=justkeepswimming{
-        ".exe" if platform.system() == "Windows" else ""
-        }",  # Output filename
+        '.exe' if platform.system() == 'Windows' else ''
+    }",  # Output filename
     "--windows-icon-from-ico=assets/icon.png",  # Windows icon
     "--macos-app-icon=assets/icon.png",  # macOS icon
     "--linux-icon=assets/icon.png",  # Linux icon
@@ -41,9 +41,7 @@ logging.basicConfig(
             rich_tracebacks=True,
             show_time=False,
             show_level=False,
-            markup=True
-        )
-    ],
+            markup=True)],
 )
 logger = logging.getLogger(__package__)
 
@@ -76,12 +74,7 @@ def build() -> None:
         if returncode != 0:
             raise subprocess.CalledProcessError(
                 returncode,
-                [
-                    VENV_PYTHON,
-                    "-m", COMPILER,
-                    *COMPILER_ARGUMENTS,
-                    ENTRY_POINT
-                ],
+                [VENV_PYTHON, "-m", COMPILER, *COMPILER_ARGUMENTS, ENTRY_POINT],
             )
         progress.remove_task(compiling_task)
         cleaning_task = progress.add_task("[cyan]Finalizing...", total=1)

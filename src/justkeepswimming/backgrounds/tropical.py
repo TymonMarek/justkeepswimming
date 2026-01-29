@@ -8,7 +8,10 @@ from justkeepswimming.components.tile import (
     AutoTileScrollComponent,
     TileTextureComponent,
 )
-from justkeepswimming.prefabs.background import MouseParallaxBackgroundLayerPrefab, ScrollingParallaxBackgroundLayerPrefab
+from justkeepswimming.prefabs.background import (
+    MouseParallaxBackgroundLayerPrefab,
+    ScrollingParallaxBackgroundLayerPrefab,
+)
 from justkeepswimming.utilities.image import Image
 from justkeepswimming.utilities.prefab import Prefab, PrefabGroup
 
@@ -32,7 +35,7 @@ class TropicalFishBackgroundLayerPrefab(Prefab):
     extends = ScrollingParallaxBackgroundLayerPrefab()
     components = [
         TileTextureComponent(Image(Path("assets/backgrounds/tropical/2.png"))),
-        AutoTileScrollComponent(speed=Vector2(50,0)),
+        AutoTileScrollComponent(speed=Vector2(50, 0)),
         TransformComponent(
             position=Vector2(0, 0),
             size=Vector2(0, 0),
@@ -41,6 +44,7 @@ class TropicalFishBackgroundLayerPrefab(Prefab):
         RendererComponent(layer=-8),
     ]
     processors = []
+
 
 class TropicalRocksLayerPrefab(Prefab):
     extends = MouseParallaxBackgroundLayerPrefab()

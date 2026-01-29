@@ -59,7 +59,8 @@ class Signal(Generic[P]):
                 *(connection.fire(*args, **kwargs) for connection in self.connections)
             )
         except CancelledError:
-            logger.debug("Signal emission was cancelled by asyncio, exiting...")
+            logger.debug(
+                "Signal emission was cancelled by asyncio, exiting...")
 
     def emit_sync(self, *args: P.args, **kwargs: P.kwargs) -> None:
         try:
