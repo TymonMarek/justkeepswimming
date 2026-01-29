@@ -7,7 +7,7 @@ import rich.logging
 from rich.progress import Progress, TimeElapsedColumn, TextColumn, BarColumn
 import toml
 
-LOG_FILE_PATH: str = "dist/build.log"
+LOG_FILE: str = "build.log"
 VENV_PYTHON: str = (
     ".venv/bin/python"
     if platform.system() != "Windows"
@@ -23,7 +23,7 @@ COMPILER_ARGUMENTS: list[str] = [
     "--output-dir=build",  # Output directory
     f"--output-filename=justkeepswimming{
         '.exe' if platform.system() == 'Windows' else ''
-    }",  # Output filename
+    }",
     "--windows-icon-from-ico=assets/icon.png",  # Windows icon
     "--macos-app-icon=assets/icon.png",  # macOS icon
     "--linux-icon=assets/icon.png",  # Linux icon
@@ -71,9 +71,9 @@ def build() -> None:
             text=True,
         )
         compiler_logger = logging.getLogger(COMPILER.capitalize())
-        dist_path = Path("dist")
-        dist_path.mkdir(exist_ok=True)
-        log_file = open(LOG_FILE_PATH, "w")
+        build_path = Path("build")
+        build_path.mkdir(exist_ok=True)
+        log_file = open(LOG_FILE, mode="w", encoding="utf-8")
         if process.stdout:
             for line in process.stdout:
                 compiler_logger.debug(line.strip())
