@@ -6,7 +6,7 @@ import time
 import pygame
 
 from justkeepswimming.debug.profiler import Profiler
-from justkeepswimming.scenes import SceneID, default
+from justkeepswimming.scenes import SceneID, menu
 from justkeepswimming.systems.clock import Clock, TickContext
 from justkeepswimming.systems.dispatcher import Dispatcher
 from justkeepswimming.systems.input import Input
@@ -44,7 +44,7 @@ class Engine:
         self.stage = Stage(
             self.context,
             {
-                SceneID.DEFAULT: default.load,
+                SceneID.MENU: menu.load,
             },
         )
 
