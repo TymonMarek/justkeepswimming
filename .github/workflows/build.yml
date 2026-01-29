@@ -1,0 +1,111 @@
+name: Build, hash, sign, and upload release artifacts
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version-file: ".python-version"
+
+      - name: Setup UV
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: '0.9.27'
+
+      - name: Install dependencies
+        run: uv sync --locked --group build
+
+      - name: Build project
+        run: uv run build 
+
+      - name: Compress build artifacts
+        run: |
+          mkdir -p dist/
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            powershell Compress-Archive -Path "justkeepswimming.dist\*" -DestinationPath "dist/justkeepswimming-${{ runner.os }}-${{ runner.arch }}-${{ github.event.release.tag_name }}.zip"
+          else
+            tar -czf dist/justkeepswimming-${{ runner.os }}-${{ runner.arch }}-${{ github.event.release.tag_name }}.tar.gz -C justkeepswimming.dist .
+          fi
+
+      - name: Upload compressed build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          path: dist/
+
+  hash:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist/
+
+      - name: Compute hashes for all artifacts
+        run: |
+          shopt -s globstar
+          for file in **/*.{zip,tar.gz}; do
+            [ -f "$file" ] || continue
+            sha256sum "$file" > "$file.sha256"
+          done
+
+
+      - name: Upload hashes
+        uses: actions/upload-artifact@v4
+        with:
+          path: dist/**/*.sha256
+
+  sign:
+    needs: hash
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist/
+
+      - name: Import code signing private key
+        env:
+          CODE_SIGNING_PRIVATE_KEY: ${{ secrets.CODE_SIGNING_PRIVATE_KEY }}
+        run: echo "$CODE_SIGNING_PRIVATE_KEY" | gpg --batch --import
+
+      - name: Sign all hashes and archives
+        run: |
+          cd dist
+          shopt -s globstar
+          for file in **/*.{zip,tar.gz,sha256}; do
+            [ -f "$file" ] || continue
+            gpg --batch --yes --armor --output "$file.sig" --detach-sign "$file"
+          done
+
+      - name: Upload signatures
+        uses: actions/upload-artifact@v4
+        with:
+          path: dist/**/*.sig
+          name: signatures
+
+  upload:
+    needs: sign
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist/
+
+      - name: Upload artifacts to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/**/*
