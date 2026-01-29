@@ -15,7 +15,8 @@ C = TypeVar("C")
 
 
 class Entity:
-    def __init__(self, entity_id: int, name: str, context: "SceneContext") -> None:
+    def __init__(self, entity_id: int, name: str,
+                 context: "SceneContext") -> None:
         self.id = entity_id
         self.maid = Maid()
         self.name = name
@@ -62,11 +63,11 @@ class SceneContext:
         self.on_entity_deleted = Signal[Entity]()
         self.on_component_added = Signal[tuple[Entity, Component]]()
         self.on_component_removed = Signal[tuple[Entity, Component]]()
-        self._query_cache: dict[
-            tuple[type[Component], ...], list[tuple[Entity, tuple[Component, ...]]]
-        ] = {}
+        self._query_cache: dict[tuple[type[Component], ...],
+                                list[tuple[Entity, tuple[Component, ...]]]] = {}
         self._query_one_cache: dict[
-            tuple[type[Component], ...], tuple[Entity, tuple[Component, ...]] | None
+            tuple[type[Component], ...], tuple[Entity,
+                                               tuple[Component, ...]] | None
         ] = {}
 
     def _invalidate_caches(self) -> None:
@@ -97,13 +98,18 @@ class SceneContext:
         for incompatible_component in component.incompatible_with:
             if incompatible_component in self.components[entity.id]:
                 raise ValueError(
-                    f"Component {type(component).__name__} is incompatible with existing component {incompatible_component.__name__} on entity {entity.id}"
-                )
+                    f"Component {
+                        type(component).__name__} is incompatible with existing component {
+                        incompatible_component.__name__} on entity {
+                        entity.id}")
         self.components[entity.id][type(component)] = component
         self.on_component_added.emit_sync((entity, component))
         self._invalidate_caches()
 
-    def remove_component(self, entity: Entity, component_type: type[Component]) -> None:
+    def remove_component(
+            self,
+            entity: Entity,
+            component_type: type[Component]) -> None:
         if entity.id not in self.components:
             raise RuntimeError(
                 f"Entity {entity.id} does not exist in the scene context."
@@ -141,7 +147,8 @@ class SceneContext:
         return signal
 
     @overload
-    def query(self, component_type: type[C1]) -> Iterable[tuple[Entity, tuple[C1]]]: ...
+    def query(self, component_type: type[C1]
+              ) -> Iterable[tuple[Entity, tuple[C1]]]: ...
 
     @overload
     def query(
@@ -174,7 +181,8 @@ class SceneContext:
             return
         results: list[tuple[Entity, tuple[Component, ...]]] = []
         for entity_id, components in self.components.items():
-            if all(component_type in components.keys() for component_type in classes):
+            if all(component_type in components.keys()
+                   for component_type in classes):
                 entity = self.entities[entity_id]
                 components_tuple = tuple(
                     components[component_type] for component_type in classes
@@ -216,7 +224,8 @@ class SceneContext:
         if self._query_one_cache.get(classes) is not None:
             return self._query_one_cache[classes]
         for entity_id, components in self.components.items():
-            if all(component_type in components.keys() for component_type in classes):
+            if all(component_type in components.keys()
+                   for component_type in classes):
                 entity = self.entities[entity_id]
                 components_tuple = tuple(
                     components[component_type] for component_type in classes

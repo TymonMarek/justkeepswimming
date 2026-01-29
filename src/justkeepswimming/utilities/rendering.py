@@ -13,8 +13,10 @@ def render_arrow(
     direction = (target - start).normalize()
     perpendicular = Vector2(-direction.y, direction.x)
     arrow_size = 5 + thickness
-    left_wing = target - direction * arrow_size + perpendicular * (arrow_size / 2)
-    right_wing = target - direction * arrow_size - perpendicular * (arrow_size / 2)
+    left_wing = target - direction * arrow_size + \
+        perpendicular * (arrow_size / 2)
+    right_wing = target - direction * arrow_size - \
+        perpendicular * (arrow_size / 2)
     pygame.draw.polygon(surface, color, [target, left_wing, right_wing])
 
 

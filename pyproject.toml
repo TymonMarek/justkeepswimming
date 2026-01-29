@@ -9,9 +9,9 @@ license = "GPL-3.0"
 requires-python = ">=3.13"
 dependencies = [
     "asyncio>=4.0.0",
-    "psutil>=7.2.1",
+    "psutil>=7.2.2",
     "pygame-ce>=2.5.6",
-    "rich>=14.2.0",
+    "rich>=14.3.1",
 ]
 
 [tool.uv.sources]
@@ -25,37 +25,15 @@ build = [
 dev = [
     "matplotlib>=3.10.8",
     "autopep8>=2.3.2",
-    "black>=25.12.0",
+    "black>=26.1.0",
     "flake8>=7.3.0",
     "isort>=7.0.0",
     "mypy>=1.19.1",
     "pre-commit>=4.5.1",
     "pycodestyle>=2.14.0",
     "pylint>=4.0.4",
-    "types-psutil>=7.2.1.20251231",
+    "types-psutil>=7.2.1.20260116",
 ]
-
-[tool.black]
-line-length = 79
-
-[tool.isort]
-profile = "black"
-
-[tool.mypy]
-follow_imports = "silent"
-
-[tool.autopep8]
-max-line-length = 79
-
-[tool.flake8]
-max-line-length = 79
-
-[tool.pylint]
-max-line-length = 79
-
-[tool.pycodestyle]
-max-line-length = 79
-
 
 [project.scripts]
 game = "justkeepswimming.main:main"

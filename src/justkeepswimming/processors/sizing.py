@@ -52,7 +52,8 @@ class RendererTransformConstraintProcessor(Processor):
             TransformComponent, RendererComponent
         ):
             if transform.size != Vector2(renderer.surface.get_size()):
-                surface = Surface(transform.size, flags=renderer.surface.get_flags())
+                surface = Surface(
+                    transform.size, flags=renderer.surface.get_flags())
                 destination = (
                     Vector2(surface.get_size()) / 2
                     - transform.size.elementwise() * transform.anchor

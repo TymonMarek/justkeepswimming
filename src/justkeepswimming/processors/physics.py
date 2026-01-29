@@ -15,7 +15,8 @@ from justkeepswimming.utilities.context import EngineContext
 
 
 class AngularPhysicsProcessor(Processor):
-    reads = frozenset({AngularPhysicsComponent, PlayerAngularMovementInputComponent})
+    reads = frozenset(
+        {AngularPhysicsComponent, PlayerAngularMovementInputComponent})
     writes = frozenset({TransformComponent, AngularPhysicsComponent})
 
     async def update(
@@ -41,8 +42,9 @@ class AngularPhysicsProcessor(Processor):
 
             angular_physics.angular_velocity += torque_acceleration * delta
             angular_physics.angular_velocity -= (
-                angular_physics.angular_velocity * angular_physics.angular_drag * delta
-            )
+                angular_physics.angular_velocity *
+                angular_physics.angular_drag *
+                delta)
 
             if (
                 abs(angular_physics.angular_velocity)
@@ -57,7 +59,8 @@ class AngularPhysicsProcessor(Processor):
 
 
 class LinearPhysicsProcessor(Processor):
-    reads = frozenset({LinearPhysicsComponent, PlayerLinearMovementInputComponent})
+    reads = frozenset(
+        {LinearPhysicsComponent, PlayerLinearMovementInputComponent})
     writes = frozenset({TransformComponent, LinearPhysicsComponent})
     alongside = frozenset({AngularPhysicsProcessor})
 
