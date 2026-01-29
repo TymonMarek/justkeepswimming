@@ -4,6 +4,9 @@ on:
   release:
     types: [published, prereleased, created, edited, released]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
