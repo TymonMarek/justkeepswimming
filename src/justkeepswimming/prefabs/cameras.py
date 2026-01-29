@@ -1,4 +1,6 @@
-from justkeepswimming.components.render import CameraComponent, MainCameraComponent
+from justkeepswimming.components.render import (
+    CameraComponent, MainCameraComponent
+)
 from justkeepswimming.components.sizing import SceneSizeConstraintComponent
 from justkeepswimming.prefabs.physics import GameObjectPrefab
 from justkeepswimming.processors.camera import CameraProcessor

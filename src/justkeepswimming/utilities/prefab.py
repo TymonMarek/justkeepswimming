@@ -45,9 +45,9 @@ class Prefab:
 class PrefabGroup:
     prefabs: dict[str, Prefab]
 
-    def construct(self, scene: "Scene") -> list[Entity]:
+    def construct(self, name: str, scene: "Scene") -> list[Entity]:
         entities: list[Entity] = []
         for prefab_name, prefab in self.prefabs.items():
-            entity = prefab.construct(prefab_name, scene)
+            entity = prefab.construct(f"{name}_{prefab_name}", scene)
             entities.append(entity)
         return entities

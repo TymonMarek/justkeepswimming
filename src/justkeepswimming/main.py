@@ -28,7 +28,7 @@ def setup_logging(verbosity: int):
 async def game_loop(launch_options: LaunchOptions):
     engine = Engine(launch_options)
     await engine.start()
-    await engine.stage.switch_scene(SceneID.DEFAULT)
+    await engine.stage.switch_scene(SceneID.MENU)
     await engine.clock.on_stop.wait()
 
 
