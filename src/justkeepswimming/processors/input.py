@@ -11,7 +11,6 @@ from justkeepswimming.systems.input import InputActionId
 from justkeepswimming.utilities.context import EngineContext
 from justkeepswimming.utilities.logger import logger
 
-
 LINEAR_INPUT_ACTION_TO_WISH_VECTOR: dict[InputActionId, Vector2] = {
     InputActionId.PLAYER_MOVE_UP: Vector2(1, 0),
     InputActionId.PLAYER_MOVE_DOWN: Vector2(-1, 0),
@@ -24,11 +23,11 @@ class PlayerLinearMovementInputProcessor(Processor):
 
     async def update(
         self,
-        tick_context: TickContext,
-        scene_context: SceneContext,
-        engine_context: EngineContext,
+        tick: TickContext,
+        scene: SceneContext,
+        engine: EngineContext,
     ) -> None:
-        input_actions = engine_context.input.action_manager.actions
+        input_actions = engine.input.action_manager.actions
         direction = Vector2(0, 0)
         for action_id, vector in LINEAR_INPUT_ACTION_TO_WISH_VECTOR.items():
             action = input_actions.get(action_id)
@@ -41,8 +40,7 @@ class PlayerLinearMovementInputProcessor(Processor):
         if direction.length_squared() > 0:
             direction = direction.normalize()
 
-        for _, (wish,) in scene_context.query(
-                PlayerLinearMovementInputComponent):
+        for _, (wish,) in scene.query(PlayerLinearMovementInputComponent):
             wish.thrust = direction
 
 
@@ -58,11 +56,11 @@ class PlayerAngularMovementInputProcessor(Processor):
 
     async def update(
         self,
-        tick_context: TickContext,
-        scene_context: SceneContext,
-        engine_context: EngineContext,
+        tick: TickContext,
+        scene: SceneContext,
+        engine: EngineContext,
     ) -> None:
-        input_actions = engine_context.input.action_manager.actions
+        input_actions = engine.input.action_manager.actions
         torque = 0.0
         for (
             action_id,
@@ -75,6 +73,5 @@ class PlayerAngularMovementInputProcessor(Processor):
             if action.active:
                 torque += wish_torque
 
-        for _, (wish,) in scene_context.query(
-                PlayerAngularMovementInputComponent):
+        for _, (wish,) in scene.query(PlayerAngularMovementInputComponent):
             wish.torque = torque

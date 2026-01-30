@@ -18,13 +18,11 @@ class SpriteProcessor(Processor):
 
     async def update(
         self,
-        tick_context: TickContext,
-        scene_context: SceneContext,
-        engine_context: EngineContext,
+        tick: TickContext,
+        scene: SceneContext,
+        engine: EngineContext,
     ) -> None:
-        for _, (sprite, renderer) in scene_context.query(
-            SpriteComponent, RendererComponent
-        ):
+        for _, (sprite, renderer) in scene.query(SpriteComponent, RendererComponent):
             if not sprite.content:
                 continue
             renderer.surface.blit(

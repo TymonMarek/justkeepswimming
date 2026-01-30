@@ -12,11 +12,11 @@ class HealthProcessor(Processor):
 
     async def update(
         self,
-        tick_context: TickContext,
-        scene_context: SceneContext,
-        engine_context: EngineContext,
+        tick: TickContext,
+        scene: SceneContext,
+        engine: EngineContext,
     ) -> None:
-        for _, (health,) in scene_context.query(HealthComponent):
+        for _, (health,) in scene.query(HealthComponent):
             if (
                 health.current_health <= 0
                 and not health.is_invincible

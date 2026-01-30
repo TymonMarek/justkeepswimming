@@ -29,13 +29,13 @@ class SceneCenterConstraintProcessor(Processor):
 
     async def update(
         self,
-        tick_context: TickContext,
-        scene_context: SceneContext,
-        engine_context: EngineContext,
+        tick: TickContext,
+        scene: SceneContext,
+        engine: EngineContext,
     ) -> None:
-        for _, (transform, _) in scene_context.query(
+        for _, (transform, _) in scene.query(
             TransformComponent, SceneCenterConstraintComponent
         ):
-            size = Vector2(scene_context.surface.get_size())
+            size = Vector2(scene.surface.get_size())
             transform.position.x = size.x / 2
             transform.position.y = size.y / 2

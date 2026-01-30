@@ -18,27 +18,24 @@ class CameraProcessor(Processor):
 
     async def update(
         self,
-        tick_context: TickContext,
-        scene_context: SceneContext,
-        engine_context: EngineContext,
+        tick: TickContext,
+        scene: SceneContext,
+        engine: EngineContext,
     ) -> None:
-        for _, (camera, transform) in scene_context.query(
-            CameraComponent, TransformComponent
-        ):
-            camera.surface = scene_context.surface.subsurface(
+        for _, (camera, transform) in scene.query(CameraComponent, TransformComponent):
+            camera.surface = scene.surface.subsurface(
                 Rect(transform.position, transform.size)
             )
-        result = scene_context.query_one(
+        result = scene.query_one(
             CameraComponent, TransformComponent, MainCameraComponent
         )
         if result is not None:
             _, (camera, transform, _) = result
-            window = engine_context.window
+            window = engine.window
             camera_width, camera_height = camera.surface.get_size()
             window_width, window_height = window.surface.get_size()
 
-            scale = min(window_width / camera_width,
-                        window_height / camera_height)
+            scale = min(window_width / camera_width, window_height / camera_height)
             new_width = int(camera_width * scale)
             new_height = int(camera_height * scale)
 

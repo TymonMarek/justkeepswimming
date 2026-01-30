@@ -25,12 +25,12 @@ class SceneSizeConstraintProcessor(Processor):
 
     async def update(
         self,
-        tick_context: TickContext,
-        scene_context: SceneContext,
-        engine_context: EngineContext,
+        tick: TickContext,
+        scene: SceneContext,
+        engine: EngineContext,
     ) -> None:
-        surface = scene_context.surface
-        for _, (transform, _) in scene_context.query(
+        surface = scene.surface
+        for _, (transform, _) in scene.query(
             TransformComponent, SceneSizeConstraintComponent
         ):
             transform.size = Vector2(surface.get_size())
@@ -44,16 +44,15 @@ class RendererTransformConstraintProcessor(Processor):
 
     async def update(
         self,
-        tick_context: TickContext,
-        scene_context: SceneContext,
-        engine_context: EngineContext,
+        tick: TickContext,
+        scene: SceneContext,
+        engine: EngineContext,
     ) -> None:
-        for _, (transform, renderer) in scene_context.query(
+        for _, (transform, renderer) in scene.query(
             TransformComponent, RendererComponent
         ):
             if transform.size != Vector2(renderer.surface.get_size()):
-                surface = Surface(
-                    transform.size, flags=renderer.surface.get_flags())
+                surface = Surface(transform.size, flags=renderer.surface.get_flags())
                 destination = (
                     Vector2(surface.get_size()) / 2
                     - transform.size.elementwise() * transform.anchor
@@ -74,11 +73,11 @@ class AspectRatioConstraintProcessor(Processor):
 
     async def update(
         self,
-        tick_context: TickContext,
-        scene_context: SceneContext,
-        engine_context: EngineContext,
+        tick: TickContext,
+        scene: SceneContext,
+        engine: EngineContext,
     ) -> None:
-        for _, (transform, aspect_ratio_constraint) in scene_context.query(
+        for _, (transform, aspect_ratio_constraint) in scene.query(
             TransformComponent, AspectRatioConstraintComponent
         ):
             width, height = transform.size
@@ -102,12 +101,12 @@ class ScreenSizeConstraintProcessor(Processor):
 
     async def update(
         self,
-        tick_context: TickContext,
-        scene_context: SceneContext,
-        engine_context: EngineContext,
+        tick: TickContext,
+        scene: SceneContext,
+        engine: EngineContext,
     ) -> None:
-        window = engine_context.window
-        for _, (transform, _) in scene_context.query(
+        window = engine.window
+        for _, (transform, _) in scene.query(
             TransformComponent, ScreenSizeConstraintComponent
         ):
             transform.size = window.size

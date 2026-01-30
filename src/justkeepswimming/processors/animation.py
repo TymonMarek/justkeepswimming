@@ -24,29 +24,26 @@ class AnimationTrackPlaybackProcessor(Processor):
     reads = frozenset({AnimatorComponent, RendererComponent})
     writes = frozenset({AnimatorComponent, RendererComponent})
     before = frozenset({RendererProcessor})
-    after = frozenset(
-        {RendererTransformConstraintProcessor, RendererPreProcessor})
+    after = frozenset({RendererTransformConstraintProcessor, RendererPreProcessor})
 
     async def update(
         self,
-        tick_context: TickContext,
-        scene_context: SceneContext,
-        engine_context: EngineContext,
+        tick: TickContext,
+        scene: SceneContext,
+        engine: EngineContext,
     ) -> None:
         for _, (
-            animation_component,
-            renderer_component,
-        ) in scene_context.query(
+            animator,
+            renderer,
+        ) in scene.query(
             AnimatorComponent,
             RendererComponent,
         ):
-            await animation_component.animator.update(tick_context, scene_context)
-            current_frame = await animation_component.animator.get_current_frame()
+            await animator.animator.update(tick, scene)
+            current_frame = await animator.animator.get_current_frame()
             if current_frame is not None:
-                renderer_component.surface.blit(
-                    pygame.transform.scale(
-                        current_frame, renderer_component.surface.get_size()
-                    ),
+                renderer.surface.blit(
+                    pygame.transform.scale(current_frame, renderer.surface.get_size()),
                     Vector2(0, 0),
                 )
 
@@ -62,31 +59,31 @@ class CharacterAnimationStateProcessor(Processor):
 
     async def update(
         self,
-        tick_context: TickContext,
-        scene_context: SceneContext,
-        engine_context: EngineContext,
+        tick: TickContext,
+        scene: SceneContext,
+        engine: EngineContext,
     ) -> None:
-        for _, (anim_state, transform, physics) in scene_context.query(
+        for _, (animation_state, transform, physics) in scene.query(
             AnimationStateComponent,
             TransformComponent,
             LinearPhysicsComponent,
         ):
-            accel = physics.acceleration.length()
+            acceleration = physics.acceleration.length()
 
-            if accel <= self.ACCEL_EPS:
-                if anim_state.current_state != AnimationType.IDLE:
-                    anim_state.current_state = AnimationType.IDLE
+            if acceleration <= self.ACCEL_EPS:
+                if animation_state.current_state != AnimationType.IDLE:
+                    animation_state.current_state = AnimationType.IDLE
                 continue
 
-            vel = physics.velocity
-            if vel.length_squared() < 1e-6:
+            velocity = physics.velocity
+            if velocity.length_squared() < 1e-6:
                 desired = AnimationType.WALK
             else:
-                move_dir = vel.normalize()
-                facing_dir = Vector2(1, 0).rotate(transform.rotation)
-                dot = move_dir.dot(facing_dir)
+                move_direction = velocity.normalize()
+                facing_direction = Vector2(1, 0).rotate(transform.rotation)
+                dot = move_direction.dot(facing_direction)
 
-                if anim_state.current_state == AnimationType.REVERSE_WALK:
+                if animation_state.current_state == AnimationType.REVERSE_WALK:
                     desired = (
                         AnimationType.REVERSE_WALK
                         if dot < +self.DOT_HYST
@@ -99,8 +96,8 @@ class CharacterAnimationStateProcessor(Processor):
                         else AnimationType.REVERSE_WALK
                     )
 
-            if anim_state.current_state != desired:
-                anim_state.current_state = desired
+            if animation_state.current_state != desired:
+                animation_state.current_state = desired
 
 
 class CharacterAnimationProcessor(Processor):
@@ -112,39 +109,34 @@ class CharacterAnimationProcessor(Processor):
 
     async def update(
         self,
-        tick_context: TickContext,
-        scene_context: SceneContext,
-        engine_context: EngineContext,
+        tick: TickContext,
+        scene: SceneContext,
+        engine: EngineContext,
     ) -> None:
         for _, (
-            animator_component,
-            animation_state_component,
-            spritesheet_component,
-        ) in scene_context.query(
+            animator,
+            animation_state,
+            spritesheet,
+        ) in scene.query(
             AnimatorComponent,
             AnimationStateComponent,
             SpritesheetComponent,
         ):
-            desired_animation = spritesheet_component.animations[
-                animation_state_component.current_state
-            ]
+            desired_animation = spritesheet.animations[animation_state.current_state]
             if (
-                animation_state_component.current_track is None
-                or animation_state_component.current_track.animation
-                != desired_animation
+                animation_state.current_track is None
+                or animation_state.current_track.animation != desired_animation
             ):
                 if (
-                    animation_state_component.current_track is not None
-                    and animation_state_component.current_track.priority.value
+                    animation_state.current_track is not None
+                    and animation_state.current_track.priority.value
                     >= desired_animation.priority.value
                 ):
-                    await animation_state_component.current_track.stop()
-                animation_state_component.current_track = (
-                    await animator_component.animator.load_animation(
-                        animation_state_component.current_state, desired_animation
-                    )
+                    await animation_state.current_track.stop()
+                animation_state.current_track = await animator.animator.load_animation(
+                    animation_state.current_state, desired_animation
                 )
-                await animation_state_component.current_track.play()
+                await animation_state.current_track.play()
 
 
 class VelocityAffectsAnimationSpeedProcessor(Processor):
@@ -161,15 +153,15 @@ class VelocityAffectsAnimationSpeedProcessor(Processor):
 
     async def update(
         self,
-        tick_context: TickContext,
-        scene_context: SceneContext,
-        engine_context: EngineContext,
+        tick: TickContext,
+        scene: SceneContext,
+        engine: EngineContext,
     ) -> None:
         for _, (
             animation_state,
             linear_physics,
             velocity_affects_animation_speed,
-        ) in scene_context.query(
+        ) in scene.query(
             AnimationStateComponent,
             LinearPhysicsComponent,
             VelocityAffectsAnimationSpeedComponent,

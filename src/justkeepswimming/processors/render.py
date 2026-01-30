@@ -17,14 +17,12 @@ class RendererProcessor(Processor):
 
     async def update(
         self,
-        tick_context: TickContext,
-        scene_context: SceneContext,
-        engine_context: EngineContext,
+        tick: TickContext,
+        scene: SceneContext,
+        engine: EngineContext,
     ) -> None:
-        scene = scene_context.surface
-        scene.fill(BACKGROUND_COLOR)
-        entities = list(scene_context.query(
-            TransformComponent, RendererComponent))
+        scene.surface.fill(BACKGROUND_COLOR)
+        entities = list(scene.query(TransformComponent, RendererComponent))
         entities.sort(key=lambda item: getattr(item[1][1], "layer", 0))
         for _, (transform, renderer) in entities:
             rotated_surface = pygame.transform.rotate(
@@ -34,7 +32,7 @@ class RendererProcessor(Processor):
             anchor_offset = transform.size.elementwise() * transform.anchor
             position = transform.position - anchor_offset
             rotated_rect.center = (int(position[0]), int(position[1]))
-            scene.blit(rotated_surface, rotated_rect.topleft)
+            scene.surface.blit(rotated_surface, rotated_rect.topleft)
 
 
 class RendererPreProcessor(Processor):
@@ -44,9 +42,9 @@ class RendererPreProcessor(Processor):
 
     async def update(
         self,
-        tick_context: TickContext,
-        scene_context: SceneContext,
-        engine_context: EngineContext,
+        tick: TickContext,
+        scene: SceneContext,
+        engine: EngineContext,
     ) -> None:
-        for _, (renderer,) in scene_context.query(RendererComponent):
+        for _, (renderer,) in scene.query(RendererComponent):
             renderer.surface.fill(Color(0, 0, 0, 0))

@@ -12,41 +12,37 @@ from justkeepswimming.utilities.rendering import render_arrow, render_label
 
 
 class LinearPhysicsDebuggerProcessor(Processor):
-    reads = frozenset(
-        {LinearPhysicsComponent, PlayerLinearMovementInputComponent})
+    reads = frozenset({LinearPhysicsComponent, PlayerLinearMovementInputComponent})
     writes = frozenset({})
     debug_only = True
 
     async def update(
         self,
-        tick_context: TickContext,
-        scene_context: SceneContext,
-        engine_context: EngineContext,
+        tick: TickContext,
+        scene: SceneContext,
+        engine: EngineContext,
     ) -> None:
-        surface = scene_context.surface
-        font = engine_context.debug_font
+        surface = scene.surface
+        font = engine.debug_font
 
-        for entity, (linear_physics, transform) in scene_context.query(
+        for entity, (linear_physics, transform) in scene.query(
             LinearPhysicsComponent,
             TransformComponent,
         ):
             origin = Vector2(transform.position)
 
             if entity.has_component(PlayerLinearMovementInputComponent):
-                input = entity.get_component(
-                    PlayerLinearMovementInputComponent).thrust
+                input = entity.get_component(PlayerLinearMovementInputComponent).thrust
                 if input.length() > 0:
                     magnitude = input.normalize() * 25
                     render_arrow(
-                        surface, origin, origin +
-                        magnitude, Color(255, 255, 0), 2
+                        surface, origin, origin + magnitude, Color(255, 255, 0), 2
                     )
                     render_label(surface, origin + magnitude, "input", font)
 
             velocity = linear_physics.velocity
             if velocity.length() > 0:
-                render_arrow(surface, origin, origin +
-                             velocity, Color(0, 255, 0), 2)
+                render_arrow(surface, origin, origin + velocity, Color(0, 255, 0), 2)
                 render_label(surface, origin + velocity, "velocity", font)
 
             acceleration = linear_physics.acceleration
@@ -54,5 +50,4 @@ class LinearPhysicsDebuggerProcessor(Processor):
                 render_arrow(
                     surface, origin, origin + acceleration, Color(255, 0, 0), 2
                 )
-                render_label(surface, origin + acceleration,
-                             "acceleration", font)
+                render_label(surface, origin + acceleration, "acceleration", font)

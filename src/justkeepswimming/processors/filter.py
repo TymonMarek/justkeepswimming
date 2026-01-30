@@ -22,22 +22,19 @@ class TintProcessor(Processor):
 
     async def update(
         self,
-        tick_context: TickContext,
-        scene_context: SceneContext,
-        engine_context: EngineContext,
+        tick: TickContext,
+        scene: SceneContext,
+        engine: EngineContext,
     ) -> None:
-        for _, (tint_component, renderable_component) in scene_context.query(
-            TintComponent, RendererComponent
-        ):
-            tint_color = tint_component.color
-            intensity = tint_component.intensity
+        for _, (tint, renderer) in scene.query(TintComponent, RendererComponent):
+            tint_color = tint.color
+            intensity = tint.intensity
             blended_color = (
                 int(tint_color.r * intensity),
                 int(tint_color.g * intensity),
                 int(tint_color.b * intensity),
                 int(tint_color.a * intensity),
             )
-            tint_surface = renderable_component.surface.copy()
-            tint_surface.fill(
-                blended_color, special_flags=tint_component.blend_mode)
-            renderable_component.surface.blit(tint_surface, (0, 0))
+            tint_surface = renderer.surface.copy()
+            tint_surface.fill(blended_color, special_flags=tint.blend_mode)
+            renderer.surface.blit(tint_surface, (0, 0))

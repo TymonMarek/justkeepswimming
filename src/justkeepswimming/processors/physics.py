@@ -15,19 +15,18 @@ from justkeepswimming.utilities.context import EngineContext
 
 
 class AngularPhysicsProcessor(Processor):
-    reads = frozenset(
-        {AngularPhysicsComponent, PlayerAngularMovementInputComponent})
+    reads = frozenset({AngularPhysicsComponent, PlayerAngularMovementInputComponent})
     writes = frozenset({TransformComponent, AngularPhysicsComponent})
 
     async def update(
         self,
-        tick_context: TickContext,
-        scene_context: SceneContext,
-        engine_context: EngineContext,
+        tick: TickContext,
+        scene: SceneContext,
+        engine: EngineContext,
     ) -> None:
-        delta = tick_context.delta_time * scene_context.time_scale
+        delta = tick.delta_time * scene.time_scale
 
-        for entity, (angular_physics, transform) in scene_context.query(
+        for entity, (angular_physics, transform) in scene.query(
             AngularPhysicsComponent,
             TransformComponent,
         ):
@@ -42,9 +41,8 @@ class AngularPhysicsProcessor(Processor):
 
             angular_physics.angular_velocity += torque_acceleration * delta
             angular_physics.angular_velocity -= (
-                angular_physics.angular_velocity *
-                angular_physics.angular_drag *
-                delta)
+                angular_physics.angular_velocity * angular_physics.angular_drag * delta
+            )
 
             if (
                 abs(angular_physics.angular_velocity)
@@ -59,20 +57,19 @@ class AngularPhysicsProcessor(Processor):
 
 
 class LinearPhysicsProcessor(Processor):
-    reads = frozenset(
-        {LinearPhysicsComponent, PlayerLinearMovementInputComponent})
+    reads = frozenset({LinearPhysicsComponent, PlayerLinearMovementInputComponent})
     writes = frozenset({TransformComponent, LinearPhysicsComponent})
     alongside = frozenset({AngularPhysicsProcessor})
 
     async def update(
         self,
-        tick_context: TickContext,
-        scene_context: SceneContext,
-        engine_context: EngineContext,
+        tick: TickContext,
+        scene: SceneContext,
+        engine: EngineContext,
     ) -> None:
-        delta = tick_context.delta_time * scene_context.time_scale
+        delta = tick.delta_time * scene.time_scale
 
-        for entity, (linear_physics, transform) in scene_context.query(
+        for entity, (linear_physics, transform) in scene.query(
             LinearPhysicsComponent,
             TransformComponent,
         ):
