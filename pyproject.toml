@@ -46,6 +46,7 @@ dev = [
 ]
 
 [project.scripts]
+play = "justkeepswimming.main:main"
 build = "justkeepswimming.build:main"
 profiler-generate-summary = "justkeepswimming.debug.viewer:cli_summary"
 profiler-generate-frame-summary = "justkeepswimming.debug.viewer:cli_frame"
@@ -71,9 +72,9 @@ tag_format = "v{version}"
 add_partial_tags = false
 
 [tool.semantic_release.branches.main]
-match = "(main|master)"
+match = "main"
 prerelease_token = "rc"
-prerelease = true
+prerelease = false
 
 [tool.semantic_release.changelog]
 mode = "update"
