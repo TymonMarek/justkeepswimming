@@ -1,10 +1,6 @@
 [project]
 name = "justkeepswimming"
-<<<<<<< HEAD
 version = "0.0.0"
-=======
-version = "0.1.0"
->>>>>>> f83e5e1 (fix: set project as prerelease)
 description = "A small game about a fish in the deep sea."
 
 readme = "README.md"
