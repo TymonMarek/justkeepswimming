@@ -31,10 +31,12 @@ jobs:
           version: '0.9.27'
 
       - name: Install dependencies
-        run: uv sync --locked --group bump
+        run: uv sync --group bump
       
       - name: Bump version
         run: uv run python-semantic-release -c pyproject.toml version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Commit version bump
         run: |
@@ -68,7 +70,7 @@ jobs:
           version: '0.9.27'
 
       - name: Install dependencies
-        run: uv sync --locked --group build
+        run: uv sync --group build
 
       - name: Build project
         run: uv run build 
@@ -166,7 +168,7 @@ jobs:
           version: '0.9.27'
 
       - name: Install dependencies
-        run: uv sync --locked --group bump
+        run: uv sync --group bump
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -175,3 +177,6 @@ jobs:
 
       - name: Upload release artifacts
         run: uv run python-semantic-release -c pyproject.toml publish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            
