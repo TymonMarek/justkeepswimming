@@ -94,7 +94,9 @@ class Frame:
         self.transform = transform
 
     async def slice(self, texture: Image) -> Surface:
-        anchor_offset = self.transform.size.elementwise() * self.transform.anchor
+        anchor_offset = (
+            self.transform.size.elementwise() * self.transform.anchor
+        )
         top_left = self.transform.position - anchor_offset
 
         region = (await texture.get_surface()).subsurface(

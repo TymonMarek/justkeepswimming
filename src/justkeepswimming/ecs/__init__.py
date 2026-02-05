@@ -63,11 +63,13 @@ class SceneContext:
         self.on_entity_deleted = Signal[Entity]()
         self.on_component_added = Signal[tuple[Entity, Component]]()
         self.on_component_removed = Signal[tuple[Entity, Component]]()
-        self._query_cache: dict[tuple[type[Component], ...],
-                                list[tuple[Entity, tuple[Component, ...]]]] = {}
+        self._query_cache: dict[
+            tuple[type[Component], ...],
+            list[tuple[Entity, tuple[Component, ...]]]
+        ] = {}
         self._query_one_cache: dict[
-            tuple[type[Component], ...], tuple[Entity,
-                                               tuple[Component, ...]] | None
+            tuple[type[Component], ...],
+            tuple[Entity, tuple[Component, ...]] | None
         ] = {}
 
     def _invalidate_caches(self) -> None:
@@ -75,7 +77,8 @@ class SceneContext:
         self._query_one_cache.clear()
 
     def create_entity(self, name: str) -> Entity:
-        # This technically won't affect the cache correctness, since no components exist yet for this entity
+        # This technically won't affect the cache correctness
+        # since no components exist yet for this entity
         # so it is safe to not clear the cache here.
         entity = Entity(len(self.entities) + 1, name, self)
         self.entities[entity.id] = entity
@@ -98,10 +101,10 @@ class SceneContext:
         for incompatible_component in component.incompatible_with:
             if incompatible_component in self.components[entity.id]:
                 raise ValueError(
-                    f"Component {
-                        type(component).__name__} is incompatible with existing component {
-                        incompatible_component.__name__} on entity {
-                        entity.id}")
+                    f"Component {type(component).__name__} is incompatible "
+                    f"with existing component "
+                    f"{incompatible_component.__name__} on entity {entity.id}"
+                )
         self.components[entity.id][type(component)] = component
         self.on_component_added.emit_sync((entity, component))
         self._invalidate_caches()
