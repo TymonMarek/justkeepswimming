@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.2.0 (2026-02-05)
+
+### Features
+
+- **text**: Add text rendering and title screen text
+  ([`57c9964`](https://github.com/TymonMarek/justkeepswimming/commit/57c9964c2f7942584c3e53d6f2662693caf2f6b9))
+
+
 ## v0.1.1 (2026-02-02)
 
 ### Bug Fixes
