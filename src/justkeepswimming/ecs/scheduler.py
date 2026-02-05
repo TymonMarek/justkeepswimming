@@ -83,12 +83,20 @@ class ProcessorScheduler:
         with engine_context.profiler.scope(
             ProfilerScope.PROCESSOR, system.__class__.__name__
         ):
-            return await system.update(tick_context, scene_context, engine_context)
+            return await system.update(
+                tick_context,
+                scene_context,
+                engine_context
+            )
 
     def add_processor(self, processor: Processor) -> None:
-        if processor.debug_only and not self.engine_context.launch_options.debug:
+        debug_mode = self.engine_context.launch_options.debug
+        if processor.debug_only and not debug_mode:
             logger.debug(
-                f"Skipping addition of debug-only system {processor} in non-debug mode.")
+                "Skipping addition of debug-only system ",
+                {processor},
+                " in non-debug mode."
+                )
         if processor in self.processors:
             raise SystemDuplicateEntryException(
                 f"System {processor} is already in the scheduler."
@@ -185,7 +193,10 @@ class ProcessorScheduler:
                         ...
                     else:
                         raise SystemConflictException(
-                            f"Unresolved write-write conflict between {a} and {b} "
+                            "Unresolved write-write conflict between ",
+                            {a},
+                            " and ",
+                            {b},
                             f"on {self._fmt_components(components_both_write)}"
                         )
 

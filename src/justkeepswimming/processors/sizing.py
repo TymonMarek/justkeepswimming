@@ -12,7 +12,10 @@ from justkeepswimming.components.sizing import (
     ScreenSizeConstraintComponent,
 )
 from justkeepswimming.ecs import Processor, SceneContext
-from justkeepswimming.processors.render import RendererPreProcessor, RendererProcessor
+from justkeepswimming.processors.render import (
+    RendererPreProcessor,
+    RendererProcessor
+)
 from justkeepswimming.systems.clock import TickContext
 from justkeepswimming.utilities.context import EngineContext
 

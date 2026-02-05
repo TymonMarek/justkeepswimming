@@ -1,5 +1,10 @@
-from justkeepswimming.backgrounds.tropical import TropicalBackgroundPrefabGroup
-from justkeepswimming.prefabs.cameras import MainCameraPrefab
+from justkeepswimming.backgrounds.tropical import (
+    TropicalBackgroundPrefabGroup,
+)
+from justkeepswimming.prefabs.cameras import (
+    MainCameraPrefab
+)
+from justkeepswimming.prefabs.text import TitleScreenTextPrefab
 from justkeepswimming.scenes import SceneID
 from justkeepswimming.systems.stage import StageContext
 from justkeepswimming.utilities.context import EngineContext
@@ -13,4 +18,5 @@ async def load(
     scene = Scene(SceneID.MENU, engine_context)
     MainCameraPrefab().construct("MainCamera", scene)
     TropicalBackgroundPrefabGroup().construct("Background", scene)
+    TitleScreenTextPrefab().construct("TitleText", scene)
     return scene
