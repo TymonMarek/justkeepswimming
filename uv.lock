@@ -406,13 +406,14 @@ wheels = [
 
 [[package]]
 name = "justkeepswimming"
-version = "0.1.1"
+version = "0.2.0"
 source = { editable = "." }
 dependencies = [
     { name = "asyncio" },
     { name = "psutil" },
     { name = "pygame-ce" },
     { name = "rich" },
+    { name = "toml" },
 ]
 
 [package.dev-dependencies]
@@ -444,6 +445,7 @@ requires-dist = [
     { name = "psutil", specifier = ">=7.2.2" },
     { name = "pygame-ce", specifier = ">=2.5.6" },
     { name = "rich", specifier = ">=14.3.1" },
+    { name = "toml", specifier = ">=0.10.2" },
 ]
 
 [package.metadata.requires-dev]
