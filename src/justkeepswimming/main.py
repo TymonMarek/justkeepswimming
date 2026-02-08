@@ -1,28 +1,12 @@
 import argparse
 import asyncio
-import logging
 
-from rich.logging import RichHandler
 
+from justkeepswimming.prelude import setup_logging
 from justkeepswimming.scenes import SceneID
 from justkeepswimming.systems.engine import Engine
 from justkeepswimming.utilities.launch import LaunchOptions
 from justkeepswimming.utilities.logger import logger
-
-
-def setup_logging(verbosity: int):
-    levels: list[int] = [
-        logging.ERROR,
-        logging.WARNING,
-        logging.INFO,
-        logging.DEBUG,
-    ]
-    level = levels[min(3, max(0, verbosity))]
-    logging.basicConfig(
-        level=level,
-        format="%(message)s",
-        handlers=[RichHandler(show_time=False)],
-    )
 
 
 async def game_loop(launch_options: LaunchOptions):
