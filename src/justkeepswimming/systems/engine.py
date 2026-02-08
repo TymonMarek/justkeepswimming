@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import os
 import time
 
 import pygame
@@ -15,9 +14,6 @@ from justkeepswimming.systems.window import Window
 from justkeepswimming.utilities.context import EngineContext, LaunchOptions
 
 logger = logging.getLogger(__name__)
-
-os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
-pygame.init()
 
 
 class Engine:
