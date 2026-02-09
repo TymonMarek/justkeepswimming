@@ -49,4 +49,4 @@ class RendererPreProcessor(Processor):
         engine_context: EngineContext,
     ) -> None:
         for _, (renderer,) in scene_context.query(RendererComponent):
-            renderer.surface.fill(Color(0, 0, 0, 0))
+            renderer.surface.fill(Color(255, 0, 0, 0))
