@@ -21,7 +21,7 @@ class TextPrefab(Prefab):
         TextProcessor,
     ]
 
-
+# TODO: make this cacheable and not load the font every time
 TITLE_SPLASH_LOGO_FONT = Font(Path("assets/fonts/GameOver.otf"), 48)
 TITLE_SPLASH_LOGO_FONT.set_bold(True)
 

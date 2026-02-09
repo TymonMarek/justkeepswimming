@@ -1,6 +1,7 @@
 from justkeepswimming.backgrounds.tropical import (
     TropicalBackgroundPrefabGroup,
 )
+from justkeepswimming.prefabs.button import PlayButtonPrefab
 from justkeepswimming.prefabs.cameras import (
     MainCameraPrefab
 )
@@ -19,4 +20,5 @@ async def load(
     MainCameraPrefab().construct("MainCamera", scene)
     TropicalBackgroundPrefabGroup().construct("Background", scene)
     TitleScreenTextPrefab().construct("TitleText", scene)
+    PlayButtonPrefab().construct("PlayButton", scene)
     return scene
