@@ -1,3 +1,5 @@
+import logging
+
 from pygame import Rect, Vector2
 import pygame
 from justkeepswimming.components.font import TextComponent
@@ -12,6 +14,8 @@ from justkeepswimming.processors.tile import TileTextureProcessor
 from justkeepswimming.systems.clock import TickContext
 from justkeepswimming.systems.input import MouseButton
 from justkeepswimming.utilities.context import EngineContext
+
+logger = logging.getLogger(__name__)
 
 
 def is_point_in_bounds(point: Vector2, top_left: Vector2, bottom_right: Vector2) -> bool:
@@ -47,15 +51,17 @@ class ButtonProcessor(Processor):
         scene_context: SceneContext,
         new_position: Vector2
         ) -> None:
+        logger.debug(f"Mouse moved to {new_position}")
         for entity, (button, transform) in scene_context.query(ButtonComponent, TransformComponent):
             # TODO: consider doing top_left and bottom_right within the transform component itself
-            # TODO: as a cached property
+            # TODO: as a cached property to improve performance and code readability
             bottom_right = transform.position + Vector2(
                 transform.position.elementwise() + transform.size
             )
             top_left = transform.position
             hovered = is_point_in_bounds(new_position, top_left, bottom_right)
             if hovered:
+                logger.debug(f"Hovering over button entity {entity}")
                 if not button.is_hovered:
                     button.is_hovered = True
                     await button.on_hover.emit()
@@ -75,6 +81,7 @@ class ButtonProcessor(Processor):
         scene_context: SceneContext,
         button: MouseButton
     ) -> None:
+        logger.debug(f"Mouse button {button} pressed")
         for _, (button_component, transform) in scene_context.query(ButtonComponent, TransformComponent):
             bottom_right = transform.position + Vector2(
                 transform.position.elementwise() + transform.size
@@ -88,6 +95,7 @@ class ButtonProcessor(Processor):
         scene_context: SceneContext,
         button: MouseButton
     ) -> None:
+        logger.debug(f"Mouse button {button} released")
         for _, (button_component, transform) in scene_context.query(ButtonComponent, TransformComponent):
             bottom_right = transform.position + Vector2(
                 transform.position.elementwise() + transform.size
@@ -135,4 +143,3 @@ class ButtonProcessor(Processor):
                 else:
                     text = entity.get_component(TextComponent)
                     text.color = button.label_color
-            pygame.image.save(renderer.surface, "button_debug.png")

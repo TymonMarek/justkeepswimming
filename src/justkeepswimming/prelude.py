@@ -16,5 +16,8 @@ def setup_logging(verbosity: int):
     logging.basicConfig(
         level=level,
         format="%(message)s",
-        handlers=[RichHandler(show_time=False)],
+        handlers=[RichHandler(
+            show_time=False,
+            show_path=True
+        )],
     )

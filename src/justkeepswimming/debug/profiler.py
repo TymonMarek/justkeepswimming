@@ -6,12 +6,13 @@ from contextlib import contextmanager
 from pathlib import Path
 
 import psutil
+import logging
 
 from justkeepswimming.datatypes.version import SemanticVersion
 from justkeepswimming.debug.options import ProfileOptions
 from justkeepswimming.debug.scopes import ProfilerScope
-from justkeepswimming.utilities.logger import logger
 
+logger = logging.getLogger(__name__)
 
 class Profiler:
     version = SemanticVersion(2, 0, 0)

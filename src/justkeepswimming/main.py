@@ -1,12 +1,15 @@
 import argparse
 import asyncio
 
+import logging
+
 
 from justkeepswimming.prelude import setup_logging
 from justkeepswimming.scenes import SceneID
 from justkeepswimming.systems.engine import Engine
 from justkeepswimming.utilities.launch import LaunchOptions
-from justkeepswimming.utilities.logger import logger
+
+logger = logging.getLogger()
 
 
 async def game_loop(launch_options: LaunchOptions):

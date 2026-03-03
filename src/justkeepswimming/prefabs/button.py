@@ -22,16 +22,16 @@ class ButtonPrefab(Prefab):
     ]
 
 
-PLAY_BUTTON_FONT = Font(Path("assets/fonts/GameOver.otf"), 12)
+PLAY_BUTTON_FONT = Font(Path("assets/fonts/GameOver.otf"), 20)
 
 
 class PlayButtonPrefab(Prefab):
     extends = RenderablePrefab()
     components = [
         TransformComponent(
-            position=Vector2(1920 / 2, 1080 / 2),
-            anchor=Vector2(0.5, 0.5),
-            size=Vector2(600, 50),
+            position=Vector2((1920 / 3) / 2, ((1080 / 4) / 2) + 50),
+            anchor=Vector2(0, 0),
+            size=Vector2(150, 30),
         ),
         TextComponent(
             color=Color(255, 255, 255),

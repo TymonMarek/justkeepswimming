@@ -1,4 +1,4 @@
-from pygame import Color, Surface
+from pygame import Color, Surface, Vector2
 from justkeepswimming.components.font import TextComponent
 from justkeepswimming.components.physics import TransformComponent
 from justkeepswimming.components.render import RendererComponent
@@ -65,4 +65,14 @@ class TextProcessor(Processor):
                 if RENDER_CACHE_LINKS.get(text):
                     del RENDER_CACHE[RENDER_CACHE_LINKS[text]]
                 RENDER_CACHE_LINKS[text] = hash(text)
-            renderer.surface = cached
+            if text.autosize:
+                renderer.surface = cached
+            else:
+                internal_position = (
+                    Vector2(renderer.surface.get_size()).elementwise()
+                    * text.alignment.value.elementwise()
+                    - Vector2(cached.get_size()).elementwise() / 2
+                )
+                renderer.surface.blit(cached, internal_position)
+            
+            # pygame.image.save(renderer.surface, f"debug/font/{entity.name}.png")

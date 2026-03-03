@@ -3,6 +3,7 @@ from justkeepswimming.components.physics import (
     LinearPhysicsComponent,
     TransformComponent,
 )
+from justkeepswimming.debug.processors.physics import LinearPhysicsDebuggerProcessor
 from justkeepswimming.ecs import Component, Processor
 from justkeepswimming.processors.physics import (
     AngularPhysicsProcessor,
@@ -25,6 +26,7 @@ class PhysicsObjectPrefab(Prefab):
         AngularPhysicsComponent(),
     ]
     processors = [
+        LinearPhysicsDebuggerProcessor,
         LinearPhysicsProcessor,
         AngularPhysicsProcessor,
     ]
