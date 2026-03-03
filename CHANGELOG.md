@@ -2,6 +2,44 @@
 
 <!-- version list -->
 
+## v0.4.0 (2026-03-03)
+
+### Bug Fixes
+
+- **button**: Adjust play button dimensions and position for better layout
+  ([`67f1fdd`](https://github.com/TymonMarek/justkeepswimming/commit/67f1fdd278bba2739b7b5701205fdb78b48694fc))
+
+### Chores
+
+- Update version to 0.3.0 in lockfile
+  ([`67f1fdd`](https://github.com/TymonMarek/justkeepswimming/commit/67f1fdd278bba2739b7b5701205fdb78b48694fc))
+
+### Features
+
+- **font**: Add text alignment options and update text component properties
+  ([`67f1fdd`](https://github.com/TymonMarek/justkeepswimming/commit/67f1fdd278bba2739b7b5701205fdb78b48694fc))
+
+- **logging**: Integrate logging across multiple modules and remove old logger utility
+  ([`67f1fdd`](https://github.com/TymonMarek/justkeepswimming/commit/67f1fdd278bba2739b7b5701205fdb78b48694fc))
+
+- **profiler**: Implement logging for profiler events
+  ([`67f1fdd`](https://github.com/TymonMarek/justkeepswimming/commit/67f1fdd278bba2739b7b5701205fdb78b48694fc))
+
+- **ui**: Enhance button processor with hover and click logging
+  ([`67f1fdd`](https://github.com/TymonMarek/justkeepswimming/commit/67f1fdd278bba2739b7b5701205fdb78b48694fc))
+
+### Refactoring
+
+- **input**: Add logging for keyboard and mouse events
+  ([`67f1fdd`](https://github.com/TymonMarek/justkeepswimming/commit/67f1fdd278bba2739b7b5701205fdb78b48694fc))
+
+- **menu**: Connect play button actions to logging events
+  ([`67f1fdd`](https://github.com/TymonMarek/justkeepswimming/commit/67f1fdd278bba2739b7b5701205fdb78b48694fc))
+
+- **render**: Improve rendering process with index tracking
+  ([`67f1fdd`](https://github.com/TymonMarek/justkeepswimming/commit/67f1fdd278bba2739b7b5701205fdb78b48694fc))
+
+
 ## v0.3.0 (2026-02-09)
 
 ### Features
