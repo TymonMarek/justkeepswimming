@@ -1,4 +1,5 @@
 from pygame import Vector2
+import logging
 
 from justkeepswimming.components.input import (
     PlayerAngularMovementInputComponent,
@@ -9,8 +10,8 @@ from justkeepswimming.ecs import Processor, SceneContext
 from justkeepswimming.systems.clock import TickContext
 from justkeepswimming.systems.input import InputActionId
 from justkeepswimming.utilities.context import EngineContext
-from justkeepswimming.utilities.logger import logger
 
+logger = logging.getLogger(__name__)
 
 LINEAR_INPUT_ACTION_TO_WISH_VECTOR: dict[InputActionId, Vector2] = {
     InputActionId.PLAYER_MOVE_UP: Vector2(1, 0),

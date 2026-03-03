@@ -1,12 +1,13 @@
 import enum
 
 import pygame
+import logging
 from pygame import Event, Vector2
 
 from justkeepswimming.systems.dispatcher import Dispatcher
-from justkeepswimming.utilities.logger import logger
 from justkeepswimming.utilities.signal import Signal
 
+logger = logging.getLogger(__name__)
 
 class InputActionId(enum.StrEnum):
     PLAYER_MOVE_UP = enum.auto()
@@ -128,6 +129,7 @@ class Keyboard:
         if event.key not in KeyboardKeyType:
             logger.warning(f"Unknown keyboard key: {event.key}")
             return
+        logger.debug(f"Key down: {event.key}")
         key_type = KeyboardKeyType(event.key)
         key = await self._get_keyboard_key(key_type)
         await key.press()
@@ -137,6 +139,7 @@ class Keyboard:
         if event.key not in KeyboardKeyType:
             logger.warning(f"Unknown keyboard key: {event.key}")
             return
+        logger.debug(f"Key up: {event.key}")
         key_type = KeyboardKeyType(event.key)
         key = await self._get_keyboard_key(key_type)
         await key.release()
@@ -189,6 +192,7 @@ class Mouse:
 
     async def _handle_motion_event(self, event: Event) -> None:
         self.position = Vector2(event.pos)
+        await self.on_mouse_move.emit(self.position)
 
     async def _get_mouse_button(
             self, button_type: MouseButtonType) -> MouseButton:
@@ -202,6 +206,7 @@ class Mouse:
         if event.button not in MouseButtonType:
             logger.warning(f"Unknown mouse button: {event.button}")
             return
+        logger.debug(f"Mouse button down: {event.button}")
         button_type = MouseButtonType(event.button)
         button = await self._get_mouse_button(button_type)
         await button.press()
@@ -210,6 +215,7 @@ class Mouse:
         if event.button not in MouseButtonType:
             logger.warning(f"Unknown mouse button: {event.button}")
             return
+        logger.debug(f"Mouse button up: {event.button}")
         button_type = MouseButtonType(event.button)
         button = await self._get_mouse_button(button_type)
         await button.release()
@@ -229,6 +235,7 @@ class ActionManager:
         mouse.on_mouse_button_released.connect(self._on_mouse_released)
 
     def register_action(self, action: InputAction) -> None:
+        logger.debug(f"Registering action: {action.id} with bindings: {action.default_bindings}")
         self.actions[action.id] = action
         for binding in action.default_bindings:
             if isinstance(binding, KeyboardKeyType):
@@ -237,6 +244,7 @@ class ActionManager:
                 self._mouse_bindings.setdefault(binding, []).append(action)
 
     def unregister_action(self, action: InputAction) -> None:
+        logger.debug(f"Unregistering action: {action.id}")
         self.actions.pop(action.id, None)
 
         for bindings in self._key_bindings.values():
@@ -248,18 +256,22 @@ class ActionManager:
                 bindings.remove(action)
 
     async def _on_key_pressed(self, key: KeyboardKey) -> None:
+        logger.debug(f"Key pressed: {key.key_type}")
         for action in self._key_bindings.get(key.key_type, []):
             await action.binding_pressed()
 
     async def _on_key_released(self, key: KeyboardKey) -> None:
+        logger.debug(f"Key released: {key.key_type}")
         for action in self._key_bindings.get(key.key_type, []):
             await action.binding_released()
 
     async def _on_mouse_pressed(self, button: MouseButton) -> None:
+        logger.debug(f"Mouse button pressed: {button.button_type}")
         for action in self._mouse_bindings.get(button.button_type, []):
             await action.binding_pressed()
 
     async def _on_mouse_released(self, button: MouseButton) -> None:
+        logger.debug(f"Mouse button released: {button.button_type}")
         for action in self._mouse_bindings.get(button.button_type, []):
             await action.binding_released()
 

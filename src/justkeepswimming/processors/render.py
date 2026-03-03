@@ -26,7 +26,9 @@ class RendererProcessor(Processor):
         entities = list(scene_context.query(
             TransformComponent, RendererComponent))
         entities.sort(key=lambda item: getattr(item[1][1], "layer", 0))
+        index = 0
         for _, (transform, renderer) in entities:
+            index += 1
             rotated_surface = pygame.transform.rotate(
                 renderer.surface, -transform.rotation
             )
@@ -34,7 +36,9 @@ class RendererProcessor(Processor):
             anchor_offset = transform.size.elementwise() * transform.anchor
             position = transform.position - anchor_offset
             rotated_rect.center = (int(position[0]), int(position[1]))
+            # save(rotated_surface, f"debug/entity/{entity.name}.png")
             scene.blit(rotated_surface, rotated_rect.topleft)
+            # save(scene, f"debug/frame/{index}_{entity.name}.png")
 
 
 class RendererPreProcessor(Processor):

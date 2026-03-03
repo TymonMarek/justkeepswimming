@@ -21,7 +21,7 @@ class TextPrefab(Prefab):
         TextProcessor,
     ]
 
-# TODO: make this cacheable and not load the font every time
+
 TITLE_SPLASH_LOGO_FONT = Font(Path("assets/fonts/GameOver.otf"), 48)
 TITLE_SPLASH_LOGO_FONT.set_bold(True)
 
@@ -34,7 +34,8 @@ class TitleScreenTextPrefab(Prefab):
             background_color=Color(0, 0, 0, 0),
             font=TITLE_SPLASH_LOGO_FONT,
             antialias=True,
-            content="JustKeepSwimming!"
+            autosize=True,
+            content="JustKeepSwimming"
         ),
         TransformComponent(
             position=Vector2((1920 / 3) / 2, (1080 / 3) / 4),
