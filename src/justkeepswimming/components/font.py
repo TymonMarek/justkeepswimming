@@ -35,16 +35,18 @@ class TextComponent(Component):
             antialias=self.antialias,
             content=self.content,
             autosize=self.autosize,
-            alignment=self.alignment
+            alignment=self.alignment,
         )
 
     def __hash__(self) -> int:
-        return hash((
-            self.font,
-            str(self.color),
-            str(self.background_color),
-            self.antialias,
-            self.content,
-            self.autosize,
-            self.alignment
-        ))
+        return hash(
+            (
+                self.font,
+                str(self.color),
+                str(self.background_color),
+                self.antialias,
+                self.content,
+                self.autosize,
+                self.alignment,
+            )
+        )

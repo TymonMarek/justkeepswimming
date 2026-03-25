@@ -8,16 +8,21 @@ from justkeepswimming.debug.profiler import Profiler
 from justkeepswimming.scenes import SceneID, menu
 from justkeepswimming.systems.clock import Clock, TickContext
 from justkeepswimming.systems.dispatcher import Dispatcher
-from justkeepswimming.systems.input import Input
+from justkeepswimming.systems.input import (
+    Input,
+    InputAction,
+    InputActionId,
+    KeyboardKeyType,
+)
 from justkeepswimming.systems.stage import Stage
 from justkeepswimming.systems.window import Window
-from justkeepswimming.utilities.context import EngineContext, LaunchOptions
+from justkeepswimming.utilities.context import EngineContext, Options
 
 logger = logging.getLogger(__name__)
 
 
 class Engine:
-    def __init__(self, launch_options: LaunchOptions):
+    def __init__(self, launch_options: Options):
         self.time_started = time.time()
         logger.info("Initializing...")
         self.dispatcher = Dispatcher()
@@ -34,7 +39,7 @@ class Engine:
             dispatcher=self.dispatcher,
             input=self.input,
             profiler=self.profiler,
-            launch_options=launch_options,
+            options=launch_options,
         )
 
         self.stage = Stage(
@@ -45,8 +50,22 @@ class Engine:
         )
 
         self._attach_quit_handler()
+        self._attach_debug_action()
         self.clock.on_tick.connect(self._process_game)
         self.clock.on_stop.connect(self.__profiler_save_dump)
+
+    async def _toggle_debug_mode(self) -> None:
+        self.context.options.debug = not self.context.options.debug
+        logger.warning(
+            f"Debug mode {'enabled' if self.context.options.debug else 'disabled'}!"
+        )
+
+    def _attach_debug_action(self) -> None:
+        debug_action = InputAction(
+            InputActionId.TOGGLE_DEBUG_MODE, "Toggle Debug Mode", [KeyboardKeyType.F3]
+        )
+        self.input.action_manager.register_action(debug_action)
+        debug_action.on_triggered.connect(self._toggle_debug_mode)
 
     async def __profiler_save_dump(self) -> None:
         self.profiler.save()

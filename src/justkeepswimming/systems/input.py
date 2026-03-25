@@ -9,6 +9,7 @@ from justkeepswimming.utilities.signal import Signal
 
 logger = logging.getLogger(__name__)
 
+
 class InputActionId(enum.StrEnum):
     PLAYER_MOVE_UP = enum.auto()
     PLAYER_MOVE_DOWN = enum.auto()
@@ -16,6 +17,7 @@ class InputActionId(enum.StrEnum):
     PLAYER_MOVE_RIGHT = enum.auto()
     PLAYER_TURN_LEFT = enum.auto()
     PLAYER_TURN_RIGHT = enum.auto()
+    TOGGLE_DEBUG_MODE = enum.auto()
 
 
 class KeyboardKeyType(enum.Enum):
@@ -25,6 +27,7 @@ class KeyboardKeyType(enum.Enum):
     D = pygame.K_d
     Q = pygame.K_q
     E = pygame.K_e
+    F3 = pygame.K_F3
 
 
 class MouseButtonType(enum.Enum):
@@ -117,8 +120,7 @@ class Keyboard:
         self._on_key_down.connect(self._handle_key_down_event)
         self._on_key_up.connect(self._handle_key_up_event)
 
-    async def _get_keyboard_key(
-            self, key_type: KeyboardKeyType) -> KeyboardKey:
+    async def _get_keyboard_key(self, key_type: KeyboardKeyType) -> KeyboardKey:
         key = self.keys.get(key_type)
         if key is None:
             key = KeyboardKey(key_type)
@@ -178,8 +180,7 @@ class Mouse:
         self.position: Vector2 = Vector2(0, 0)
 
         self._on_motion = dispatcher.get_signal_for(pygame.MOUSEMOTION)
-        self._on_button_down = dispatcher.get_signal_for(
-            pygame.MOUSEBUTTONDOWN)
+        self._on_button_down = dispatcher.get_signal_for(pygame.MOUSEBUTTONDOWN)
         self._on_button_up = dispatcher.get_signal_for(pygame.MOUSEBUTTONUP)
 
         self.on_mouse_move = Signal[Vector2]()
@@ -194,8 +195,7 @@ class Mouse:
         self.position = Vector2(event.pos)
         await self.on_mouse_move.emit(self.position)
 
-    async def _get_mouse_button(
-            self, button_type: MouseButtonType) -> MouseButton:
+    async def _get_mouse_button(self, button_type: MouseButtonType) -> MouseButton:
         button = self.buttons.get(button_type)
         if button is None:
             button = MouseButton(button_type)
@@ -235,7 +235,9 @@ class ActionManager:
         mouse.on_mouse_button_released.connect(self._on_mouse_released)
 
     def register_action(self, action: InputAction) -> None:
-        logger.debug(f"Registering action: {action.id} with bindings: {action.default_bindings}")
+        logger.debug(
+            f"Registering action: {action.id} with bindings: {action.default_bindings}"
+        )
         self.actions[action.id] = action
         for binding in action.default_bindings:
             if isinstance(binding, KeyboardKeyType):

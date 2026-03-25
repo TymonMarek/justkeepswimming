@@ -3,10 +3,7 @@ from justkeepswimming.components.font import TextComponent
 from justkeepswimming.components.physics import TransformComponent
 from justkeepswimming.components.render import RendererComponent
 from justkeepswimming.ecs import Component, Processor, SceneContext
-from justkeepswimming.processors.render import (
-    RendererPreProcessor,
-    RendererProcessor
-)
+from justkeepswimming.processors.render import RendererPreProcessor, RendererProcessor
 from justkeepswimming.processors.sizing import (
     RendererTransformConstraintProcessor,
 )
@@ -20,23 +17,17 @@ RENDER_CACHE_LINKS: dict[TextComponent, int] = {}
 
 
 class TextProcessor(Processor):
-    writes: frozenset[type[Component]] = frozenset({
-        RendererComponent,
-    })
-    reads: frozenset[type[Component]] = frozenset({
-        TextComponent,
-        TransformComponent
-    })
-    before: frozenset[type["Processor"]] = frozenset({
-        RendererProcessor
-    })
-    after: frozenset[type["Processor"]] = frozenset({
-        RendererTransformConstraintProcessor,
-        RendererPreProcessor
-    })
-    alongside: frozenset[type["Processor"]] = frozenset({
-        TileTextureProcessor
-    })
+    writes: frozenset[type[Component]] = frozenset(
+        {
+            RendererComponent,
+        }
+    )
+    reads: frozenset[type[Component]] = frozenset({TextComponent, TransformComponent})
+    before: frozenset[type["Processor"]] = frozenset({RendererProcessor})
+    after: frozenset[type["Processor"]] = frozenset(
+        {RendererTransformConstraintProcessor, RendererPreProcessor}
+    )
+    alongside: frozenset[type["Processor"]] = frozenset({TileTextureProcessor})
 
     async def update(
         self,
@@ -51,9 +42,7 @@ class TextProcessor(Processor):
             cached = RENDER_CACHE.get(hash(text))
             if cached is None:
                 bg_color = (
-                    text.background_color
-                    if text.background_color.a > 0
-                    else None
+                    text.background_color if text.background_color.a > 0 else None
                 )
                 cached = text.font.render(
                     text.content or "",
@@ -74,5 +63,5 @@ class TextProcessor(Processor):
                     - Vector2(cached.get_size()).elementwise() / 2
                 )
                 renderer.surface.blit(cached, internal_position)
-            
+
             # pygame.image.save(renderer.surface, f"debug/font/{entity.name}.png")

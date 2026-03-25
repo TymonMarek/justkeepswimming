@@ -7,12 +7,12 @@ import logging
 from justkeepswimming.prelude import setup_logging
 from justkeepswimming.scenes import SceneID
 from justkeepswimming.systems.engine import Engine
-from justkeepswimming.utilities.launch import LaunchOptions
+from justkeepswimming.utilities.launch import Options
 
 logger = logging.getLogger()
 
 
-async def game_loop(launch_options: LaunchOptions):
+async def game_loop(launch_options: Options):
     engine = Engine(launch_options)
     await engine.start()
     await engine.stage.switch_scene(SceneID.MENU)
@@ -57,7 +57,7 @@ def main():
             "Profiler is enabled, keeping last %d records.",
             args.profiler_history,
         )
-    launch_options = LaunchOptions(
+    launch_options = Options(
         debug=args.debug,
         profiler_enabled=args.profiler,
         profiler_history=args.profiler_history,

@@ -8,9 +8,7 @@ from justkeepswimming.components.tile import (
     AutoTileScrollComponent,
     TileTextureComponent,
 )
-from justkeepswimming.prefabs.background import (
-    ScrollingParallaxBackgroundLayerPrefab
-)
+from justkeepswimming.prefabs.background import ScrollingParallaxBackgroundLayerPrefab
 from justkeepswimming.utilities.image import Image
 from justkeepswimming.utilities.prefab import Prefab, PrefabGroup
 
@@ -92,14 +90,9 @@ class NearParticleEffectBackgroundLayerPrefab(Prefab):
 
 class MinesBackgroundPrefabGroup(PrefabGroup):
     prefabs = {
-        "FarOceanBackgroundLayer":
-            FarOceanBackgroundLayerPrefab(),
-        "FarMinesOceanBackgroundLayer":
-            FarMinesOceanBackgroundLayerPrefab(),
-        "FarParticleEffectBackgroundLayer":
-            FarParticleEffectBackgroundLayerPrefab(),
-        "NearMinesOceanBackgroundLayer":
-            NearMinesOceanBackgroundLayerPrefab(),
-        "NearParticleEffectBackgroundLayer":
-            NearParticleEffectBackgroundLayerPrefab(),
+        "FarOceanBackgroundLayer": FarOceanBackgroundLayerPrefab(),
+        "FarMinesOceanBackgroundLayer": FarMinesOceanBackgroundLayerPrefab(),
+        "FarParticleEffectBackgroundLayer": FarParticleEffectBackgroundLayerPrefab(),
+        "NearMinesOceanBackgroundLayer": NearMinesOceanBackgroundLayerPrefab(),
+        "NearParticleEffectBackgroundLayer": NearParticleEffectBackgroundLayerPrefab(),
     }
