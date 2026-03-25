@@ -84,9 +84,8 @@ class Image:
             anchor=Vector2(0.5, 0.5),
         )
         logger.debug(
-            f"Image loaded from {
-                self.path} with size {
-                self._surface.get_size()}")
+            f"Image loaded from {self.path} with size {self._surface.get_size()}"
+        )
 
 
 class Frame:
@@ -94,9 +93,7 @@ class Frame:
         self.transform = transform
 
     async def slice(self, texture: Image) -> Surface:
-        anchor_offset = (
-            self.transform.size.elementwise() * self.transform.anchor
-        )
+        anchor_offset = self.transform.size.elementwise() * self.transform.anchor
         top_left = self.transform.position - anchor_offset
 
         region = (await texture.get_surface()).subsurface(

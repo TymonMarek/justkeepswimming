@@ -1,6 +1,8 @@
 import pygame
 from pygame import Color, Surface, Vector2
 
+DEBUG_FONT = pygame.font.SysFont(None, 14)
+
 
 def render_arrow(
     surface: Surface,
@@ -13,10 +15,8 @@ def render_arrow(
     direction = (target - start).normalize()
     perpendicular = Vector2(-direction.y, direction.x)
     arrow_size = 5 + thickness
-    left_wing = target - direction * arrow_size + \
-        perpendicular * (arrow_size / 2)
-    right_wing = target - direction * arrow_size - \
-        perpendicular * (arrow_size / 2)
+    left_wing = target - direction * arrow_size + perpendicular * (arrow_size / 2)
+    right_wing = target - direction * arrow_size - perpendicular * (arrow_size / 2)
     pygame.draw.polygon(surface, color, [target, left_wing, right_wing])
 
 
@@ -38,10 +38,9 @@ def render_label(
     text: str,
     font: pygame.font.Font,
     color: Color = Color(255, 255, 255),
-    offset: Vector2 = Vector2(0, 0),
 ) -> None:
     text_surface = font.render(text, True, color)
-    surface.blit(text_surface, position + offset)
+    surface.blit(text_surface, position)
 
 
 def render_bounding_box(
@@ -51,3 +50,26 @@ def render_bounding_box(
     thickness: int = 1,
 ) -> None:
     pygame.draw.rect(surface, color, rect, thickness)
+
+
+def render_cross(
+    surface: Surface,
+    position: Vector2,
+    size: int = 10,
+    color: Color = Color(255, 0, 255),
+    thickness: int = 1,
+) -> None:
+    pygame.draw.line(
+        surface,
+        color,
+        position - Vector2(size, 0),
+        position + Vector2(size, 0),
+        thickness,
+    )
+    pygame.draw.line(
+        surface,
+        color,
+        position - Vector2(0, size),
+        position + Vector2(0, size),
+        thickness,
+    )

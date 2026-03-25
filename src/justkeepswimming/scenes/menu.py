@@ -5,9 +5,7 @@ from justkeepswimming.backgrounds.tropical import (
 )
 from justkeepswimming.components.ui import ButtonComponent
 from justkeepswimming.prefabs.button import PlayButtonPrefab
-from justkeepswimming.prefabs.cameras import (
-    MainCameraPrefab
-)
+from justkeepswimming.prefabs.cameras import MainCameraPrefab
 from justkeepswimming.prefabs.text import TitleScreenTextPrefab
 from justkeepswimming.scenes import SceneID
 from justkeepswimming.systems.stage import StageContext
@@ -25,16 +23,13 @@ async def on_hover():
     logger.info("Button hovered!")
 
 
-async def load(
-        stage_context: StageContext,
-        engine_context: EngineContext
-        ) -> Scene:
+async def load(stage_context: StageContext, engine_context: EngineContext) -> Scene:
     scene = Scene(SceneID.MENU, engine_context)
     MainCameraPrefab().construct("MainCamera", scene)
     TropicalBackgroundPrefabGroup().construct("Background", scene)
     TitleScreenTextPrefab().construct("TitleText", scene)
-    play_button = PlayButtonPrefab().construct("PlayButton", scene)
-    button = play_button.get_component(ButtonComponent)
-    button.on_click.connect(on_play)
-    button.on_hover.connect(on_hover)
+    play_button_prefab = PlayButtonPrefab().construct("PlayButton", scene)
+    play_button = play_button_prefab.get_component(ButtonComponent)
+    play_button.on_click.connect(on_play)
+    play_button.on_hover.connect(on_hover)
     return scene

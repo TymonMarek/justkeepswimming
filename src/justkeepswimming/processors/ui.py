@@ -18,41 +18,47 @@ from justkeepswimming.utilities.context import EngineContext
 logger = logging.getLogger(__name__)
 
 
-def is_point_in_bounds(point: Vector2, top_left: Vector2, bottom_right: Vector2) -> bool:
-    return top_left.x <= point.x <= bottom_right.x and top_left.y <= point.y <= bottom_right.y
+def is_point_in_bounds(
+    point: Vector2, top_left: Vector2, bottom_right: Vector2
+) -> bool:
+    return (
+        top_left.x <= point.x <= bottom_right.x
+        and top_left.y <= point.y <= bottom_right.y
+    )
 
 
 class ButtonProcessor(Processor):
-    reads = frozenset({
-        TransformComponent,
-        ButtonComponent,
-        RendererComponent,
-        TextComponent,
-    })
-    writes = frozenset({
-        ButtonComponent,
-        RendererComponent,
-        TextComponent,
-    })
-    after = frozenset({
-        RendererTransformConstraintProcessor,
-        RendererPreProcessor,
-    })
-    before = frozenset({
-        RendererProcessor,
-        TextProcessor
-    })
-    alongside = frozenset({
-        TileTextureProcessor
-    })
+    reads = frozenset(
+        {
+            TransformComponent,
+            ButtonComponent,
+            RendererComponent,
+            TextComponent,
+        }
+    )
+    writes = frozenset(
+        {
+            ButtonComponent,
+            RendererComponent,
+            TextComponent,
+        }
+    )
+    after = frozenset(
+        {
+            RendererTransformConstraintProcessor,
+            RendererPreProcessor,
+        }
+    )
+    before = frozenset({RendererProcessor, TextProcessor})
+    alongside = frozenset({TileTextureProcessor})
 
     async def on_mouse_moved(
-        self,
-        scene_context: SceneContext,
-        new_position: Vector2
-        ) -> None:
+        self, scene_context: SceneContext, new_position: Vector2
+    ) -> None:
         logger.debug(f"Mouse moved to {new_position}")
-        for entity, (button, transform) in scene_context.query(ButtonComponent, TransformComponent):
+        for entity, (button, transform) in scene_context.query(
+            ButtonComponent, TransformComponent
+        ):
             # TODO: consider doing top_left and bottom_right within the transform component itself
             # TODO: as a cached property to improve performance and code readability
             bottom_right = transform.position + Vector2(
@@ -77,12 +83,12 @@ class ButtonProcessor(Processor):
                         text.color = button.label_color
 
     async def on_mouse_button_pressed(
-        self,
-        scene_context: SceneContext,
-        button: MouseButton
+        self, scene_context: SceneContext, button: MouseButton
     ) -> None:
         logger.debug(f"Mouse button {button} pressed")
-        for _, (button_component, transform) in scene_context.query(ButtonComponent, TransformComponent):
+        for _, (button_component, transform) in scene_context.query(
+            ButtonComponent, TransformComponent
+        ):
             bottom_right = transform.position + Vector2(
                 transform.position.elementwise() + transform.size
             )
@@ -91,12 +97,12 @@ class ButtonProcessor(Processor):
                 await button_component.on_click.emit()
 
     async def on_mouse_button_released(
-        self,
-        scene_context: SceneContext,
-        button: MouseButton
+        self, scene_context: SceneContext, button: MouseButton
     ) -> None:
         logger.debug(f"Mouse button {button} released")
-        for _, (button_component, transform) in scene_context.query(ButtonComponent, TransformComponent):
+        for _, (button_component, transform) in scene_context.query(
+            ButtonComponent, TransformComponent
+        ):
             bottom_right = transform.position + Vector2(
                 transform.position.elementwise() + transform.size
             )
@@ -109,9 +115,15 @@ class ButtonProcessor(Processor):
         scene_context: SceneContext,
         engine_context: EngineContext,
     ) -> None:
-        engine_context.input.mouse.on_mouse_move.connect(lambda position: self.on_mouse_moved(scene_context, position))
-        engine_context.input.mouse.on_mouse_button_pressed.connect(lambda button: self.on_mouse_button_pressed(scene_context, button))
-        engine_context.input.mouse.on_mouse_button_released.connect(lambda button: self.on_mouse_button_released(scene_context, button))
+        engine_context.input.mouse.on_mouse_move.connect(
+            lambda position: self.on_mouse_moved(scene_context, position)
+        )
+        engine_context.input.mouse.on_mouse_button_pressed.connect(
+            lambda button: self.on_mouse_button_pressed(scene_context, button)
+        )
+        engine_context.input.mouse.on_mouse_button_released.connect(
+            lambda button: self.on_mouse_button_released(scene_context, button)
+        )
 
     async def update(
         self,
@@ -119,7 +131,9 @@ class ButtonProcessor(Processor):
         scene_context: SceneContext,
         engine_context: EngineContext,
     ) -> None:
-        for entity, (button, transform, renderer) in scene_context.query(ButtonComponent, TransformComponent, RendererComponent):
+        for entity, (button, transform, renderer) in scene_context.query(
+            ButtonComponent, TransformComponent, RendererComponent
+        ):
             rect = Rect()
             rect.width, rect.height = int(transform.size.x), int(transform.size.y)
             if button.is_hovered:
@@ -127,14 +141,14 @@ class ButtonProcessor(Processor):
                     renderer.surface,
                     button.hover_background_color,
                     rect,
-                    border_radius=min(rect.width, rect.height) // 2 
+                    border_radius=min(rect.width, rect.height) // 2,
                 )
             else:
                 pygame.draw.rect(
                     renderer.surface,
                     button.background_color,
                     rect,
-                    border_radius=min(rect.width, rect.height) // 2 
+                    border_radius=min(rect.width, rect.height) // 2,
                 )
             if entity.has_component(TextComponent):
                 if button.is_hovered:

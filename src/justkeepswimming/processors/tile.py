@@ -15,21 +15,14 @@ from justkeepswimming.components.tile import (
     TileTextureComponent,
 )
 from justkeepswimming.ecs import Processor, SceneContext
-from justkeepswimming.processors.animation import (
-    AnimationTrackPlaybackProcessor
-)
+from justkeepswimming.processors.animation import AnimationTrackPlaybackProcessor
 from justkeepswimming.processors.filter import TintProcessor
 from justkeepswimming.processors.physics import (
     AngularPhysicsProcessor,
     LinearPhysicsProcessor,
 )
-from justkeepswimming.processors.render import (
-    RendererPreProcessor,
-    RendererProcessor
-)
-from justkeepswimming.processors.sizing import (
-    RendererTransformConstraintProcessor
-)
+from justkeepswimming.processors.render import RendererPreProcessor, RendererProcessor
+from justkeepswimming.processors.sizing import RendererTransformConstraintProcessor
 from justkeepswimming.systems.clock import TickContext
 from justkeepswimming.utilities.context import EngineContext
 
@@ -40,8 +33,7 @@ DEBUG_FONT = pygame.font.SysFont(None, 34)
 class TileTextureProcessor(Processor):
     reads = frozenset({TileTextureComponent, TransformComponent})
     writes = frozenset({TileTextureComponent, RendererComponent})
-    after = frozenset(
-        {RendererTransformConstraintProcessor, RendererPreProcessor})
+    after = frozenset({RendererTransformConstraintProcessor, RendererPreProcessor})
     before = frozenset({RendererProcessor, TintProcessor})
     alongside = frozenset({AnimationTrackPlaybackProcessor})
     logger = logging.getLogger(__name__)
@@ -116,8 +108,7 @@ class TileTextureProcessor(Processor):
                 px = origin_x + x * tile_w
                 for y in range(start_y, end_y):
                     py = origin_y + y * tile_h
-                    surf.blit(tile_texture.cache_scaled_surface,
-                              Vector2(px, py))
+                    surf.blit(tile_texture.cache_scaled_surface, Vector2(px, py))
 
 
 class AutoTileScrollProcessor(Processor):
@@ -178,11 +169,11 @@ def lerp_vec2(start: Vector2, end: Vector2, time: float) -> Vector2:
 
 
 class MouseRelativeTileScrollProcessor(Processor):
-    reads = frozenset({MouseRelativeTileScrollComponent,
-                       TileTextureComponent, ScenePseudoComponent})
+    reads = frozenset(
+        {MouseRelativeTileScrollComponent, TileTextureComponent, ScenePseudoComponent}
+    )
     writes = frozenset({TileTextureComponent})
-    after = frozenset(
-        {FitTileSizeToTransformProcessor, AutoTileScrollProcessor})
+    after = frozenset({FitTileSizeToTransformProcessor, AutoTileScrollProcessor})
     before = frozenset({TileTextureProcessor, RendererProcessor})
 
     async def update(

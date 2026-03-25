@@ -7,7 +7,7 @@ from justkeepswimming.systems.clock import Clock
 from justkeepswimming.systems.dispatcher import Dispatcher
 from justkeepswimming.systems.input import Input
 from justkeepswimming.systems.window import Window
-from justkeepswimming.utilities.launch import LaunchOptions
+from justkeepswimming.utilities.launch import Options
 
 pygame.font.init()
 
@@ -19,5 +19,4 @@ class EngineContext:
     dispatcher: Dispatcher
     input: Input
     profiler: Profiler
-    launch_options: LaunchOptions
-    debug_font = pygame.font.SysFont(None, 14)
+    options: Options

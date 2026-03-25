@@ -12,10 +12,7 @@ from justkeepswimming.components.sizing import (
     ScreenSizeConstraintComponent,
 )
 from justkeepswimming.ecs import Processor, SceneContext
-from justkeepswimming.processors.render import (
-    RendererPreProcessor,
-    RendererProcessor
-)
+from justkeepswimming.processors.render import RendererPreProcessor, RendererProcessor
 from justkeepswimming.systems.clock import TickContext
 from justkeepswimming.utilities.context import EngineContext
 
@@ -55,8 +52,7 @@ class RendererTransformConstraintProcessor(Processor):
             TransformComponent, RendererComponent
         ):
             if transform.size != Vector2(renderer.surface.get_size()):
-                surface = Surface(
-                    transform.size, flags=renderer.surface.get_flags())
+                surface = Surface(transform.size, flags=renderer.surface.get_flags())
                 destination = (
                     Vector2(surface.get_size()) / 2
                     - transform.size.elementwise() * transform.anchor

@@ -43,15 +43,12 @@ class ProcessorScheduler:
         self.scene_context = scene_context
         self.profiler = engine_context.profiler
 
-    def __deepcopy__(self, memo: dict[int, Any]
-                     | None) -> "ProcessorScheduler":
-        new_scheduler = ProcessorScheduler(
-            self.scene_context, self.engine_context)
+    def __deepcopy__(self, memo: dict[int, Any] | None) -> "ProcessorScheduler":
+        new_scheduler = ProcessorScheduler(self.scene_context, self.engine_context)
         new_scheduler.processors = copy.deepcopy(self.processors, memo)
         new_scheduler._nodes = copy.deepcopy(self._nodes, memo)
         new_scheduler._graph = copy.deepcopy(self._graph, memo)
-        new_scheduler._execution_order = copy.deepcopy(
-            self._execution_order, memo)
+        new_scheduler._execution_order = copy.deepcopy(self._execution_order, memo)
         return new_scheduler
 
     def _fmt_components(self, components: frozenset[Type[Component]]) -> str:
@@ -80,23 +77,21 @@ class ProcessorScheduler:
         scene_context: SceneContext,
         engine_context: EngineContext,
     ):
+        if system.debug_only and not engine_context.options.debug:
+            return
         with engine_context.profiler.scope(
             ProfilerScope.PROCESSOR, system.__class__.__name__
         ):
-            return await system.update(
-                tick_context,
-                scene_context,
-                engine_context
-            )
+            return await system.update(tick_context, scene_context, engine_context)
 
     def add_processor(self, processor: Processor) -> None:
-        debug_mode = self.engine_context.launch_options.debug
+        debug_mode = self.engine_context.options.debug
         if processor.debug_only and not debug_mode:
             logger.debug(
                 "Skipping addition of debug-only system ",
                 {processor},
-                " in non-debug mode."
-                )
+                " in non-debug mode.",
+            )
         if processor in self.processors:
             raise SystemDuplicateEntryException(
                 f"System {processor} is already in the scheduler."
@@ -170,8 +165,7 @@ class ProcessorScheduler:
                     logger.debug(
                         f"Inferred: {a} runs BEFORE {b} "
                         f"because {b} reads {
-                            self._fmt_components(
-                                components_a_writes_that_b_reads)
+                            self._fmt_components(components_a_writes_that_b_reads)
                         }"
                     )
                     self._graph.set_dependency(node_b, node_a)
@@ -181,8 +175,7 @@ class ProcessorScheduler:
                     logger.debug(
                         f"Inferred: {b} runs BEFORE {a} "
                         f"because {a} reads {
-                            self._fmt_components(
-                                components_a_reads_that_b_writes)
+                            self._fmt_components(components_a_reads_that_b_writes)
                         }"
                     )
                     self._graph.set_dependency(node_a, node_b)
@@ -197,7 +190,7 @@ class ProcessorScheduler:
                             {a},
                             " and ",
                             {b},
-                            f"on {self._fmt_components(components_both_write)}"
+                            f"on {self._fmt_components(components_both_write)}",
                         )
 
         self._execution_order = self._graph.parallel_sort()

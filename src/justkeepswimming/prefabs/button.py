@@ -46,9 +46,7 @@ class PlayButtonPrefab(Prefab):
             hover_background_color=Color(0, 0, 0),
             background_color=Color(255, 255, 255),
         ),
-        RendererComponent(
-            layer=100
-        )
+        RendererComponent(layer=100),
     ]
     processors = [
         ButtonProcessor,

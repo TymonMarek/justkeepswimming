@@ -1,12 +1,8 @@
-from justkeepswimming.components.font import (
-    TextComponent
-)
+from justkeepswimming.components.font import TextComponent
 from justkeepswimming.components.physics import TransformComponent
 from justkeepswimming.components.render import RendererComponent
 from justkeepswimming.prefabs.renderable import RenderablePrefab
-from justkeepswimming.processors.font import (
-    TextProcessor
-)
+from justkeepswimming.processors.font import TextProcessor
 from justkeepswimming.utilities.prefab import Prefab
 from pygame import Color, Font, Vector2
 from pathlib import Path
@@ -35,15 +31,12 @@ class TitleScreenTextPrefab(Prefab):
             font=TITLE_SPLASH_LOGO_FONT,
             antialias=True,
             autosize=True,
-            content="JustKeepSwimming"
+            content="JustKeepSwimming",
         ),
         TransformComponent(
-            position=Vector2((1920 / 3) / 2, (1080 / 3) / 4),
-            anchor=Vector2(0.5, 0.5)
+            position=Vector2((1920 / 3) / 2, (1080 / 3) / 4), anchor=Vector2(0.5, 0.5)
         ),
-        RendererComponent(
-            layer=100
-        )
+        RendererComponent(layer=100),
     ]
     processors = [
         TextProcessor,

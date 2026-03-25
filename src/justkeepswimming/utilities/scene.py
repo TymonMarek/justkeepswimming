@@ -4,6 +4,7 @@ from typing import Any
 
 from pygame import Event, Surface, Vector2
 
+from justkeepswimming.debug.processors.rendering import MouseDebuggerProcessor
 from justkeepswimming.ecs import SceneContext
 from justkeepswimming.ecs.scheduler import ProcessorScheduler
 from justkeepswimming.scenes import SceneID
@@ -43,6 +44,7 @@ class Scene:
     async def _handle_enter(self, engine_context: EngineContext) -> None:
         for action in self.actions:
             engine_context.input.action_manager.register_action(action)
+        self.scheduler.add_processor(MouseDebuggerProcessor())
 
     async def _handle_exit(self, engine_context: EngineContext) -> None:
         for action in self.actions:
@@ -51,8 +53,7 @@ class Scene:
 
     async def _on_window_resize(self, event: Event) -> None:
         self.context.surface = Surface(Vector2(event.w, event.h))
-        logger.debug(
-            f"Scene {self.id} resized to Vector2({event.w}, {event.h})")
+        logger.debug(f"Scene {self.id} resized to Vector2({event.w}, {event.h})")
 
     async def _process_systems(
         self, tick_context: TickContext, engine_context: EngineContext
