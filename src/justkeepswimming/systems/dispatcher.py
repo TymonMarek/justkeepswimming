@@ -3,32 +3,23 @@ import logging
 import pygame
 from pygame import Event as PygameEvent
 
+from justkeepswimming.utilities.custom_event import CustomEvent
 from justkeepswimming.utilities.signal import Signal
 
 logger = logging.getLogger(__name__)
 
 type EventType = int
 
-
-class CustomEvent:
-    def __init__(self, event_type: int) -> None:
-        self.event_type: EventType = event_type
-
-    def dispatch(self) -> None:
-        logger.info(f"Dispatching custom event: {self.event_type}")
-        pygame.event.post(pygame.event.Event(self.event_type))
-
-
 class Dispatcher:
     def __init__(self) -> None:
         self.event_signals: dict[EventType, Signal[PygameEvent]] = dict()
-        self._custom_event_type_ptr: int = pygame.USEREVENT + 1
+        self.custom_events: dict[EventType, CustomEvent] = {}
 
     def create_event(self) -> CustomEvent:
-        event_type: EventType = self._custom_event_type_ptr
-        self._custom_event_type_ptr += 1
-        logger.info(f"Creating custom event type: {event_type}")
-        return CustomEvent(event_type)
+        event_id = pygame.USEREVENT + len(self.custom_events)
+        logger.info(f"Registering custom event type: {event_id}")
+        self.custom_events[event_id] = CustomEvent(event_id)
+        return self.custom_events[event_id]
 
     def get_signal_for(self, event_type: EventType) -> Signal[PygameEvent]:
         signal = self.event_signals.get(event_type)
