@@ -1,6 +1,6 @@
 [project]
 name = "justkeepswimming"
-version = "0.5.0"
+version = "0.6.0"
 description = "A small game about a fish in the deep sea."
 
 readme = "README.md"

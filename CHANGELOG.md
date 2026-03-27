@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.6.0 (2026-03-27)
+
+### Features
+
+- **debug**: Add button debugging processor
+  ([`cf39282`](https://github.com/TymonMarek/justkeepswimming/commit/cf39282cd071ca2f00acab312fb3bda0b216ae5f))
+
+
 ## v0.5.0 (2026-03-27)
 
 ### Features
