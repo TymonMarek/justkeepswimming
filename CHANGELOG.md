@@ -2,6 +2,22 @@
 
 <!-- version list -->
 
+## v0.7.0 (2026-03-27)
+
+### Bug Fixes
+
+- **buttons**: Fix button clicking and releasing
+  ([`a77721d`](https://github.com/TymonMarek/justkeepswimming/commit/a77721d2cba3316f417a6eb27548ba5970640c8e))
+
+- **input**: Fix mouse button input handling to actually capture input
+  ([`a77721d`](https://github.com/TymonMarek/justkeepswimming/commit/a77721d2cba3316f417a6eb27548ba5970640c8e))
+
+### Features
+
+- **menu**: Add buttons in the main menu
+  ([`a77721d`](https://github.com/TymonMarek/justkeepswimming/commit/a77721d2cba3316f417a6eb27548ba5970640c8e))
+
+
 ## v0.6.0 (2026-03-27)
 
 ### Features
