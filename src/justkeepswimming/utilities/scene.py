@@ -44,6 +44,15 @@ class Scene:
     async def _handle_enter(self, engine_context: EngineContext) -> None:
         for action in self.actions:
             engine_context.input.action_manager.register_action(action)
+        if not engine_context.options.debug and "__compiled__" in globals():
+            logger.debug(
+                f"Debugging has been disabled for scene {self.id} because ",
+                "the game is compiled.",
+                "To enable debugging, run the game in debug mode or ."
+                "run the development version of the game.",
+            )
+            return # Skip if not in debug mode or if the module is compiled
+        #! Add debug processors here
         self.scheduler.add_processor(MouseDebuggerProcessor())
 
     async def _handle_exit(self, engine_context: EngineContext) -> None:

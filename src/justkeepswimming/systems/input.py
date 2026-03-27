@@ -1,3 +1,4 @@
+# from dataclasses import dataclass
 import enum
 
 import pygame
@@ -150,11 +151,15 @@ class Keyboard:
         await key.release()
         await self.on_key_released.emit(key)
 
+# @dataclass
+# class MouseButtonInputStory:
+    
 
 class MouseButton:
     def __init__(self, button_type: MouseButtonType) -> None:
         self.button_type = button_type
         self.pressed: bool = False
+        self.position: Vector2 = Vector2(0, 0)
         self.__press_start_time: float = 0.0
 
         self.on_pressed = Signal[[]]()

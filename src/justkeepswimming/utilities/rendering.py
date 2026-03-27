@@ -32,6 +32,16 @@ def render_vector(
     pygame.draw.circle(surface, color, end_point, thickness * 2)
 
 
+def render_connection(
+    surface: Surface,
+    point_a: Vector2,
+    point_b: Vector2,
+    color: Color = Color(255, 255, 0),
+    thickness: int = 1,
+) -> None:
+    pygame.draw.line(surface, color, point_a, point_b, thickness)
+
+
 def render_label(
     surface: Surface,
     position: Vector2,

@@ -74,6 +74,9 @@ class Profiler:
                     } (profiler version {self.version})..."
                 )
                 pickle.dump(self, file)
+                logger.info(
+                    f"Finished saving profiler dump! View summary using: uv run profiler-generate-summary {self.options.dump_path}"
+                )
         except Exception as error:
             logger.error(f"Failed to save profiler dump: {error}")
 

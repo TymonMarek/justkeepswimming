@@ -4,8 +4,10 @@ from justkeepswimming.components.font import TextComponent
 from justkeepswimming.components.physics import TransformComponent
 from justkeepswimming.components.render import RendererComponent
 from justkeepswimming.components.ui import ButtonComponent
+from justkeepswimming.debug.processors.button import ButtonDebuggerProcessor
 from justkeepswimming.prefabs.renderable import RenderablePrefab
 from justkeepswimming.processors.font import TextProcessor
+from justkeepswimming.processors.render import RendererProcessor
 from justkeepswimming.processors.ui import ButtonProcessor
 from justkeepswimming.utilities.prefab import Prefab
 
@@ -19,6 +21,7 @@ class ButtonPrefab(Prefab):
     processors = [
         ButtonProcessor,
         TextProcessor,
+        ButtonDebuggerProcessor,
     ]
 
 
@@ -49,6 +52,8 @@ class PlayButtonPrefab(Prefab):
         RendererComponent(layer=100),
     ]
     processors = [
+        ButtonDebuggerProcessor,
         ButtonProcessor,
-        TextProcessor,
+        RendererProcessor,
+        TextProcessor
     ]
