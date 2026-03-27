@@ -7,6 +7,9 @@ from pygame import Event, Vector2
 from justkeepswimming.systems.dispatcher import Dispatcher
 from justkeepswimming.utilities.signal import Signal
 
+
+INTERNAL_RENDER_WINDOW_SIZE = Vector2(1920 / 3, 1080 / 3)
+
 logger = logging.getLogger(__name__)
 
 
@@ -178,10 +181,12 @@ class Mouse:
     def __init__(self, dispatcher: Dispatcher) -> None:
         self.buttons: dict[MouseButtonType, MouseButton] = {}
         self.position: Vector2 = Vector2(0, 0)
+        self._window_size: Vector2 = Vector2(800, 600)
 
         self._on_motion = dispatcher.get_signal_for(pygame.MOUSEMOTION)
         self._on_button_down = dispatcher.get_signal_for(pygame.MOUSEBUTTONDOWN)
         self._on_button_up = dispatcher.get_signal_for(pygame.MOUSEBUTTONUP)
+        self._on_window_resize = dispatcher.get_signal_for(pygame.VIDEORESIZE)
 
         self.on_mouse_move = Signal[Vector2]()
         self.on_mouse_button_pressed = Signal[MouseButton]()
@@ -190,9 +195,32 @@ class Mouse:
         self._on_motion.connect(self._handle_motion_event)
         self._on_button_down.connect(self._handle_mouse_button_down_event)
         self._on_button_up.connect(self._handle_mouse_button_up_event)
+        self._on_window_resize.connect(self._handle_window_resize_event)
+    
+    async def _handle_window_resize_event(self, event: Event) -> None:
+        self._window_size = Vector2(event.size)
 
     async def _handle_motion_event(self, event: Event) -> None:
-        self.position = Vector2(event.pos)
+        pos = Vector2(event.pos)
+        
+        # Calculate letterbox offset and scale
+        window_aspect = self._window_size.x / self._window_size.y
+        internal_aspect = INTERNAL_RENDER_WINDOW_SIZE.x / INTERNAL_RENDER_WINDOW_SIZE.y
+        if window_aspect > internal_aspect:
+            # Letterboxing on sides
+            letterbox_width = (self._window_size.y * internal_aspect)
+            offset_x = (self._window_size.x - letterbox_width) / 2
+            scale = INTERNAL_RENDER_WINDOW_SIZE.x / letterbox_width
+            self.position.x = (pos.x - offset_x) * scale
+            self.position.y = pos.y / self._window_size.y * INTERNAL_RENDER_WINDOW_SIZE.y
+        else:
+            # Letterboxing on top/bottom
+            letterbox_height = (self._window_size.x / internal_aspect)
+            offset_y = (self._window_size.y - letterbox_height) / 2
+            scale = INTERNAL_RENDER_WINDOW_SIZE.y / letterbox_height
+            self.position.x = pos.x / self._window_size.x * INTERNAL_RENDER_WINDOW_SIZE.x
+            self.position.y = (pos.y - offset_y) * scale
+        
         await self.on_mouse_move.emit(self.position)
 
     async def _get_mouse_button(self, button_type: MouseButtonType) -> MouseButton:

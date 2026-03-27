@@ -264,3 +264,6 @@ class Processor:
 
     def __repr__(self) -> str:
         return f"<Processor {self.__class__.__name__}>"
+    
+    def __str__(self) -> str:
+        return self.__repr__()
