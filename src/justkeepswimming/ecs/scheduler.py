@@ -88,9 +88,9 @@ class ProcessorScheduler:
         debug_mode = self.engine_context.options.debug
         if processor.debug_only and not debug_mode:
             logger.debug(
-                "Skipping addition of debug-only system ",
-                {processor},
-                " in non-debug mode.",
+                " ".join(["Skipping addition of debug-only system",
+                f"{str(processor)}",
+                " in non-debug mode.",])
             )
         if processor in self.processors:
             raise SystemDuplicateEntryException(
