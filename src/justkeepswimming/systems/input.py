@@ -193,9 +193,9 @@ class Mouse:
         self._on_button_up = dispatcher.get_signal_for(pygame.MOUSEBUTTONUP)
         self._on_window_resize = dispatcher.get_signal_for(pygame.VIDEORESIZE)
 
-        self.on_mouse_move = Signal[Vector2]()
-        self.on_mouse_button_pressed = Signal[MouseButton]()
-        self.on_mouse_button_released = Signal[MouseButton]()
+        self.on_mouse_move = Signal[Mouse]()
+        self.on_mouse_button_pressed = Signal[Mouse, MouseButton]()
+        self.on_mouse_button_released = Signal[Mouse, MouseButton]()
 
         self._on_motion.connect(self._handle_motion_event)
         self._on_button_down.connect(self._handle_mouse_button_down_event)
@@ -206,7 +206,7 @@ class Mouse:
         self._window_size = Vector2(event.size)
 
     async def _handle_motion_event(self, event: Event) -> None:
-        pos = Vector2(event.pos)
+        window_position = Vector2(event.pos)
         
         # Calculate letterbox offset and scale
         window_aspect = self._window_size.x / self._window_size.y
@@ -216,17 +216,17 @@ class Mouse:
             letterbox_width = (self._window_size.y * internal_aspect)
             offset_x = (self._window_size.x - letterbox_width) / 2
             scale = INTERNAL_RENDER_WINDOW_SIZE.x / letterbox_width
-            self.position.x = (pos.x - offset_x) * scale
-            self.position.y = pos.y / self._window_size.y * INTERNAL_RENDER_WINDOW_SIZE.y
+            self.position.x = (window_position.x - offset_x) * scale
+            self.position.y = window_position.y / self._window_size.y * INTERNAL_RENDER_WINDOW_SIZE.y
         else:
             # Letterboxing on top/bottom
             letterbox_height = (self._window_size.x / internal_aspect)
             offset_y = (self._window_size.y - letterbox_height) / 2
             scale = INTERNAL_RENDER_WINDOW_SIZE.y / letterbox_height
-            self.position.x = pos.x / self._window_size.x * INTERNAL_RENDER_WINDOW_SIZE.x
-            self.position.y = (pos.y - offset_y) * scale
+            self.position.x = window_position.x / self._window_size.x * INTERNAL_RENDER_WINDOW_SIZE.x
+            self.position.y = (window_position.y - offset_y) * scale
         
-        await self.on_mouse_move.emit(self.position)
+        await self.on_mouse_move.emit(self)
 
     async def _get_mouse_button(self, button_type: MouseButtonType) -> MouseButton:
         button = self.buttons.get(button_type)
@@ -243,6 +243,7 @@ class Mouse:
         button_type = MouseButtonType(event.button)
         button = await self._get_mouse_button(button_type)
         await button.press()
+        await self.on_mouse_button_pressed.emit(self, button)
 
     async def _handle_mouse_button_up_event(self, event: Event) -> None:
         if event.button not in MouseButtonType:
@@ -252,6 +253,7 @@ class Mouse:
         button_type = MouseButtonType(event.button)
         button = await self._get_mouse_button(button_type)
         await button.release()
+        await self.on_mouse_button_released.emit(self, button)
 
 
 class ActionManager:
@@ -300,12 +302,12 @@ class ActionManager:
         for action in self._key_bindings.get(key.key_type, []):
             await action.binding_released()
 
-    async def _on_mouse_pressed(self, button: MouseButton) -> None:
+    async def _on_mouse_pressed(self, mouse: Mouse, button: MouseButton) -> None:
         logger.debug(f"Mouse button pressed: {button.button_type}")
         for action in self._mouse_bindings.get(button.button_type, []):
             await action.binding_pressed()
 
-    async def _on_mouse_released(self, button: MouseButton) -> None:
+    async def _on_mouse_released(self, mouse: Mouse, button: MouseButton) -> None:
         logger.debug(f"Mouse button released: {button.button_type}")
         for action in self._mouse_bindings.get(button.button_type, []):
             await action.binding_released()

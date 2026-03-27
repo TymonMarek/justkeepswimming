@@ -11,7 +11,7 @@ from justkeepswimming.processors.position import SceneCenterConstraintProcessor
 from justkeepswimming.processors.render import RendererProcessor
 from justkeepswimming.processors.sizing import SceneSizeConstraintProcessor
 from justkeepswimming.processors.tile import AutoTileScrollProcessor, MouseRelativeTileScrollProcessor
-from justkeepswimming.processors.ui import ButtonProcessor
+from justkeepswimming.processors.button import ButtonProcessor
 from justkeepswimming.systems.clock import TickContext
 from justkeepswimming.utilities.context import EngineContext
 from justkeepswimming.utilities.rendering import DEBUG_FONT, render_bounding_box, render_connection, render_label

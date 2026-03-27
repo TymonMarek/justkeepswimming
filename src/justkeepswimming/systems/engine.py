@@ -16,7 +16,7 @@ from justkeepswimming.systems.input import (
 )
 from justkeepswimming.systems.stage import Stage
 from justkeepswimming.systems.window import Window
-from justkeepswimming.utilities.context import EngineContext, Options
+from justkeepswimming.utilities.context import CustomEventType, EngineContext, Options
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +40,9 @@ class Engine:
             input=self.input,
             profiler=self.profiler,
             options=launch_options,
+            custom_events={
+                CustomEventType.QUIT: self.dispatcher.create_event(),
+            }
         )
 
         self.stage = Stage(
@@ -75,6 +78,7 @@ class Engine:
             await self._quit()
 
         self.dispatcher.get_signal_for(pygame.QUIT).connect(_on_quit)
+        self.dispatcher.get_signal_for(self.context.custom_events[CustomEventType.QUIT].event_id).connect(_on_quit)
 
     async def _process_game(self, tick_context: TickContext) -> None:
         await self.dispatcher.process_events()
