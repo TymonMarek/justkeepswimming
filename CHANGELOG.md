@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v0.5.0 (2026-03-27)
+
+### Features
+
+- **input**: Enhance mouse handling with window resize support and letterboxing adjustments
+  ([`5a268e3`](https://github.com/TymonMarek/justkeepswimming/commit/5a268e38a0b3019575d74e74c6e1e0b9eb431501))
+
+### Refactoring
+
+- **logging**: Move setup_logging to prelude and clean up imports
+  ([`a42755b`](https://github.com/TymonMarek/justkeepswimming/commit/a42755b28bec4770833ee05b94a7b1cbbfec759e))
+
+
 ## v0.4.0 (2026-03-03)
 
 ### Bug Fixes
