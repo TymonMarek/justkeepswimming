@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v0.7.2 (2026-04-14)
+
+### Bug Fixes
+
+- **ci**: Fix lockfile not updating on version bumps
+  ([`5e5b5f8`](https://github.com/TymonMarek/justkeepswimming/commit/5e5b5f86c18ee9a16a81b51e7825c9f3330fe883))
+
+### Chores
+
+- **version**: Bump lockfile justkeepswimming package version to 0.7.1
+  ([`338c480`](https://github.com/TymonMarek/justkeepswimming/commit/338c480099ac1987893af281e96e4978a5d03a15))
+
+
 ## v0.7.1 (2026-04-14)
 
 ### Bug Fixes
