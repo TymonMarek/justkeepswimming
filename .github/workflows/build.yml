@@ -38,6 +38,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Update lockfile
+        run: uv sync --package justkeepswimming
+
       - name: Commit version bump
         run: |
           git config user.name "github-actions[bot]"
