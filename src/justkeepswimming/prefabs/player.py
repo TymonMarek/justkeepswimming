@@ -26,8 +26,8 @@ class PlayerPrefab(Prefab):
             max_velocity=Vector2(100.0, 50.0),
         ),
         AngularPhysicsComponent(
-            torque=200.0,
-            max_angular_velocity=150.0,
+            torque=500.0,
+            max_angular_velocity=200.0,
         ),
         PlayerLinearMovementInputComponent(),
         PlayerAngularMovementInputComponent(),

@@ -58,6 +58,7 @@ class Scene:
         for action in self.actions:
             engine_context.input.action_manager.unregister_action(action)
         self.context.maid.cleanup()
+        self.scheduler.cleanup()
 
     async def _on_window_resize(self, event: Event) -> None:
         self.context.surface = Surface(Vector2(event.w, event.h))
