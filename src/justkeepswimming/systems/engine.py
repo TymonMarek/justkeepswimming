@@ -5,7 +5,7 @@ import time
 import pygame
 
 from justkeepswimming.debug.profiler import Profiler
-from justkeepswimming.scenes import SceneID, menu
+from justkeepswimming.scenes import SceneID, menu, game
 from justkeepswimming.systems.clock import Clock, TickContext
 from justkeepswimming.systems.dispatcher import Dispatcher
 from justkeepswimming.systems.input import (
@@ -16,7 +16,11 @@ from justkeepswimming.systems.input import (
 )
 from justkeepswimming.systems.stage import Stage
 from justkeepswimming.systems.window import Window
-from justkeepswimming.utilities.context import CustomEventType, EngineContext, Options
+from justkeepswimming.utilities.context import (
+    CustomEventType,
+    EngineContext,
+    Options,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -42,14 +46,12 @@ class Engine:
             options=launch_options,
             custom_events={
                 CustomEventType.QUIT: self.dispatcher.create_event(),
-            }
+            },
         )
 
         self.stage = Stage(
             self.context,
-            {
-                SceneID.MENU: menu.load,
-            },
+            {SceneID.MENU: menu.load, SceneID.GAME: game.load},
         )
 
         self._attach_quit_handler()
@@ -60,12 +62,15 @@ class Engine:
     async def _toggle_debug_mode(self) -> None:
         self.context.options.debug = not self.context.options.debug
         logger.warning(
-            f"Debug mode {'enabled' if self.context.options.debug else 'disabled'}!"
+            "Debug mode %s!",
+            "enabled" if self.context.options.debug else "disabled",
         )
 
     def _attach_debug_action(self) -> None:
         debug_action = InputAction(
-            InputActionId.TOGGLE_DEBUG_MODE, "Toggle Debug Mode", [KeyboardKeyType.F3]
+            InputActionId.TOGGLE_DEBUG_MODE,
+            "Toggle Debug Mode",
+            [KeyboardKeyType.F3],
         )
         self.input.action_manager.register_action(debug_action)
         debug_action.on_triggered.connect(self._toggle_debug_mode)
@@ -78,7 +83,9 @@ class Engine:
             await self._quit()
 
         self.dispatcher.get_signal_for(pygame.QUIT).connect(_on_quit)
-        self.dispatcher.get_signal_for(self.context.custom_events[CustomEventType.QUIT].event_id).connect(_on_quit)
+        self.dispatcher.get_signal_for(
+            self.context.custom_events[CustomEventType.QUIT].event_id
+        ).connect(_on_quit)
 
     async def _process_game(self, tick_context: TickContext) -> None:
         await self.dispatcher.process_events()

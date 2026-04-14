@@ -5,16 +5,27 @@ from justkeepswimming.components.physics import TransformComponent
 from justkeepswimming.components.pseudo import ScenePseudoComponent
 from justkeepswimming.components.render import RendererComponent
 from justkeepswimming.components.ui import ButtonComponent
-from justkeepswimming.debug.processors.rendering import MouseDebuggerProcessor, RendererDebuggerProcessor
+from justkeepswimming.debug.processors.rendering import (
+    MouseDebuggerProcessor,
+    RendererDebuggerProcessor,
+)
 from justkeepswimming.ecs import Processor, SceneContext
 from justkeepswimming.processors.position import SceneCenterConstraintProcessor
 from justkeepswimming.processors.render import RendererProcessor
 from justkeepswimming.processors.sizing import SceneSizeConstraintProcessor
-from justkeepswimming.processors.tile import AutoTileScrollProcessor, MouseRelativeTileScrollProcessor
+from justkeepswimming.processors.tile import (
+    AutoTileScrollProcessor,
+    MouseRelativeTileScrollProcessor,
+)
 from justkeepswimming.processors.button import ButtonProcessor
 from justkeepswimming.systems.clock import TickContext
 from justkeepswimming.utilities.context import EngineContext
-from justkeepswimming.utilities.rendering import DEBUG_FONT, render_bounding_box, render_connection, render_label
+from justkeepswimming.utilities.rendering import (
+    DEBUG_FONT,
+    render_bounding_box,
+    render_connection,
+    render_label,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +52,7 @@ class ButtonDebuggerProcessor(Processor):
             SceneCenterConstraintProcessor,
             MouseRelativeTileScrollProcessor,
             RendererDebuggerProcessor,
-            MouseDebuggerProcessor
+            MouseDebuggerProcessor,
         }
     )
     before = frozenset({})
@@ -58,8 +69,13 @@ class ButtonDebuggerProcessor(Processor):
             ButtonComponent, TransformComponent, RendererComponent
         ):
             rect = Rect()
-            rect.width, rect.height = int(transform.size.x), int(transform.size.y)
-            rect.center = (int(transform.position.x), int(transform.position.y))
+            rect.width, rect.height = int(transform.size.x), int(
+                transform.size.y
+            )
+            rect.center = (
+                int(transform.position.x),
+                int(transform.position.y),
+            )
             hovered = button.hovering
             render_label(
                 scene_context.surface,

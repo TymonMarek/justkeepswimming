@@ -8,7 +8,9 @@ from justkeepswimming.components.tile import (
     AutoTileScrollComponent,
     TileTextureComponent,
 )
-from justkeepswimming.prefabs.background import ScrollingParallaxBackgroundLayerPrefab
+from justkeepswimming.prefabs.background import (
+    ScrollingParallaxBackgroundLayerPrefab,
+)
 from justkeepswimming.utilities.image import Image
 from justkeepswimming.utilities.prefab import Prefab, PrefabGroup
 

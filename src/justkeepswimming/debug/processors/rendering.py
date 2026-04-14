@@ -43,7 +43,9 @@ class RendererDebuggerProcessor(Processor):
         engine_context: EngineContext,
     ) -> None:
         scene = scene_context.surface
-        entities = list(scene_context.query(TransformComponent, RendererComponent))
+        entities = list(
+            scene_context.query(TransformComponent, RendererComponent)
+        )
         entities.sort(key=lambda item: getattr(item[1][1], "layer", 0))
         index = 0
         for _, (transform, renderer) in entities:
@@ -69,7 +71,7 @@ class MouseDebuggerProcessor(Processor):
             AutoTileScrollProcessor,
             SceneCenterConstraintProcessor,
             MouseRelativeTileScrollProcessor,
-            RendererDebuggerProcessor
+            RendererDebuggerProcessor,
         }
     )
     debug_only = True
@@ -83,5 +85,9 @@ class MouseDebuggerProcessor(Processor):
         scene = scene_context.surface
         mouse_pos = engine_context.input.mouse.position
         render_cross(
-            scene, Vector2(mouse_pos), size=1000, color=Color(255, 0, 0), thickness=2
+            scene,
+            Vector2(mouse_pos),
+            size=1000,
+            color=Color(255, 0, 0),
+            thickness=2,
         )

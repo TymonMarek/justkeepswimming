@@ -5,7 +5,9 @@ from justkeepswimming.components.render import RendererComponent
 from justkeepswimming.components.sprite import SpriteComponent
 from justkeepswimming.ecs import Processor, SceneContext
 from justkeepswimming.processors.render import RendererProcessor
-from justkeepswimming.processors.sizing import RendererTransformConstraintProcessor
+from justkeepswimming.processors.sizing import (
+    RendererTransformConstraintProcessor,
+)
 from justkeepswimming.systems.clock import TickContext
 from justkeepswimming.utilities.context import EngineContext
 

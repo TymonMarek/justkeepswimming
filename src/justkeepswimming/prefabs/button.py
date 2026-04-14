@@ -55,7 +55,7 @@ class PlayButtonPrefab(Prefab):
         ButtonDebuggerProcessor,
         ButtonProcessor,
         RendererProcessor,
-        TextProcessor
+        TextProcessor,
     ]
 
 

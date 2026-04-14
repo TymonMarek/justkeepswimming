@@ -15,7 +15,9 @@ C = TypeVar("C")
 
 
 class Entity:
-    def __init__(self, entity_id: int, name: str, context: "SceneContext") -> None:
+    def __init__(
+        self, entity_id: int, name: str, context: "SceneContext"
+    ) -> None:
         self.id = entity_id
         self.maid = Maid()
         self.name = name
@@ -63,10 +65,12 @@ class SceneContext:
         self.on_component_added = Signal[tuple[Entity, Component]]()
         self.on_component_removed = Signal[tuple[Entity, Component]]()
         self._query_cache: dict[
-            tuple[type[Component], ...], list[tuple[Entity, tuple[Component, ...]]]
+            tuple[type[Component], ...],
+            list[tuple[Entity, tuple[Component, ...]]],
         ] = {}
         self._query_one_cache: dict[
-            tuple[type[Component], ...], tuple[Entity, tuple[Component, ...]] | None
+            tuple[type[Component], ...],
+            tuple[Entity, tuple[Component, ...]] | None,
         ] = {}
 
     def _invalidate_caches(self) -> None:
@@ -106,7 +110,9 @@ class SceneContext:
         self.on_component_added.emit_sync((entity, component))
         self._invalidate_caches()
 
-    def remove_component(self, entity: Entity, component_type: type[Component]) -> None:
+    def remove_component(
+        self, entity: Entity, component_type: type[Component]
+    ) -> None:
         if entity.id not in self.components:
             raise RuntimeError(
                 f"Entity {entity.id} does not exist in the scene context."
@@ -144,7 +150,9 @@ class SceneContext:
         return signal
 
     @overload
-    def query(self, component_type: type[C1]) -> Iterable[tuple[Entity, tuple[C1]]]: ...
+    def query(
+        self, component_type: type[C1]
+    ) -> Iterable[tuple[Entity, tuple[C1]]]: ...
 
     @overload
     def query(
@@ -177,7 +185,10 @@ class SceneContext:
             return
         results: list[tuple[Entity, tuple[Component, ...]]] = []
         for entity_id, components in self.components.items():
-            if all(component_type in components.keys() for component_type in classes):
+            if all(
+                component_type in components.keys()
+                for component_type in classes
+            ):
                 entity = self.entities[entity_id]
                 components_tuple = tuple(
                     components[component_type] for component_type in classes
@@ -219,7 +230,10 @@ class SceneContext:
         if self._query_one_cache.get(classes) is not None:
             return self._query_one_cache[classes]
         for entity_id, components in self.components.items():
-            if all(component_type in components.keys() for component_type in classes):
+            if all(
+                component_type in components.keys()
+                for component_type in classes
+            ):
                 entity = self.entities[entity_id]
                 components_tuple = tuple(
                     components[component_type] for component_type in classes
@@ -235,7 +249,9 @@ class Processor:
     before: frozenset[type["Processor"]] = frozenset()
     after: frozenset[type["Processor"]] = frozenset()
     alongside: frozenset[type["Processor"]] = frozenset()
-    debug_only: bool = False # Processors used for debugging purposes only will not run in production builds
+    debug_only: bool = (
+        False  # Processors used for debugging purposes only will not run in production builds
+    )
 
     def __init__(self) -> None:
         self.maid = Maid()
@@ -264,6 +280,6 @@ class Processor:
 
     def __repr__(self) -> str:
         return f"<Processor {self.__class__.__name__}>"
-    
+
     def __str__(self) -> str:
         return self.__repr__()

@@ -20,8 +20,8 @@ class SceneLoadingStrategy(enum.Enum):
 @dataclass
 class StageContext:
     scene: Optional[Scene] = None
-    on_request_switch_scene: Signal[SceneID] = field(
-        default_factory=lambda: Signal[SceneID]()
+    on_request_switch_scene: Signal[[SceneID, bool]] = field(
+        default_factory=lambda: Signal[[SceneID, bool]]()
     )
 
 
@@ -68,7 +68,9 @@ class Stage:
         self.context = StageContext()
 
         self.on_tick.connect(self._process_scene)
-        self.context.on_request_switch_scene.connect(self._handle_request_switch_scene)
+        self.context.on_request_switch_scene.connect(
+            self._handle_request_switch_scene
+        )
 
         if loading_strategy is SceneLoadingStrategy.EAGER:
             self._create_all_handles()
@@ -94,10 +96,12 @@ class Stage:
             self.handles[scene_id] = handle
             return handle
 
-    async def switch_scene(self, scene_id: SceneID) -> None:
-        await self.context.on_request_switch_scene.emit(scene_id)
+    async def switch_scene(self, scene_id: SceneID, transition: bool) -> None:
+        await self.context.on_request_switch_scene.emit(scene_id, transition)
 
-    async def _handle_request_switch_scene(self, scene_id: SceneID) -> None:
+    async def _handle_request_switch_scene(
+        self, scene_id: SceneID, transition: bool
+    ) -> None:
         if self.scene:
             await self.scene.on_exit.emit(self.engine_context)
             await self.scene.on_unload.emit()

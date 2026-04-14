@@ -68,11 +68,15 @@ def show_summary(profiler: Profiler) -> None:
         times_series = []
         max_len = 0
         for name in labels:
-            durations = [(end - start) for (start, end) in processor_records[name]]
+            durations = [
+                (end - start) for (start, end) in processor_records[name]
+            ]
             times_series.append(durations)
             max_len = max(max_len, len(durations))
 
-        padded = [series + [0.0] * (max_len - len(series)) for series in times_series]
+        padded = [
+            series + [0.0] * (max_len - len(series)) for series in times_series
+        ]
 
         if max_len > 0:
             ax_proc_records.cla()
@@ -93,7 +97,8 @@ def show_summary(profiler: Profiler) -> None:
                 return label if pct >= threshold_pct else ""
 
             filtered_labels = [
-                label_filter(label, value) for label, value in zip(labels, values)
+                label_filter(label, value)
+                for label, value in zip(labels, values)
             ]
 
             ax_proc_chart.set_title("Average CPU Time Distribution")
@@ -137,7 +142,10 @@ def show_gantt_frame(profiler: Profiler, frame_index: int) -> None:
             spans.append((name, start, end))
             min_start = min(min_start, start)
 
-    spans = [(name, start - min_start, end - min_start) for name, start, end in spans]
+    spans = [
+        (name, start - min_start, end - min_start)
+        for name, start, end in spans
+    ]
     if not spans:
         print("No spans for that frame")
         return
@@ -158,7 +166,9 @@ def show_gantt_frame(profiler: Profiler, frame_index: int) -> None:
     bar_entries = []
     for idx, (name, start, end) in enumerate(spans):
         width = end - start
-        bar = ax.barh(idx, width, left=start, color=colors[name], edgecolor="black")[0]
+        bar = ax.barh(
+            idx, width, left=start, color=colors[name], edgecolor="black"
+        )[0]
         bar_entries.append((bar, name, start, end, width))
 
     ax.grid(axis="x", linestyle="--", alpha=0.4)
@@ -244,8 +254,12 @@ def show_gantt_frame(profiler: Profiler, frame_index: int) -> None:
         # Fallback: place flush to chart edge (outside) if both sides fail
         if not placed:
             if prefer_right:
-                edge_disp_x = ax.transData.transform((max_end, idx))[0] + padding_px
-                data_x = ax.transData.inverted().transform((edge_disp_x, bar_disp_y))[0]
+                edge_disp_x = (
+                    ax.transData.transform((max_end, idx))[0] + padding_px
+                )
+                data_x = ax.transData.inverted().transform(
+                    (edge_disp_x, bar_disp_y)
+                )[0]
                 ax.text(
                     data_x,
                     idx,
@@ -258,7 +272,9 @@ def show_gantt_frame(profiler: Profiler, frame_index: int) -> None:
                 )
             else:
                 edge_disp_x = ax.transData.transform((0, idx))[0] - padding_px
-                data_x = ax.transData.inverted().transform((edge_disp_x, bar_disp_y))[0]
+                data_x = ax.transData.inverted().transform(
+                    (edge_disp_x, bar_disp_y)
+                )[0]
                 ax.text(
                     data_x,
                     idx,
@@ -293,22 +309,18 @@ def cli_frame() -> None:
     profiler = Profiler.load(args.dump_path)
     show_gantt_frame(profiler, args.frame)
 
+
 def cli() -> None:
     parser = argparse.ArgumentParser(description="Profiler")
     subparsers = parser.add_subparsers(dest="command")
 
     parser_summary = subparsers.add_parser(
-        "summary",
-        help="Show profiler summary"
+        "summary", help="Show profiler summary"
     )
-    parser_summary.add_argument(
-        "dump_path",
-        help="Path to .prof dump"
-    )
+    parser_summary.add_argument("dump_path", help="Path to .prof dump")
 
     parser_frame = subparsers.add_parser(
-        "frame",
-        help="Show Gantt for one frame"
+        "frame", help="Show Gantt for one frame"
     )
     parser_frame.add_argument("dump_path", help="Path to .prof dump")
     parser_frame.add_argument(

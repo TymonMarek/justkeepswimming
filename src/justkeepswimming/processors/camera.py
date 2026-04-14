@@ -6,7 +6,10 @@ from justkeepswimming.components.pseudo import (
     ScenePseudoComponent,
     WindowPseudoComponent,
 )
-from justkeepswimming.components.render import CameraComponent, MainCameraComponent
+from justkeepswimming.components.render import (
+    CameraComponent,
+    MainCameraComponent,
+)
 from justkeepswimming.ecs import Processor, SceneContext
 from justkeepswimming.systems.clock import TickContext
 from justkeepswimming.utilities.context import EngineContext
@@ -37,7 +40,9 @@ class CameraProcessor(Processor):
             camera_width, camera_height = camera.surface.get_size()
             window_width, window_height = window.surface.get_size()
 
-            scale = min(window_width / camera_width, window_height / camera_height)
+            scale = min(
+                window_width / camera_width, window_height / camera_height
+            )
             new_width = int(camera_width * scale)
             new_height = int(camera_height * scale)
 

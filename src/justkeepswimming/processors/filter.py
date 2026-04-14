@@ -1,9 +1,16 @@
 from justkeepswimming.components.filter import TintComponent
 from justkeepswimming.components.render import RendererComponent
 from justkeepswimming.ecs import Processor, SceneContext
-from justkeepswimming.processors.animation import AnimationTrackPlaybackProcessor
-from justkeepswimming.processors.render import RendererPreProcessor, RendererProcessor
-from justkeepswimming.processors.sizing import RendererTransformConstraintProcessor
+from justkeepswimming.processors.animation import (
+    AnimationTrackPlaybackProcessor,
+)
+from justkeepswimming.processors.render import (
+    RendererPreProcessor,
+    RendererProcessor,
+)
+from justkeepswimming.processors.sizing import (
+    RendererTransformConstraintProcessor,
+)
 from justkeepswimming.systems.clock import TickContext
 from justkeepswimming.utilities.context import EngineContext
 
@@ -38,5 +45,7 @@ class TintProcessor(Processor):
                 int(tint_color.a * intensity),
             )
             tint_surface = renderable_component.surface.copy()
-            tint_surface.fill(blended_color, special_flags=tint_component.blend_mode)
+            tint_surface.fill(
+                blended_color, special_flags=tint_component.blend_mode
+            )
             renderable_component.surface.blit(tint_surface, (0, 0))
