@@ -56,11 +56,14 @@ class Signal(Generic[P]):
     async def emit(self, *args: P.args, **kwargs: P.kwargs) -> None:
         try:
             tasks = [
-                connection.fire(*args, **kwargs) for connection in self.connections
+                connection.fire(*args, **kwargs)
+                for connection in self.connections
             ]
             await asyncio.gather(*tasks)
         except CancelledError:
-            logger.debug("Signal emission was cancelled by asyncio, exiting...")
+            logger.debug(
+                "Signal emission was cancelled by asyncio, exiting..."
+            )
 
     def emit_sync(self, *args: P.args, **kwargs: P.kwargs) -> None:
         try:

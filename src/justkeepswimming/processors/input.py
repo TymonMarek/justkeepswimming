@@ -42,7 +42,9 @@ class PlayerLinearMovementInputProcessor(Processor):
         if direction.length_squared() > 0:
             direction = direction.normalize()
 
-        for _, (wish,) in scene_context.query(PlayerLinearMovementInputComponent):
+        for _, (wish,) in scene_context.query(
+            PlayerLinearMovementInputComponent
+        ):
             wish.thrust = direction
 
 
@@ -75,5 +77,7 @@ class PlayerAngularMovementInputProcessor(Processor):
             if action.active:
                 torque += wish_torque
 
-        for _, (wish,) in scene_context.query(PlayerAngularMovementInputComponent):
+        for _, (wish,) in scene_context.query(
+            PlayerAngularMovementInputComponent
+        ):
             wish.torque = torque

@@ -13,8 +13,13 @@ from justkeepswimming.components.physics import (
 )
 from justkeepswimming.components.render import RendererComponent
 from justkeepswimming.ecs import Processor, SceneContext
-from justkeepswimming.processors.render import RendererPreProcessor, RendererProcessor
-from justkeepswimming.processors.sizing import RendererTransformConstraintProcessor
+from justkeepswimming.processors.render import (
+    RendererPreProcessor,
+    RendererProcessor,
+)
+from justkeepswimming.processors.sizing import (
+    RendererTransformConstraintProcessor,
+)
 from justkeepswimming.systems.clock import TickContext
 from justkeepswimming.utilities.animation import AnimationType
 from justkeepswimming.utilities.context import EngineContext
@@ -24,7 +29,9 @@ class AnimationTrackPlaybackProcessor(Processor):
     reads = frozenset({AnimatorComponent, RendererComponent})
     writes = frozenset({AnimatorComponent, RendererComponent})
     before = frozenset({RendererProcessor})
-    after = frozenset({RendererTransformConstraintProcessor, RendererPreProcessor})
+    after = frozenset(
+        {RendererTransformConstraintProcessor, RendererPreProcessor}
+    )
 
     async def update(
         self,
@@ -39,8 +46,12 @@ class AnimationTrackPlaybackProcessor(Processor):
             AnimatorComponent,
             RendererComponent,
         ):
-            await animation_component.animator.update(tick_context, scene_context)
-            current_frame = await animation_component.animator.get_current_frame()
+            await animation_component.animator.update(
+                tick_context, scene_context
+            )
+            current_frame = (
+                await animation_component.animator.get_current_frame()
+            )
             if current_frame is not None:
                 renderer_component.surface.blit(
                     pygame.transform.scale(
@@ -140,7 +151,8 @@ class CharacterAnimationProcessor(Processor):
                     await animation_state_component.current_track.stop()
                 animation_state_component.current_track = (
                     await animator_component.animator.load_animation(
-                        animation_state_component.current_state, desired_animation
+                        animation_state_component.current_state,
+                        desired_animation,
                     )
                 )
                 await animation_state_component.current_track.play()

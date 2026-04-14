@@ -15,7 +15,7 @@ logger = logging.getLogger()
 async def game_loop(launch_options: Options):
     engine = Engine(launch_options)
     await engine.start()
-    await engine.stage.switch_scene(SceneID.MENU)
+    await engine.stage.switch_scene(SceneID.MENU, transition=False)
     await engine.clock.on_stop.wait()
 
 

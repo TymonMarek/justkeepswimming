@@ -1,8 +1,15 @@
 from justkeepswimming.components.render import RendererComponent
-from justkeepswimming.debug.processors.rendering import RendererDebuggerProcessor
+from justkeepswimming.debug.processors.rendering import (
+    RendererDebuggerProcessor,
+)
 from justkeepswimming.prefabs.physics import GameObjectPrefab
-from justkeepswimming.processors.render import RendererPreProcessor, RendererProcessor
-from justkeepswimming.processors.sizing import RendererTransformConstraintProcessor
+from justkeepswimming.processors.render import (
+    RendererPreProcessor,
+    RendererProcessor,
+)
+from justkeepswimming.processors.sizing import (
+    RendererTransformConstraintProcessor,
+)
 from justkeepswimming.utilities.prefab import Prefab
 
 

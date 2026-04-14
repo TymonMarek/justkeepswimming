@@ -43,12 +43,18 @@ class ProcessorScheduler:
         self.scene_context = scene_context
         self.profiler = engine_context.profiler
 
-    def __deepcopy__(self, memo: dict[int, Any] | None) -> "ProcessorScheduler":
-        new_scheduler = ProcessorScheduler(self.scene_context, self.engine_context)
+    def __deepcopy__(
+        self, memo: dict[int, Any] | None
+    ) -> "ProcessorScheduler":
+        new_scheduler = ProcessorScheduler(
+            self.scene_context, self.engine_context
+        )
         new_scheduler.processors = copy.deepcopy(self.processors, memo)
         new_scheduler._nodes = copy.deepcopy(self._nodes, memo)
         new_scheduler._graph = copy.deepcopy(self._graph, memo)
-        new_scheduler._execution_order = copy.deepcopy(self._execution_order, memo)
+        new_scheduler._execution_order = copy.deepcopy(
+            self._execution_order, memo
+        )
         return new_scheduler
 
     def _fmt_components(self, components: frozenset[Type[Component]]) -> str:
@@ -82,15 +88,21 @@ class ProcessorScheduler:
         with engine_context.profiler.scope(
             ProfilerScope.PROCESSOR, system.__class__.__name__
         ):
-            return await system.update(tick_context, scene_context, engine_context)
+            return await system.update(
+                tick_context, scene_context, engine_context
+            )
 
     def add_processor(self, processor: Processor) -> None:
         debug_mode = self.engine_context.options.debug
         if processor.debug_only and not debug_mode:
             logger.debug(
-                " ".join(["Skipping addition of debug-only system",
-                f"{str(processor)}",
-                " in non-debug mode.",])
+                " ".join(
+                    [
+                        "Skipping addition of debug-only system",
+                        f"{str(processor)}",
+                        " in non-debug mode.",
+                    ]
+                )
             )
         if processor in self.processors:
             raise SystemDuplicateEntryException(
@@ -163,8 +175,7 @@ class ProcessorScheduler:
                 components_a_writes_that_b_reads = a.writes & b.reads
                 if components_a_writes_that_b_reads:
                     logger.debug(
-                        f"Inferred: {a} runs BEFORE {b} "
-                        f"because {b} reads {
+                        f"Inferred: {a} runs BEFORE {b} " f"because {b} reads {
                             self._fmt_components(components_a_writes_that_b_reads)
                         }"
                     )
@@ -173,8 +184,7 @@ class ProcessorScheduler:
                 components_a_reads_that_b_writes = a.reads & b.writes
                 if components_a_reads_that_b_writes:
                     logger.debug(
-                        f"Inferred: {b} runs BEFORE {a} "
-                        f"because {a} reads {
+                        f"Inferred: {b} runs BEFORE {a} " f"because {a} reads {
                             self._fmt_components(components_a_reads_that_b_writes)
                         }"
                     )

@@ -39,6 +39,7 @@ class Clock:
         self.running = False
         self.on_start.connect(self._start)
         self.on_stop.connect(self._stop)
+        self.start_timestamp: float = 0.0
 
     async def _start(self) -> None:
         if self.running:

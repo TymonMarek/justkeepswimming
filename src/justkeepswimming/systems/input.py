@@ -8,7 +8,6 @@ from pygame import Event, Vector2
 from justkeepswimming.systems.dispatcher import Dispatcher
 from justkeepswimming.utilities.signal import Signal
 
-
 INTERNAL_RENDER_WINDOW_SIZE = Vector2(1920 / 3, 1080 / 3)
 
 logger = logging.getLogger(__name__)
@@ -124,7 +123,9 @@ class Keyboard:
         self._on_key_down.connect(self._handle_key_down_event)
         self._on_key_up.connect(self._handle_key_up_event)
 
-    async def _get_keyboard_key(self, key_type: KeyboardKeyType) -> KeyboardKey:
+    async def _get_keyboard_key(
+        self, key_type: KeyboardKeyType
+    ) -> KeyboardKey:
         key = self.keys.get(key_type)
         if key is None:
             key = KeyboardKey(key_type)
@@ -151,9 +152,10 @@ class Keyboard:
         await key.release()
         await self.on_key_released.emit(key)
 
+
 # @dataclass
 # class MouseButtonInputStory:
-    
+
 
 class MouseButton:
     def __init__(self, button_type: MouseButtonType) -> None:
@@ -189,7 +191,9 @@ class Mouse:
         self._window_size: Vector2 = Vector2(800, 600)
 
         self._on_motion = dispatcher.get_signal_for(pygame.MOUSEMOTION)
-        self._on_button_down = dispatcher.get_signal_for(pygame.MOUSEBUTTONDOWN)
+        self._on_button_down = dispatcher.get_signal_for(
+            pygame.MOUSEBUTTONDOWN
+        )
         self._on_button_up = dispatcher.get_signal_for(pygame.MOUSEBUTTONUP)
         self._on_window_resize = dispatcher.get_signal_for(pygame.VIDEORESIZE)
 
@@ -201,34 +205,46 @@ class Mouse:
         self._on_button_down.connect(self._handle_mouse_button_down_event)
         self._on_button_up.connect(self._handle_mouse_button_up_event)
         self._on_window_resize.connect(self._handle_window_resize_event)
-    
+
     async def _handle_window_resize_event(self, event: Event) -> None:
         self._window_size = Vector2(event.size)
 
     async def _handle_motion_event(self, event: Event) -> None:
         window_position = Vector2(event.pos)
-        
+
         # Calculate letterbox offset and scale
         window_aspect = self._window_size.x / self._window_size.y
-        internal_aspect = INTERNAL_RENDER_WINDOW_SIZE.x / INTERNAL_RENDER_WINDOW_SIZE.y
+        internal_aspect = (
+            INTERNAL_RENDER_WINDOW_SIZE.x / INTERNAL_RENDER_WINDOW_SIZE.y
+        )
         if window_aspect > internal_aspect:
             # Letterboxing on sides
-            letterbox_width = (self._window_size.y * internal_aspect)
+            letterbox_width = self._window_size.y * internal_aspect
             offset_x = (self._window_size.x - letterbox_width) / 2
             scale = INTERNAL_RENDER_WINDOW_SIZE.x / letterbox_width
             self.position.x = (window_position.x - offset_x) * scale
-            self.position.y = window_position.y / self._window_size.y * INTERNAL_RENDER_WINDOW_SIZE.y
+            self.position.y = (
+                window_position.y
+                / self._window_size.y
+                * INTERNAL_RENDER_WINDOW_SIZE.y
+            )
         else:
             # Letterboxing on top/bottom
-            letterbox_height = (self._window_size.x / internal_aspect)
+            letterbox_height = self._window_size.x / internal_aspect
             offset_y = (self._window_size.y - letterbox_height) / 2
             scale = INTERNAL_RENDER_WINDOW_SIZE.y / letterbox_height
-            self.position.x = window_position.x / self._window_size.x * INTERNAL_RENDER_WINDOW_SIZE.x
+            self.position.x = (
+                window_position.x
+                / self._window_size.x
+                * INTERNAL_RENDER_WINDOW_SIZE.x
+            )
             self.position.y = (window_position.y - offset_y) * scale
-        
+
         await self.on_mouse_move.emit(self)
 
-    async def _get_mouse_button(self, button_type: MouseButtonType) -> MouseButton:
+    async def _get_mouse_button(
+        self, button_type: MouseButtonType
+    ) -> MouseButton:
         button = self.buttons.get(button_type)
         if button is None:
             button = MouseButton(button_type)
@@ -302,12 +318,16 @@ class ActionManager:
         for action in self._key_bindings.get(key.key_type, []):
             await action.binding_released()
 
-    async def _on_mouse_pressed(self, mouse: Mouse, button: MouseButton) -> None:
+    async def _on_mouse_pressed(
+        self, mouse: Mouse, button: MouseButton
+    ) -> None:
         logger.debug(f"Mouse button pressed: {button.button_type}")
         for action in self._mouse_bindings.get(button.button_type, []):
             await action.binding_pressed()
 
-    async def _on_mouse_released(self, mouse: Mouse, button: MouseButton) -> None:
+    async def _on_mouse_released(
+        self, mouse: Mouse, button: MouseButton
+    ) -> None:
         logger.debug(f"Mouse button released: {button.button_type}")
         for action in self._mouse_bindings.get(button.button_type, []):
             await action.binding_released()

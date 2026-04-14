@@ -34,7 +34,8 @@ class TitleScreenTextPrefab(Prefab):
             content="JustKeepSwimming",
         ),
         TransformComponent(
-            position=Vector2((1920 / 3) / 2, (1080 / 3) / 4), anchor=Vector2(0.5, 0.5)
+            position=Vector2((1920 / 3) / 2, (1080 / 3) / 4),
+            anchor=Vector2(0.5, 0.5),
         ),
         RendererComponent(layer=100),
     ]

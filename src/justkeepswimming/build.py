@@ -43,7 +43,10 @@ logging.basicConfig(
     format="[bold cyan]%(name)s[/] %(message)s",
     handlers=[
         rich.logging.RichHandler(
-            rich_tracebacks=True, show_time=False, show_level=False, markup=True
+            rich_tracebacks=True,
+            show_time=False,
+            show_level=False,
+            markup=True,
         )
     ],
 )
@@ -58,7 +61,9 @@ def build() -> None:
         BarColumn(),
         TimeElapsedColumn(),
     ) as progress:
-        compiling_task = progress.add_task("[cyan]Compiling...", total=None, start=True)
+        compiling_task = progress.add_task(
+            "[cyan]Compiling...", total=None, start=True
+        )
         process = subprocess.Popen(
             [VENV_PYTHON, "-m", COMPILER, *COMPILER_ARGUMENTS, ENTRY_POINT],
             stdout=subprocess.PIPE,
@@ -80,7 +85,13 @@ def build() -> None:
             logger.error(f"Build failed with return code {returncode}.")
             raise subprocess.CalledProcessError(
                 returncode,
-                [VENV_PYTHON, "-m", COMPILER, *COMPILER_ARGUMENTS, ENTRY_POINT],
+                [
+                    VENV_PYTHON,
+                    "-m",
+                    COMPILER,
+                    *COMPILER_ARGUMENTS,
+                    ENTRY_POINT,
+                ],
             )
         progress.remove_task(compiling_task)
         cleaning_task = progress.add_task("[cyan]Finalizing...", total=1)

@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 type EventType = int
 
+
 class Dispatcher:
     def __init__(self) -> None:
         self.event_signals: dict[EventType, Signal[PygameEvent]] = dict()

@@ -1,6 +1,8 @@
 from pygame import Color, Vector2
 
-from justkeepswimming.components.input import PlayerLinearMovementInputComponent
+from justkeepswimming.components.input import (
+    PlayerLinearMovementInputComponent,
+)
 from justkeepswimming.components.physics import (
     LinearPhysicsComponent,
     TransformComponent,
@@ -8,11 +10,17 @@ from justkeepswimming.components.physics import (
 from justkeepswimming.ecs import Processor, SceneContext
 from justkeepswimming.systems.clock import TickContext
 from justkeepswimming.utilities.context import EngineContext
-from justkeepswimming.utilities.rendering import DEBUG_FONT, render_arrow, render_label
+from justkeepswimming.utilities.rendering import (
+    DEBUG_FONT,
+    render_arrow,
+    render_label,
+)
 
 
 class LinearPhysicsDebuggerProcessor(Processor):
-    reads = frozenset({LinearPhysicsComponent, PlayerLinearMovementInputComponent})
+    reads = frozenset(
+        {LinearPhysicsComponent, PlayerLinearMovementInputComponent}
+    )
     writes = frozenset({})
     debug_only = True
 
@@ -31,22 +39,36 @@ class LinearPhysicsDebuggerProcessor(Processor):
             origin = Vector2(transform.position)
 
             if entity.has_component(PlayerLinearMovementInputComponent):
-                input = entity.get_component(PlayerLinearMovementInputComponent).thrust
+                input = entity.get_component(
+                    PlayerLinearMovementInputComponent
+                ).thrust
                 if input.length() > 0:
                     magnitude = input.normalize() * 25
                     render_arrow(
-                        surface, origin, origin + magnitude, Color(255, 255, 0), 2
+                        surface,
+                        origin,
+                        origin + magnitude,
+                        Color(255, 255, 0),
+                        2,
                     )
-                    render_label(surface, origin + magnitude, "input", DEBUG_FONT)
+                    render_label(
+                        surface, origin + magnitude, "input", DEBUG_FONT
+                    )
 
             velocity = linear_physics.velocity
             if velocity.length() > 0:
-                render_arrow(surface, origin, origin + velocity, Color(0, 255, 0), 2)
-                render_label(surface, origin + velocity, "velocity", DEBUG_FONT)
+                render_arrow(
+                    surface, origin, origin + velocity, Color(0, 255, 0), 2
+                )
+                render_label(
+                    surface, origin + velocity, "velocity", DEBUG_FONT
+                )
 
             acceleration = linear_physics.acceleration
             if acceleration.length() > 0:
                 render_arrow(
                     surface, origin, origin + acceleration, Color(255, 0, 0), 2
                 )
-                render_label(surface, origin + acceleration, "acceleration", DEBUG_FONT)
+                render_label(
+                    surface, origin + acceleration, "acceleration", DEBUG_FONT
+                )

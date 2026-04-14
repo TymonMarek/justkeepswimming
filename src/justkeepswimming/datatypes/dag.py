@@ -44,7 +44,9 @@ class DirectedAcyclicGraph(Generic[T]):
         self, node: DirectedAcyclicGraphNode[T]
     ) -> DirectedAcyclicGraphNode[T]:
         if node in self.nodes:
-            raise NodeAlreadyExistsError(f"{node} already exists in the graph.")
+            raise NodeAlreadyExistsError(
+                f"{node} already exists in the graph."
+            )
         self.nodes.add(node)
         return node
 
@@ -58,7 +60,9 @@ class DirectedAcyclicGraph(Generic[T]):
         target: DirectedAcyclicGraphNode[T],
     ) -> List[DirectedAcyclicGraphNode[T]] | None:
         stack: list[
-            tuple[DirectedAcyclicGraphNode[T], list[DirectedAcyclicGraphNode[T]]]
+            tuple[
+                DirectedAcyclicGraphNode[T], list[DirectedAcyclicGraphNode[T]]
+            ]
         ] = [(start, [start])]
         visited: set[DirectedAcyclicGraphNode[T]] = set()
 

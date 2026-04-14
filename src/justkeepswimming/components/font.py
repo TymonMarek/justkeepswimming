@@ -22,7 +22,9 @@ class TextComponent(Component):
     font: Font = field(default_factory=lambda: SysFont(None, 24))
     color: Color = field(default_factory=lambda: Color(0, 0, 0))
     background_color: Color = field(default_factory=lambda: Color(0, 0, 0, 0))
-    alignment: TextAlignment = field(default_factory=lambda: TextAlignment.CENTER)
+    alignment: TextAlignment = field(
+        default_factory=lambda: TextAlignment.CENTER
+    )
     antialias: bool = False
     autosize: bool = False
     content: str = ""

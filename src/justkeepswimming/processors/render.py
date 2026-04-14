@@ -23,7 +23,9 @@ class RendererProcessor(Processor):
     ) -> None:
         scene = scene_context.surface
         scene.fill(BACKGROUND_COLOR)
-        entities = list(scene_context.query(TransformComponent, RendererComponent))
+        entities = list(
+            scene_context.query(TransformComponent, RendererComponent)
+        )
         entities.sort(key=lambda item: getattr(item[1][1], "layer", 0))
         index = 0
         for _, (transform, renderer) in entities:

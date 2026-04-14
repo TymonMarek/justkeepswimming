@@ -133,7 +133,11 @@ class AnimationTrack:
 
         keyframes = self.animation.sequence.keyframes
         for i in range(len(keyframes) - 1):
-            if keyframes[i].timestamp <= self.time < keyframes[i + 1].timestamp:
+            if (
+                keyframes[i].timestamp
+                <= self.time
+                < keyframes[i + 1].timestamp
+            ):
                 return self.frames[keyframes[i].timestamp]
 
         return self.frames[keyframes[-1].timestamp]
@@ -162,7 +166,9 @@ class Animator:
 
     async def get_active_track(self) -> AnimationTrack | None:
         playing = [
-            t for t in self.tracks.values() if t.state == AnimationTrackState.PLAYING
+            t
+            for t in self.tracks.values()
+            if t.state == AnimationTrackState.PLAYING
         ]
         if not playing:
             return None
@@ -178,4 +184,6 @@ class Animator:
         self, tick_context: TickContext, scene_context: SceneContext
     ) -> None:
         for track in self.tracks.values():
-            await track.update(tick_context.delta_time * scene_context.time_scale)
+            await track.update(
+                tick_context.delta_time * scene_context.time_scale
+            )

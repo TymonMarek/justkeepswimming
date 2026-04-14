@@ -1,5 +1,6 @@
 import logging
 import math
+from datetime import datetime
 
 import pygame
 
@@ -15,14 +16,21 @@ from justkeepswimming.components.tile import (
     TileTextureComponent,
 )
 from justkeepswimming.ecs import Processor, SceneContext
-from justkeepswimming.processors.animation import AnimationTrackPlaybackProcessor
+from justkeepswimming.processors.animation import (
+    AnimationTrackPlaybackProcessor,
+)
 from justkeepswimming.processors.filter import TintProcessor
 from justkeepswimming.processors.physics import (
     AngularPhysicsProcessor,
     LinearPhysicsProcessor,
 )
-from justkeepswimming.processors.render import RendererPreProcessor, RendererProcessor
-from justkeepswimming.processors.sizing import RendererTransformConstraintProcessor
+from justkeepswimming.processors.render import (
+    RendererPreProcessor,
+    RendererProcessor,
+)
+from justkeepswimming.processors.sizing import (
+    RendererTransformConstraintProcessor,
+)
 from justkeepswimming.systems.clock import TickContext
 from justkeepswimming.utilities.context import EngineContext
 
@@ -33,7 +41,9 @@ DEBUG_FONT = pygame.font.SysFont(None, 34)
 class TileTextureProcessor(Processor):
     reads = frozenset({TileTextureComponent, TransformComponent})
     writes = frozenset({TileTextureComponent, RendererComponent})
-    after = frozenset({RendererTransformConstraintProcessor, RendererPreProcessor})
+    after = frozenset(
+        {RendererTransformConstraintProcessor, RendererPreProcessor}
+    )
     before = frozenset({RendererProcessor, TintProcessor})
     alongside = frozenset({AnimationTrackPlaybackProcessor})
     logger = logging.getLogger(__name__)
@@ -108,7 +118,9 @@ class TileTextureProcessor(Processor):
                 px = origin_x + x * tile_w
                 for y in range(start_y, end_y):
                     py = origin_y + y * tile_h
-                    surf.blit(tile_texture.cache_scaled_surface, Vector2(px, py))
+                    surf.blit(
+                        tile_texture.cache_scaled_surface, Vector2(px, py)
+                    )
 
 
 class AutoTileScrollProcessor(Processor):
@@ -124,7 +136,8 @@ class AutoTileScrollProcessor(Processor):
         scene_context: SceneContext,
         engine_context: EngineContext,
     ) -> None:
-        delta = float(tick_context.delta_time * scene_context.time_scale)
+        timestamp = engine_context.clock.start_timestamp
+        elapsed = float(datetime.now().timestamp() - timestamp)
 
         for _, (auto_tile_scroll, tile_texture) in scene_context.query(
             AutoTileScrollComponent, TileTextureComponent
@@ -132,7 +145,7 @@ class AutoTileScrollProcessor(Processor):
             tile_size_x = float(tile_texture.tile_size.x) or 1.0
             tile_size_y = float(tile_texture.tile_size.y) or 1.0
 
-            tile_texture.scroll += auto_tile_scroll.speed * delta
+            tile_texture.scroll = auto_tile_scroll.speed * elapsed
             tile_texture.scroll.x %= tile_size_x
             tile_texture.scroll.y %= tile_size_y
 
@@ -170,10 +183,16 @@ def lerp_vec2(start: Vector2, end: Vector2, time: float) -> Vector2:
 
 class MouseRelativeTileScrollProcessor(Processor):
     reads = frozenset(
-        {MouseRelativeTileScrollComponent, TileTextureComponent, ScenePseudoComponent}
+        {
+            MouseRelativeTileScrollComponent,
+            TileTextureComponent,
+            ScenePseudoComponent,
+        }
     )
     writes = frozenset({TileTextureComponent})
-    after = frozenset({FitTileSizeToTransformProcessor, AutoTileScrollProcessor})
+    after = frozenset(
+        {FitTileSizeToTransformProcessor, AutoTileScrollProcessor}
+    )
     before = frozenset({TileTextureProcessor, RendererProcessor})
 
     async def update(
