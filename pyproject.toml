@@ -43,10 +43,9 @@ dev = [
 ]
 
 [project.scripts]
-play = "justkeepswimming.main:main"
+justkeepswimming = "justkeepswimming.main:main"
+profiler = "justkeepswimming.debug.viewer:cli"
 build = "justkeepswimming.build:main"
-profiler-generate-summary = "justkeepswimming.debug.viewer:cli_summary"
-profiler-generate-frame-summary = "justkeepswimming.debug.viewer:cli_frame"
 
 [tool.nuitka]
 standalone = true

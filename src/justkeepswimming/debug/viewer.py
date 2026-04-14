@@ -292,3 +292,36 @@ def cli_frame() -> None:
 
     profiler = Profiler.load(args.dump_path)
     show_gantt_frame(profiler, args.frame)
+
+def cli() -> None:
+    parser = argparse.ArgumentParser(description="Profiler")
+    subparsers = parser.add_subparsers(dest="command")
+
+    parser_summary = subparsers.add_parser(
+        "summary",
+        help="Show profiler summary"
+    )
+    parser_summary.add_argument(
+        "dump_path",
+        help="Path to .prof dump"
+    )
+
+    parser_frame = subparsers.add_parser(
+        "frame",
+        help="Show Gantt for one frame"
+    )
+    parser_frame.add_argument("dump_path", help="Path to .prof dump")
+    parser_frame.add_argument(
+        "--frame", "-f", type=int, required=True, help="Frame index to show"
+    )
+
+    args = parser.parse_args()
+
+    if args.command == "summary":
+        profiler = Profiler.load(args.dump_path)
+        show_summary(profiler)
+    elif args.command == "frame":
+        profiler = Profiler.load(args.dump_path)
+        show_gantt_frame(profiler, args.frame)
+    else:
+        parser.print_help()
