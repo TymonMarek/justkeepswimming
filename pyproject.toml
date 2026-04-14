@@ -2,7 +2,6 @@
 name = "justkeepswimming"
 version = "0.7.2"
 description = "A small game about a fish in the deep sea."
-
 readme = "README.md"
 license = "GPL-3.0"
 
@@ -40,6 +39,7 @@ dev = [
     "pylint>=4.0.4",
     "types-psutil>=7.2.1.20260116",
     "types-toml>=0.10.8.20240310",
+    "ty>=0.0.29",
 ]
 
 [project.scripts]
