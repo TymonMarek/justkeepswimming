@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v0.7.1 (2026-04-14)
+
+### Bug Fixes
+
+- **entrypoints**: Adjust entrypoints for a simpler interface
+  ([`e1c331b`](https://github.com/TymonMarek/justkeepswimming/commit/e1c331b320f55293d761fb02f1aac8d1b1239b83))
+
+### Chores
+
+- **bump**: Update justkeepswimming package version to 0.7.0
+  ([`37dce8a`](https://github.com/TymonMarek/justkeepswimming/commit/37dce8a0d41dcd8832ccd18bf7f269b4a6996690))
+
+
 ## v0.7.0 (2026-03-27)
 
 ### Bug Fixes
