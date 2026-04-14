@@ -287,7 +287,9 @@ class ActionManager:
 
     def register_action(self, action: InputAction) -> None:
         logger.debug(
-            f"Registering action: {action.id} with bindings: {action.default_bindings}"
+            "Registering action: %s with bindings: %s",
+            action.id,
+            action.default_bindings
         )
         self.actions[action.id] = action
         for binding in action.default_bindings:

@@ -1,4 +1,9 @@
-# List all debug processors here so they can be automatically registered when a scene is entered
+"""
+This module contains all of the debugger processors that can be used in the
+debug build of the engine. These processors are meant to be used for debugging
+purposes and may have performance implications, so they should not be included
+in the release build of the engine.
+"""
 from justkeepswimming.debug.processors.rendering import (
     RendererDebuggerProcessor,
 )

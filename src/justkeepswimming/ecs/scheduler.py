@@ -174,19 +174,23 @@ class ProcessorScheduler:
 
                 components_a_writes_that_b_reads = a.writes & b.reads
                 if components_a_writes_that_b_reads:
+                    formatted_components = self._fmt_components(
+                        components_a_writes_that_b_reads
+                    )
                     logger.debug(
-                        f"Inferred: {a} runs BEFORE {b} " f"because {b} reads {
-                            self._fmt_components(components_a_writes_that_b_reads)
-                        }"
+                        f"Inferred: {a} runs BEFORE {b} "
+                        f"because {b} reads {formatted_components}"
                     )
                     self._graph.set_dependency(node_b, node_a)
 
                 components_a_reads_that_b_writes = a.reads & b.writes
                 if components_a_reads_that_b_writes:
+                    formatted = self._fmt_components(
+                        components_a_reads_that_b_writes
+                    )
                     logger.debug(
-                        f"Inferred: {b} runs BEFORE {a} " f"because {a} reads {
-                            self._fmt_components(components_a_reads_that_b_writes)
-                        }"
+                        f"Inferred: {b} runs BEFORE {a} "
+                        f"because {a} reads {formatted}"
                     )
                     self._graph.set_dependency(node_a, node_b)
 
@@ -196,11 +200,9 @@ class ProcessorScheduler:
                         ...
                     else:
                         raise SystemConflictException(
-                            "Unresolved write-write conflict between ",
-                            {a},
-                            " and ",
-                            {b},
-                            f"on {self._fmt_components(components_both_write)}",
+                            f"Unresolved write-write conflict between {a} "
+                            f"and {b} on "
+                            f"{self._fmt_components(components_both_write)}"
                         )
 
         self._execution_order = self._graph.parallel_sort()

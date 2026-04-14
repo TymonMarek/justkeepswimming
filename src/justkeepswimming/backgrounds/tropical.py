@@ -91,7 +91,9 @@ class TropicalPlantsLayerPrefab(Prefab):
 class TropicalBackgroundPrefabGroup(PrefabGroup):
     prefabs = {
         "TropicalBackgroundLayerPrefab": TropicalBackgroundLayerPrefab(),
-        "TropicalFishBackgroundLayerPrefab": TropicalFishBackgroundLayerPrefab(),
+        "TropicalFishBackgroundLayerPrefab": (
+            TropicalFishBackgroundLayerPrefab()
+        ),
         "TropicalRocksLayerPrefab": TropicalRocksLayerPrefab(),
         "TropicalSandLayerPrefab": TropicalSandLayerPrefab(),
         "TropicalPlantsLayerPrefab": TropicalPlantsLayerPrefab(),

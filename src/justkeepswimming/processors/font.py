@@ -69,5 +69,3 @@ class TextProcessor(Processor):
                     - Vector2(cached.get_size()).elementwise() / 2
                 )
                 renderer.surface.blit(cached, internal_position)
-
-            # pygame.image.save(renderer.surface, f"debug/font/{entity.name}.png")

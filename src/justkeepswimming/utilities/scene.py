@@ -52,7 +52,6 @@ class Scene:
                 "run the development version of the game.",
             )
             return  # Skip if not in debug mode or if the module is compiled
-        #! Add debug processors here
         self.scheduler.add_processor(MouseDebuggerProcessor())
 
     async def _handle_exit(self, engine_context: EngineContext) -> None:
@@ -63,7 +62,10 @@ class Scene:
     async def _on_window_resize(self, event: Event) -> None:
         self.context.surface = Surface(Vector2(event.w, event.h))
         logger.debug(
-            f"Scene {self.id} resized to Vector2({event.w}, {event.h})"
+            "Scene %s resized to Vector2(%s, %s)",
+            self.id,
+            event.w,
+            event.h
         )
 
     async def _process_systems(
