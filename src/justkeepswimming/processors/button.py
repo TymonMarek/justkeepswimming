@@ -150,18 +150,24 @@ class ButtonProcessor(Processor):
         scene_context: SceneContext,
         engine_context: EngineContext,
     ) -> None:
-        engine_context.input.mouse.on_mouse_move.connect(
-            lambda mouse: self.on_mouse_moved(scene_context, mouse)
+        self.maid.add(
+            engine_context.input.mouse.on_mouse_move.connect(
+                lambda mouse: self.on_mouse_moved(scene_context, mouse)
+            )  # type: ignore[arg-type]
         )
-        engine_context.input.mouse.on_mouse_button_pressed.connect(
-            lambda mouse, button: self.on_mouse_button_pressed(
-                scene_context, mouse, button
-            )
+        self.maid.add(
+            engine_context.input.mouse.on_mouse_button_pressed.connect(
+                lambda mouse, button: self.on_mouse_button_pressed(
+                    scene_context, mouse, button
+                )
+            )  # type: ignore[arg-type]
         )
-        engine_context.input.mouse.on_mouse_button_released.connect(
-            lambda mouse, button: self.on_mouse_button_released(
-                scene_context, mouse, button
-            )
+        self.maid.add(
+            engine_context.input.mouse.on_mouse_button_released.connect(
+                lambda mouse, button: self.on_mouse_button_released(
+                    scene_context, mouse, button
+                )
+            )  # type: ignore[arg-type]
         )
 
     async def update(

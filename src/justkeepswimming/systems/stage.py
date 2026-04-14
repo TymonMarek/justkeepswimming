@@ -1,4 +1,3 @@
-import copy
 import enum
 import logging
 from dataclasses import dataclass, field
@@ -43,11 +42,9 @@ class SceneHandle:
     async def get_scene(
         self, context: StageContext, engine_context: EngineContext
     ) -> Scene:
-        if self._scene is None:
-            self._scene = await self.factory(context, engine_context)
-            await self._scene.on_load.emit()
-
-        return copy.deepcopy(self._scene)
+        self._scene = await self.factory(context, engine_context)
+        await self._scene.on_load.emit()
+        return self._scene
 
 
 class Stage:
@@ -59,6 +56,7 @@ class Stage:
     ) -> None:
         self.scenes = scenes
         self.loading_strategy = loading_strategy
+        self.busy = False
 
         self.scene: Optional[Scene] = None
         self.handles: dict[SceneID, SceneHandle] = {}
@@ -85,16 +83,13 @@ class Stage:
 
     def _get_handle(self, scene_id: SceneID) -> SceneHandle:
         try:
-            return self.handles[scene_id]
+            factory = self.scenes[scene_id]
         except KeyError:
-            try:
-                factory = self.scenes[scene_id]
-            except KeyError:
-                raise ValueError(f"Scene {scene_id} does not exist")
+            raise ValueError(f"Scene {scene_id} does not exist")
 
-            handle = SceneHandle(scene_id, factory, self.loading_strategy)
-            self.handles[scene_id] = handle
-            return handle
+        handle = SceneHandle(scene_id, factory, self.loading_strategy)
+        self.handles[scene_id] = handle
+        return handle
 
     async def switch_scene(self, scene_id: SceneID, transition: bool) -> None:
         await self.context.on_request_switch_scene.emit(scene_id, transition)
@@ -102,13 +97,32 @@ class Stage:
     async def _handle_request_switch_scene(
         self, scene_id: SceneID, transition: bool
     ) -> None:
-        if self.scene:
-            await self.scene.on_exit.emit(self.engine_context)
-            await self.scene.on_unload.emit()
+        if transition:
+            self.engine_context.window.fade(1.0)
+            self.busy = True
+            self.engine_context.window.reached_target_fade.once(
+                lambda: self._transition_scene(scene_id)
+            )
+        else:
+            await self._unload_scene()
+            await self._load_scene(scene_id)
 
+    async def _transition_scene(self, scene_id: SceneID) -> None:
+        await self._load_scene(scene_id)
+        self.engine_context.window.fade(0.0)
+        await self.engine_context.window.reached_target_fade.wait()
+        self.busy = True
+
+    async def _load_scene(self, scene_id: SceneID) -> None:
         handle = self._get_handle(scene_id)
         self.scene = await handle.get_scene(self.context, self.engine_context)
         await self.scene.on_enter.emit(self.engine_context)
+
+    async def _unload_scene(self) -> None:
+        if self.scene:
+            self.scene.context.maid.cleanup()
+            await self.scene.on_exit.emit(self.engine_context)
+            await self.scene.on_unload.emit()
 
     async def _process_scene(
         self,

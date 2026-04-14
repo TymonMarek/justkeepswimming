@@ -21,6 +21,7 @@ class InputActionId(enum.StrEnum):
     PLAYER_TURN_LEFT = enum.auto()
     PLAYER_TURN_RIGHT = enum.auto()
     TOGGLE_DEBUG_MODE = enum.auto()
+    GO_BACK = enum.auto()
 
 
 class KeyboardKeyType(enum.Enum):
@@ -31,6 +32,7 @@ class KeyboardKeyType(enum.Enum):
     Q = pygame.K_q
     E = pygame.K_e
     F3 = pygame.K_F3
+    ESCAPE = pygame.K_ESCAPE
 
 
 class MouseButtonType(enum.Enum):
@@ -340,3 +342,6 @@ class Input:
         self.keyboard = Keyboard(dispatcher)
         self.mouse = Mouse(dispatcher)
         self.action_manager = ActionManager(self.keyboard, self.mouse)
+
+    def __deepcopy__(self, memo: dict[int, object]) -> "Input":
+        return self

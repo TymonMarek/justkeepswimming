@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum, auto
+from typing import Any
 import pygame
 
 from justkeepswimming.debug.profiler import Profiler
@@ -26,3 +27,6 @@ class EngineContext:
     profiler: Profiler
     options: Options
     custom_events: dict[CustomEventType, CustomEvent]
+
+    def __deepcopy__(self, memo: dict[str, Any]) -> "EngineContext":
+        return self

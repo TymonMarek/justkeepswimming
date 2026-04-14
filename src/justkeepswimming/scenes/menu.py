@@ -30,7 +30,7 @@ async def load(
     play_button_prefab = PlayButtonPrefab().construct("PlayButton", scene)
 
     async def on_play_button_click():
-        await stage_context.on_request_switch_scene.emit(SceneID.GAME)
+        await stage_context.on_request_switch_scene.emit(SceneID.GAME, True)
 
     play_button_prefab.get_component(ButtonComponent).on_click.connect(
         on_play_button_click

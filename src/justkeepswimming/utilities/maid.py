@@ -7,8 +7,9 @@ class Maid:
     def __init__(self) -> None:
         self._connections: list[Connection[Any]] = []
 
-    def add(self, connection: Connection[Any]) -> None:
-        self._connections.append(connection)
+    def add(self, obj: Any) -> None:
+        if isinstance(obj, Connection):
+            self._connections.append(obj)
 
     def cleanup(self) -> None:
         for connection in self._connections:

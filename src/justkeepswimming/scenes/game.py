@@ -48,7 +48,17 @@ async def load(
         InputAction(
             InputActionId.PLAYER_MOVE_RIGHT, "Move right", [KeyboardKeyType.D]
         ),
+        go_back_action := InputAction(
+            InputActionId.GO_BACK,
+            "Go back to the previous scene",
+            [KeyboardKeyType.ESCAPE]
+        )
     ]
+
+    go_back_action.on_triggered.connect(
+        lambda: stage_context.on_request_switch_scene.emit(SceneID.MENU, True)
+    )
+
     PlayerPrefab().construct("Player", scene)
     random.choice(
         [MinesBackgroundPrefabGroup, OceanBackgroundPrefabGroup]

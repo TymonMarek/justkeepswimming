@@ -60,6 +60,11 @@ class ProcessorScheduler:
     def _fmt_components(self, components: frozenset[Type[Component]]) -> str:
         return "{" + ", ".join(comp.__name__ for comp in components) + "}"
 
+    def cleanup(self) -> None:
+        for processor in self.processors:
+            processor.maid.cleanup()
+            processor.teardown(self.scene_context, self.engine_context)
+
     async def process_tick(
         self,
         tick_context: TickContext,

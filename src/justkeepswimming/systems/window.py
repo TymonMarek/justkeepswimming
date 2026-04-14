@@ -2,14 +2,15 @@ import logging
 from pathlib import Path
 
 import pygame
-from pygame import Vector2
+from pygame import Color, Vector2
 
 from justkeepswimming.systems.dispatcher import Dispatcher
+from justkeepswimming.utilities.signal import Signal
 
 DEFAULT_WINDOWS_ICON: Path = Path("assets/icon.png")
 DEFAULT_WINDOW_TITLE: str = "Just Keep Swimming!"
 DEFAULT_WINDOW_SIZE: Vector2 = Vector2(800, 600)
-DEFAULT_WINDOW_FLAGS: int = pygame.RESIZABLE
+DEFAULT_WINDOW_FLAGS: int = pygame.RESIZABLE | pygame.SRCALPHA
 DEFAULT_IS_VSYNC_ENABLED: bool = False
 
 logger = logging.getLogger(__name__)
@@ -24,6 +25,11 @@ class Window:
         self._flags: int = DEFAULT_WINDOW_FLAGS
         self.on_resize = dispatcher.get_signal_for(pygame.VIDEORESIZE)
         self.surface: pygame.Surface
+        self._target_fade: float = 0.0
+        self._current_fade: float = 0.0
+        self.reached_target_fade: Signal[[]] = Signal[[]]()
+        self._sent_fade_reached_event: bool = True
+        self.fade_speed: float = 0.01
         self._create_window()
         self._update_icon(DEFAULT_WINDOWS_ICON)
         self.on_resize.connect(self._on_resize_event)
@@ -36,8 +42,30 @@ class Window:
     async def _on_resize_event(self, event: pygame.event.Event) -> None:
         self._size = Vector2(event.w, event.h)
 
+    def draw_fade_overlay(self):
+        fade_surface = pygame.Surface(self._size)
+        fade_surface.fill(Color(0, 0, 0))
+        fade_surface.set_alpha(int(self._current_fade * 255))
+        self.surface.blit(fade_surface, (0, 0))
+
     def refresh(self):
+        if self._target_fade > self._current_fade:
+            self._current_fade = min(
+                self._target_fade, self._current_fade + self.fade_speed
+            )
+        elif self._target_fade < self._current_fade:
+            self._current_fade = max(
+                self._target_fade, self._current_fade - self.fade_speed
+            )
+        if self._current_fade == self._target_fade:
+            self.reached_target_fade.emit_sync()
+        if self._current_fade > 0.0:
+            self.draw_fade_overlay()
         pygame.display.flip()
+
+    def fade(self, amount: float):
+        self._target_fade = max(0.0, min(1.0, amount))
+        self._sent_fade_reached_event = False
 
     def _create_window(self):
         logger.debug(
