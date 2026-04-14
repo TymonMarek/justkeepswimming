@@ -16,6 +16,8 @@ jobs:
     permissions:
       contents: write
     runs-on: ubuntu-latest
+    outputs:
+      version_bumped: ${{ steps.commit.outputs.version_bumped }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -42,18 +44,22 @@ jobs:
         run: uv sync --package justkeepswimming
 
       - name: Commit version bump
+        id: commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           if git diff --quiet; then
             echo "No changes to commit"
+            echo "version_bumped=false" >> $GITHUB_OUTPUT
           else
-            git commit -am "Bump version [skip ci]"
-            git push origin HEAD:${{ github.ref }}
+          git commit -am "Bump version [skip ci]"
+          git push origin HEAD:${{ github.ref }}
+          echo "version_bumped=true" >> $GITHUB_OUTPUT
           fi
 
   build:
     needs: bump
+    if: ${{ needs.bump.outputs.version_bumped == 'true' }}
     permissions:
       contents: write
     strategy:
