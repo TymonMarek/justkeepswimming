@@ -103,7 +103,9 @@ class ButtonProcessor(Processor):
             colliding = rect.collidepoint(mouse.position)
             if colliding:
                 logger.debug(
-                    f"Mouse button {mouse_button.button_type.name} pressed on {entity.name}"
+                    "Mouse button %s pressed on %s",
+                    mouse_button.button_type.name,
+                    entity.name,
                 )
                 button.active = True
                 await button.on_click.emit()
@@ -131,12 +133,16 @@ class ButtonProcessor(Processor):
             button.active = False
             if colliding:
                 logger.debug(
-                    f"Mouse button {mouse_button.button_type.name} released on {entity.name}"
+                    "Mouse button %s released on %s",
+                    mouse_button.button_type.name,
+                    entity.name
                 )
                 await button.on_release.emit()
             else:
                 logger.debug(
-                    f"Mouse button {mouse_button.button_type.name} cancelled press on {entity.name}"
+                    "Mouse button %s cancelled press on %s",
+                    mouse_button.button_type.name,
+                    entity.name
                 )
 
     def initialize(

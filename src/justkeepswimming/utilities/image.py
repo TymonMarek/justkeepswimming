@@ -84,7 +84,9 @@ class Image:
             anchor=Vector2(0.5, 0.5),
         )
         logger.debug(
-            f"Image loaded from {self.path} with size {self._surface.get_size()}"
+            "Image loaded from %s with size %s",
+            self.path,
+            self._surface.get_size()
         )
 
 

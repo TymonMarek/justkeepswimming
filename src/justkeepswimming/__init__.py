@@ -1,0 +1,3 @@
+"""
+Placeholder library stub.
+"""

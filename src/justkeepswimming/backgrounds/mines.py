@@ -93,8 +93,16 @@ class NearParticleEffectBackgroundLayerPrefab(Prefab):
 class MinesBackgroundPrefabGroup(PrefabGroup):
     prefabs = {
         "FarOceanBackgroundLayer": FarOceanBackgroundLayerPrefab(),
-        "FarMinesOceanBackgroundLayer": FarMinesOceanBackgroundLayerPrefab(),
-        "FarParticleEffectBackgroundLayer": FarParticleEffectBackgroundLayerPrefab(),
-        "NearMinesOceanBackgroundLayer": NearMinesOceanBackgroundLayerPrefab(),
-        "NearParticleEffectBackgroundLayer": NearParticleEffectBackgroundLayerPrefab(),
+        "FarMinesOceanBackgroundLayer": (
+            FarMinesOceanBackgroundLayerPrefab()
+        ),
+        "FarParticleEffectBackgroundLayer": (
+            FarParticleEffectBackgroundLayerPrefab()
+        ),
+        "NearMinesOceanBackgroundLayer": (
+            NearMinesOceanBackgroundLayerPrefab()
+        ),
+        "NearParticleEffectBackgroundLayer": (
+            NearParticleEffectBackgroundLayerPrefab()
+        ),
     }

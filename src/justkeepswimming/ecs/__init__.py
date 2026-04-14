@@ -250,7 +250,7 @@ class Processor:
     after: frozenset[type["Processor"]] = frozenset()
     alongside: frozenset[type["Processor"]] = frozenset()
     debug_only: bool = (
-        False  # Processors used for debugging purposes only will not run in production builds
+        False
     )
 
     def __init__(self) -> None:

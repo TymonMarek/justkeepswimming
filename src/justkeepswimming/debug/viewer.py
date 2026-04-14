@@ -120,9 +120,10 @@ def show_summary(profiler: Profiler) -> None:
 
 
 def show_gantt_frame(profiler: Profiler, frame_index: int) -> None:
-    """Draw a true start/end Gantt for exactly one frame, labels only inside blocks
-    or outside (left/right) when they don't fit. Outside labels are black and
-    won't overlap the bar."""
+    """Draw a true start/end Gantt for exactly one frame, labels only inside
+    blocks or outside (left/right) when they don't fit. Outside labels are
+    black and won't overlap the bar.
+    """
     processor_records = profiler.records.get(ProfilerScope.PROCESSOR, {})
     if not processor_records:
         print("No processor scope records")

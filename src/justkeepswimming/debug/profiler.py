@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import pickle
 import time
 from collections import deque
@@ -23,7 +23,8 @@ class Profiler:
             enabled=enabled,
             history_length=history_length,
             dump_path=Path(
-                f"dumps/{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.prof"
+                "dumps",
+                datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + ".prof"
             ),
         )
         self.records: dict[
@@ -83,7 +84,8 @@ class Profiler:
                     } (profiler version {self.version})...")
                 pickle.dump(self, file)
                 logger.info(
-                    f"Finished saving profiler dump! View summary using: uv run profiler-generate-summary {self.options.dump_path}"
+                    "Finished saving profiler dump to %s.",
+                    self.options.dump_path,
                 )
         except Exception as error:
             logger.error(f"Failed to save profiler dump: {error}")
@@ -95,7 +97,8 @@ class Profiler:
                 profiler = pickle.load(file)
                 if not isinstance(profiler, Profiler):
                     raise TypeError(
-                        "Failed to load profiler, are you sure this is a valid dump?"
+                        "Failed to load profiler!",
+                        "Are you sure this is a valid dump?"
                     )
                 if not Profiler.version.is_compatible_with(profiler.version):
                     raise ValueError(f"The profiler dump version {

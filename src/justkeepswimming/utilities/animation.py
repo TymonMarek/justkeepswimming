@@ -96,7 +96,9 @@ class AnimationTrack:
             surface = await keyframe.region.slice(self.animation.image)
             self.frames[keyframe.timestamp] = surface
             logger.debug(
-                f"Loaded {surface.get_size()} frame at timestamp {keyframe.timestamp}"
+                "Loaded %s frame at timestamp %s",
+                surface.get_size(),
+                keyframe.timestamp
             )
 
     async def play(self) -> None:
