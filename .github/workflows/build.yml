@@ -37,7 +37,7 @@ jobs:
         run: uv sync --group bump 
 
       - name: Calculate version reference
-        run: uv run python-semantic-release -c pyproject.toml version --no-commit
+        run: uv run python-semantic-release -c pyproject.toml version --no-commit --no-push 
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -52,6 +52,7 @@ jobs:
           fi
 
   build:
+    name: Build distributable release artifacts
     needs: bump
     if: ${{ needs.bump.outputs.version_bumped == 'true' }}
     permissions:
@@ -98,6 +99,7 @@ jobs:
           path: dist/
 
   hash:
+    name: Compute hashes for release artifacts
     needs: build
     permissions:
       contents: write
@@ -123,6 +125,7 @@ jobs:
           path: dist/**/*.sha256
 
   sign:
+    name: Sign release artifacts and hashes
     needs: hash
     permissions:
       contents: write
@@ -154,6 +157,7 @@ jobs:
           name: signatures
 
   release:
+    name: Publish release on GitHub
     needs: sign
     permissions:
       contents: write
@@ -208,7 +212,7 @@ jobs:
           git commit -m "ci: bump package version to {version} [skip ci]"
           git push origin HEAD:${{ github.ref }}
 
-      - name: Publish release
+      - name: Generate and publish a new release
         run: uv run python-semantic-release -c pyproject.toml publish
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
