@@ -2,6 +2,36 @@
 
 <!-- version list -->
 
+## v0.8.0 (2026-04-14)
+
+### Bug Fixes
+
+- Make backgrounds consistantly scroll across scenes
+  ([`48b6934`](https://github.com/TymonMarek/justkeepswimming/commit/48b693435186ae64d2fb33daa47c034c5edd477e))
+
+- **ci**: Change builds to only run when the version is bumped
+  ([`064ec97`](https://github.com/TymonMarek/justkeepswimming/commit/064ec97da0138234a512172ebb8ca3153464ef8a))
+
+- **ci**: Fix error in github action script on non-release
+  ([`4f653b3`](https://github.com/TymonMarek/justkeepswimming/commit/4f653b354d7e9ea53a70f0d2120d5498c9bb893a))
+
+### Documentation
+
+- Fix license reference and markdown errors in readme
+  ([`1c35e0b`](https://github.com/TymonMarek/justkeepswimming/commit/1c35e0bef07d71a5352e0b87cc92dcdea0453e46))
+
+- **license**: Add seperate license for game assets
+  ([`48b6934`](https://github.com/TymonMarek/justkeepswimming/commit/48b693435186ae64d2fb33daa47c034c5edd477e))
+
+- **license**: Add seperate license for game assets
+  ([`794174d`](https://github.com/TymonMarek/justkeepswimming/commit/794174d0deb72cb9b2f6f0566c883722e61ccd02))
+
+### Features
+
+- Add game scene
+  ([`48b6934`](https://github.com/TymonMarek/justkeepswimming/commit/48b693435186ae64d2fb33daa47c034c5edd477e))
+
+
 ## v0.7.2 (2026-04-14)
 
 ### Bug Fixes
