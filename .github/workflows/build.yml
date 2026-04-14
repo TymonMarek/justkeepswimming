@@ -34,13 +34,14 @@ jobs:
           version: '0.9.27'
 
       - name: Install dependencies
-        run: uv sync --group bump
-      
-      - name: Check if the push requires a version bump
-        run: uv run python-semantic-release -c pyproject.toml version
+        run: uv sync --group bump 
+
+      - name: Calculate version reference
+        run: uv run python-semantic-release -c pyproject.toml version --no-commit
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Commit version bump
+
+      - name: Check if version was bumped
         id: commit
         run: |
           if git diff --quiet; then
@@ -180,10 +181,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: dist/
-      
-      - name: Update lockfile
-        run: uv sync --package justkeepswimming
-      - name: Commit version bump
+
+      - name: Calculate version reference
+        run: uv run python-semantic-release -c pyproject.toml version --no-commit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+      - name: Commit new version
         id: commit
         run: |
           if git diff --quiet; then
@@ -191,9 +195,19 @@ jobs:
             echo "version_bumped=false" >> $GITHUB_OUTPUT
           else
             echo "version_bumped=true" >> $GITHUB_OUTPUT
-            git commit -m "ci: bump package version to {version} [skip ci]"
-            git push origin HEAD:${{ github.ref }}
           fi
+      
+      - name: Update lockfile
+        run: uv sync --package justkeepswimming
+
+      - name: Commit version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add pyproject.toml uv.lock
+          git commit -m "ci: bump package version to {version} [skip ci]"
+          git push origin HEAD:${{ github.ref }}
+
       - name: Publish release
         run: uv run python-semantic-release -c pyproject.toml publish
         env:
