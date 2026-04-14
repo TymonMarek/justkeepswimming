@@ -13,6 +13,7 @@ permissions:
 
 jobs:
   bump:
+    name: Check if the push requires a version bump
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -35,26 +36,18 @@ jobs:
       - name: Install dependencies
         run: uv sync --group bump
       
-      - name: Bump version
+      - name: Check if the push requires a version bump
         run: uv run python-semantic-release -c pyproject.toml version
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Update lockfile
-        run: uv sync --package justkeepswimming
-
       - name: Commit version bump
         id: commit
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
           if git diff --quiet; then
             echo "No changes to commit"
             echo "version_bumped=false" >> $GITHUB_OUTPUT
           else
-          git commit -am "Bump version [skip ci]"
-          git push origin HEAD:${{ github.ref }}
-          echo "version_bumped=true" >> $GITHUB_OUTPUT
+            echo "version_bumped=true" >> $GITHUB_OUTPUT
           fi
 
   build:
@@ -159,7 +152,7 @@ jobs:
           path: dist/**/*.sig
           name: signatures
 
-  upload:
+  release:
     needs: sign
     permissions:
       contents: write
@@ -187,8 +180,21 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: dist/
-
-      - name: Upload release artifacts
+      
+      - name: Update lockfile
+        run: uv sync --package justkeepswimming
+      - name: Commit version bump
+        id: commit
+        run: |
+          if git diff --quiet; then
+            echo "No changes to commit"
+            echo "version_bumped=false" >> $GITHUB_OUTPUT
+          else
+            echo "version_bumped=true" >> $GITHUB_OUTPUT
+            git commit -m "ci: bump package version to {version} [skip ci]"
+            git push origin HEAD:${{ github.ref }}
+          fi
+      - name: Publish release
         run: uv run python-semantic-release -c pyproject.toml publish
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
