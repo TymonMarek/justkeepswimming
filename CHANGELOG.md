@@ -2,6 +2,27 @@
 
 <!-- version list -->
 
+## v0.8.0 (2026-04-14)
+
+### Bug Fixes
+
+- Make backgrounds consistantly scroll across scenes
+  ([`48b6934`](https://github.com/TymonMarek/justkeepswimming/commit/48b693435186ae64d2fb33daa47c034c5edd477e))
+
+### Documentation
+
+- **license**: Add seperate license for game assets
+  ([`48b6934`](https://github.com/TymonMarek/justkeepswimming/commit/48b693435186ae64d2fb33daa47c034c5edd477e))
+
+- **license**: Add seperate license for game assets
+  ([`794174d`](https://github.com/TymonMarek/justkeepswimming/commit/794174d0deb72cb9b2f6f0566c883722e61ccd02))
+
+### Features
+
+- Add game scene
+  ([`48b6934`](https://github.com/TymonMarek/justkeepswimming/commit/48b693435186ae64d2fb33daa47c034c5edd477e))
+
+
 ## v0.7.2 (2026-04-14)
 
 ### Bug Fixes
