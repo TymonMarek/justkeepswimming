@@ -1,5 +1,8 @@
 # justkeepswimming
 
+> [!WARNING]
+> This project has been archived since Monday 15th April 2026. The purpose of this project was to get an A* in Computer Science A-Level final project, so it has been maticilously developed to be as complex and overengineered as possible. This project is shockingly unoptimized; only dare to run this game if you have 12 NASA super computers to spare for a few weeks. You have been warned!
+
 A small game about a fish in the deep sea.
 
 ## Table Of Contents
